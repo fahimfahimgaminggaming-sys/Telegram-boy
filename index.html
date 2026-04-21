@@ -3,117 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON PRO v6.0 - Terminal</title>
+    <title>TON PRO v26.0 - Institutional Terminal</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; }
-        .card { background: #0c0c0c; border: 1px solid #1f1f1f; border-radius: 24px; }
-        .glow-blue { box-shadow: 0 0 20px rgba(0, 122, 255, 0.2); }
-        .token-row { border-bottom: 1px solid #111; }
-        .token-row:last-child { border-bottom: none; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .terminal-font { font-family: 'Orbitron', sans-serif; }
+        .glass-card { background: linear-gradient(145deg, #0a0a0a, #020202); border: 1px solid #1a1a1a; border-radius: 28px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
+        .neon-border { border-color: rgba(0, 136, 255, 0.3); box-shadow: 0 0 15px rgba(0, 136, 255, 0.1); }
+        .gradient-text { background: linear-gradient(90deg, #0088ff, #00ffcc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .shimmer { background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%); background-size: 200% 100%; animation: shimmer 2s infinite; }
+        @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
     </style>
 </head>
-<body class="p-5">
+<body class="p-5 select-none">
 
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-lg font-black italic text-blue-500">TON<span class="text-white italic">PRO</span></h1>
-            <p class="text-[8px] text-gray-600 uppercase tracking-[0.3em]">Institutional Grade Terminal</p>
+            <h1 class="text-xl font-black italic terminal-font tracking-tighter">TON<span class="text-blue-500">PRO</span> <span class="text-[8px] text-gray-500 not-italic">v26.0</span></h1>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></span>
+                <p class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Encrypted Node: Active</p>
+            </div>
         </div>
-        <div id="status-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+        <div class="px-3 py-1 bg-white/5 rounded-full border border-white/10">
+            <p id="network-tag" class="text-[9px] font-bold text-blue-400">MAINNET</p>
+        </div>
     </div>
 
-    <div class="card p-8 mb-6 glow-blue relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-4 opacity-5 italic font-black text-4xl">SECURE</div>
-        <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Available TON Balance</p>
+    <div class="glass-card p-8 mb-6 neon-border relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-6 opacity-5 terminal-font font-black text-5xl rotate-12">SECURE</div>
+        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3">Available Portfolio Value</p>
         <div class="flex items-baseline gap-2">
-            <h2 id="main-bal" class="text-5xl font-black italic">0.00</h2>
-            <span class="text-blue-500 font-bold">TON</span>
+            <h2 id="main-bal" class="text-5xl font-bold terminal-font italic">0.00</h2>
+            <span class="text-blue-500 font-bold text-sm">TON</span>
         </div>
-        <p id="bdt-val" class="text-[10px] text-green-500 font-bold mt-2">≈ ৳0.00 BDT</p>
+        <div id="bdt-container" class="mt-3 flex items-center gap-2">
+            <p id="bdt-val" class="text-sm font-bold text-green-500 italic">৳0.00 BDT</p>
+            <span class="text-[10px] text-gray-600">(@ <span id="rate-now">0</span>/ton)</span>
+        </div>
     </div>
 
-    <div class="card overflow-hidden">
-        <div class="p-4 bg-white/5 flex justify-between items-center">
-            <span class="text-[10px] font-black text-gray-400 uppercase">Live Asset Portfolio</span>
-            <span class="text-[9px] text-blue-400 font-bold" id="sync-text">SYNCED</span>
+    <div class="glass-card overflow-hidden">
+        <div class="p-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Live Asset Portfolio</span>
+            <span class="text-[8px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-md font-bold" id="sync-status">SYNCING...</span>
         </div>
         
-        <div id="asset-container" class="divide-y divide-[#111]">
-            <div class="p-4 flex justify-between items-center token-row">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center font-bold text-green-500">U</div>
+        <div id="asset-list" class="divide-y divide-white/[0.03]">
+            <div class="p-5 flex justify-between items-center asset-row transition active:bg-white/5">
+                <div class="flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                        <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" class="w-6 h-6" alt="USDT">
+                    </div>
                     <div>
-                        <p class="text-sm font-bold">Tether USDT</p>
-                        <p class="text-[9px] text-gray-500 font-mono">TON Network</p>
+                        <p class="text-sm font-black uppercase">Tether USDT</p>
+                        <p class="text-[9px] text-gray-500 font-mono tracking-tighter">TON-JETTON NETWORK</p>
                     </div>
                 </div>
                 <div class="text-right">
                     <p id="usdt-bal" class="text-sm font-bold text-white">0.00</p>
-                    <p class="text-[9px] text-gray-500 italic">Checking...</p>
+                    <p class="text-[9px] text-green-500 font-bold italic">$1.00 USD</p>
                 </div>
             </div>
-            
-            </div>
+        </div>
     </div>
 
-    <div class="fixed bottom-6 left-6 right-6 flex gap-3">
-        <button onclick="tele.showAlert('Trade system connecting...')" class="flex-1 bg-blue-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-600/30">Quick Swap</button>
-        <button onclick="tele.close()" class="w-16 bg-[#111] border border-[#222] rounded-2xl flex items-center justify-center text-xl">✕</button>
+    <div class="fixed bottom-8 left-6 right-6 flex gap-4">
+        <button onclick="handleSwap()" class="flex-[2] bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-[0_10px_25px_rgba(37,99,235,0.4)] transition-all active:scale-95">
+            Quick Swap ⚡
+        </button>
+        <button onclick="window.location.reload()" class="flex-1 bg-[#111] border border-white/10 rounded-2xl flex items-center justify-center transition active:bg-white/5">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+        </button>
     </div>
 
     <script>
         const tele = window.Telegram.WebApp;
         tele.expand();
+        tele.enableClosingConfirmation();
 
-        // --- আপনার TON API KEY সরাসরি এখানে অ্যাড করা হয়েছে ---
+        // --- আপনার API এবং অ্যাড্রেস ---
         const TON_API_KEY = 'AE53JZWGNDEQCXIAAAAJP5W44GTSYV5I7ODQNKL7WKMANYMB47UC67HGFFBC7NBMSZGEM2A';
-        
         const params = new URLSearchParams(window.location.search);
-        const walletAddr = params.get('wallet') || "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"; 
+        // যদি URL এ অ্যাড্রেস না থাকে, তবে ডিফল্ট হিসেবে আপনার অ্যাড্রেসটি ব্যবহার করবে
+        const walletAddr = params.get('wallet') || "UQBEt6y0FdSQD6DO0VLGOrNjqtBFwL1j5gijfd0jmXZp-SQT";
 
-        async function fetchRealtimeData() {
+        async function updateDashboard() {
             try {
-                document.getElementById('sync-text').innerText = "REFRESHING...";
-                
-                // ১. TON Balance & BDT Rate Fetch
-                const response = await fetch(`https://tonapi.io/v2/accounts/${walletAddr}`, {
-                    headers: { 'Authorization': `Bearer ${TON_API_KEY}` }
-                });
-                const data = await response.json();
-                const tonBal = (data.balance / 1e9).toFixed(2);
-                document.getElementById('main-bal').innerText = tonBal;
+                // ১. লাইভ মার্কেট রেট (TON to BDT)
+                const rateRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=bdt');
+                const rateData = await rateRes.json();
+                const tonBdtRate = rateData['the-open-network'].bdt;
+                document.getElementById('rate-now').innerText = tonBdtRate.toLocaleString();
 
-                // ২. Jettons (USDT/Tokens) Fetch
-                const jettonResponse = await fetch(`https://tonapi.io/v2/accounts/${walletAddr}/jettons`, {
+                // ২. ওয়ালেট ব্যালেন্স (TON)
+                const accRes = await fetch(`https://tonapi.io/v2/accounts/${walletAddr}`, {
                     headers: { 'Authorization': `Bearer ${TON_API_KEY}` }
                 });
-                const jettonData = await jettonResponse.json();
+                const accData = await accRes.json();
+                const tonBal = (accData.balance / 1e9);
                 
-                let foundUSDT = false;
+                // ৩. জেটটন ব্যালেন্স (USDT)
+                const jettonRes = await fetch(`https://tonapi.io/v2/accounts/${walletAddr}/jettons`, {
+                    headers: { 'Authorization': `Bearer ${TON_API_KEY}` }
+                });
+                const jettonData = await jettonRes.json();
+                
+                let usdtBalance = 0;
                 jettonData.balances.forEach(item => {
                     if(item.jetton.symbol === 'USDT') {
-                        const val = (item.balance / Math.pow(10, item.jetton.decimals)).toFixed(2);
-                        document.getElementById('usdt-bal').innerText = val;
-                        foundUSDT = true;
+                        usdtBalance = (item.balance / Math.pow(10, item.jetton.decimals));
                     }
                 });
 
-                document.getElementById('sync-text').innerText = "SYNCED";
-                document.getElementById('status-dot').classList.replace('bg-orange-500', 'bg-green-500');
+                // UI আপডেট
+                document.getElementById('main-bal').innerText = tonBal.toLocaleString(undefined, {minimumFractionDigits: 2});
+                document.getElementById('bdt-val').innerText = "≈ ৳" + (tonBal * tonBdtRate).toLocaleString(undefined, {maximumFractionDigits: 0}) + " BDT";
+                document.getElementById('usdt-bal').innerText = usdtBalance.toFixed(2);
+                
+                document.getElementById('sync-status').innerText = "LIVE SYNC";
+                document.getElementById('sync-status').classList.replace('bg-blue-500/10', 'bg-green-500/10');
+                document.getElementById('sync-status').classList.replace('text-blue-400', 'text-green-500');
 
-            } catch (error) {
-                console.error("API Error:", error);
-                document.getElementById('sync-text').innerText = "ERROR";
-                document.getElementById('status-dot').classList.replace('bg-green-500', 'bg-orange-500');
+            } catch (err) {
+                console.error(err);
+                document.getElementById('sync-status').innerText = "RETRYING...";
             }
         }
 
-        // শুরুতে একবার ডাটা লোড হবে
-        fetchRealtimeData();
-        // প্রতি ৩০ সেকেন্ড পরপর অটোমেটিক আপডেট হবে
-        setInterval(fetchRealtimeData, 30000);
+        function handleSwap() {
+            tele.HapticFeedback.impactOccurred('medium');
+            tele.showConfirm("Proceed to Quick Swap Terminal?", (ok) => {
+                if(ok) tele.showAlert("Swap system is currently being optimized for Major Fahim!");
+            });
+        }
+
+        // ইনিশিয়াল লোড
+        updateDashboard();
+        // প্রতি ২০ সেকেন্ডে অটো আপডেট
+        setInterval(updateDashboard, 20000);
 
     </script>
 </body>
