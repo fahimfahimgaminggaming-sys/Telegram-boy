@@ -2,140 +2,173 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TON PRO v26.0 - Major Fahim</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TON PRO v26.0 Premium - Major Fahim</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        body { background-color: #000; color: #fff; font-family: sans-serif; }
-        .glass-card { background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 24px; }
+        :root { --primary: #007aff; --bg: #050505; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(28, 28, 30, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 28px; }
         .tab-content { display: none; }
-        .active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .nav-btn.active-nav { color: #007aff; }
+        .active { display: block; }
+        .nav-active { color: var(--primary); filter: drop-shadow(0 0 8px var(--primary)); }
+        .btn-press:active { transform: scale(0.96); transition: 0.1s; }
+        .shimmer { background: linear-gradient(90deg, #1c1c1e 25%, #2c2c2e 50%, #1c1c1e 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        #loader-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="p-4 pb-24">
+<body class="p-4 pb-28">
 
-    <div class="flex justify-between items-center mb-6">
-        <div class="flex items-center gap-2">
-            <div class="bg-blue-600 p-2 rounded-lg">
-                <span class="font-bold text-white">T</span>
+    <div id="loader-overlay" class="flex flex-col items-center justify-center">
+        <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="font-bold text-blue-400 animate__animated animate__pulse animate__infinite">Processing Transaction...</p>
+    </div>
+
+    <div class="flex justify-between items-center mb-8 animate__animated animate__fadeInDown">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center font-bold">F</div>
+            <div>
+                <h1 class="text-sm text-gray-500">Welcome back,</h1>
+                <p class="font-bold text-white tracking-wide uppercase text-xs">Major Fahim</p>
             </div>
-            <h1 class="text-xl font-bold italic">TON PRO <span class="text-gray-500 text-xs">v26.0</span></h1>
         </div>
-        <div class="bg-gray-800 px-3 py-1 rounded-full text-[10px] font-bold text-blue-400 border border-blue-900">
-            MAJOR FAHIM
+        <div class="glass px-4 py-1.5 flex items-center gap-2 border-blue-500/20">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-[10px] font-bold text-blue-400 tracking-widest">v26.0 PRO</span>
         </div>
     </div>
 
-    <div id="home" class="tab-content active">
-        <div class="glass-card p-8 mb-6 text-center">
-            <p class="text-gray-400 text-sm mb-2">Total Balance</p>
-            <h2 class="text-5xl font-bold mb-2">124.50 <span class="text-blue-500 text-2xl">TON</span></h2>
-            <p class="text-green-400 font-bold">≈ ৳85,420.00 BDT</p>
+    <div id="home" class="tab-content active animate__animated animate__fadeIn">
+        <div class="glass p-8 mb-6 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl"></div>
+            <div class="flex flex-col items-center">
+                <p class="text-gray-400 text-xs font-medium mb-3 tracking-widest uppercase">Total Portfolio Value</p>
+                <div class="flex items-center gap-3 mb-2">
+                    <h2 id="balance-text" class="text-5xl font-black tracking-tighter">124.50 <span class="text-blue-500 text-2xl uppercase">Ton</span></h2>
+                    <button onclick="toggleBalance()" class="text-gray-600">👁️</button>
+                </div>
+                <p class="text-blue-400/80 font-semibold text-sm tracking-wide">≈ ৳85,420.00 BDT</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-8">
-            <button onclick="showTab('send')" class="glass-card p-6 flex flex-col items-center gap-2 active:scale-95 transition">
-                <span class="text-2xl">🚀</span>
-                <span class="font-bold text-blue-400 uppercase text-xs tracking-widest">Send</span>
+            <button onclick="showTab('send')" class="glass p-6 flex flex-col items-center gap-3 btn-press border-b-2 border-blue-600/30">
+                <div class="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
+                <span class="text-[11px] font-black uppercase tracking-widest">Send Asset</span>
             </button>
-            <button onclick="showTab('deposit')" class="glass-card p-6 flex flex-col items-center gap-2 active:scale-95 transition">
-                <span class="text-2xl">📥</span>
-                <span class="font-bold text-orange-400 uppercase text-xs tracking-widest">Deposit</span>
+            <button onclick="showTab('deposit')" class="glass p-6 flex flex-col items-center gap-3 btn-press border-b-2 border-orange-600/30">
+                <div class="w-12 h-12 bg-orange-600/10 rounded-2xl flex items-center justify-center text-2xl">💎</div>
+                <span class="text-[11px] font-black uppercase tracking-widest">Receive</span>
             </button>
         </div>
 
-        <h3 class="font-bold mb-4">Market Analysis</h3>
-        <div class="glass-card p-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-500/20 p-2 rounded-xl">💎</div>
+        <h3 class="text-[11px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4 ml-2">Market Insights</h3>
+        <div class="glass p-5 flex justify-between items-center border-l-4 border-blue-600">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+                    <img src="https://ton.org/download/ton_symbol.svg" class="w-6 h-6">
+                </div>
                 <div>
-                    <p class="font-bold">TON / USD</p>
-                    <p class="text-xs text-gray-500">$7.24</p>
+                    <p class="font-black text-sm uppercase">TON Network</p>
+                    <p class="text-xs text-gray-500 font-bold">$7.24 USD</p>
                 </div>
             </div>
-            <p class="text-green-400 font-bold">+5.24%</p>
-        </div>
-    </div>
-
-    <div id="send" class="tab-content">
-        <h2 class="text-2xl font-bold mb-6">Send TON</h2>
-        <div class="space-y-4">
-            <div>
-                <label class="text-xs text-gray-500 ml-2">RECIPIENT ADDRESS</label>
-                <input id="target" type="text" placeholder="Enter TON address" class="w-full bg-gray-900 border border-gray-800 p-4 rounded-2xl focus:outline-none focus:border-blue-500">
+            <div class="text-right">
+                <p class="text-green-400 font-black text-sm">+5.24%</p>
+                <div class="h-1 w-16 bg-gray-800 rounded-full mt-1 overflow-hidden">
+                    <div class="h-full bg-green-500 w-3/4"></div>
+                </div>
             </div>
-            <div>
-                <label class="text-xs text-gray-500 ml-2">AMOUNT (TON)</label>
-                <input id="amt" type="number" placeholder="0.00" class="w-full bg-gray-900 border border-gray-800 p-4 rounded-2xl focus:outline-none focus:border-blue-500">
+        </div>
+    </div>
+
+    <div id="send" class="tab-content animate__animated animate__fadeInRight">
+        <div class="flex items-center gap-4 mb-8">
+            <button onclick="showTab('home')" class="glass w-10 h-10 flex items-center justify-center">❮</button>
+            <h2 class="text-2xl font-black italic uppercase">Send Asset</h2>
+        </div>
+        <div class="space-y-6">
+            <div class="glass p-4">
+                <label class="text-[10px] font-black text-blue-500 uppercase tracking-widest ml-1 mb-2 block">Destination Address</label>
+                <input id="target" type="text" placeholder="UQ... or Wallet ID" class="w-full bg-transparent p-2 text-sm focus:outline-none placeholder:text-gray-700 font-mono">
             </div>
-            <button onclick="processSend()" class="w-full bg-blue-600 p-4 rounded-2xl font-bold mt-4 active:scale-95 transition">CONFIRM TRANSFER</button>
-            <button onclick="showTab('home')" class="w-full text-gray-500 text-sm font-bold uppercase py-2">Cancel</button>
-        </div>
-    </div>
-
-    <div id="deposit" class="tab-content">
-        <h2 class="text-2xl font-bold mb-6 text-center">Deposit</h2>
-        <div class="glass-card p-6 flex flex-col items-center">
-            <div id="qrcode" class="bg-white p-2 rounded-xl mb-6"></div>
-            <p class="text-xs text-gray-500 mb-2 uppercase">Your Wallet Address</p>
-            <div class="bg-black/50 p-3 rounded-lg border border-gray-800 w-full mb-6">
-                <p id="wallet-addr" class="text-[10px] break-all text-center text-gray-300">Loading...</p>
+            <div class="glass p-4">
+                <label class="text-[10px] font-black text-blue-500 uppercase tracking-widest ml-1 mb-2 block">Amount to Transfer</label>
+                <div class="flex items-center">
+                    <input id="amt" type="number" placeholder="0.00" class="w-full bg-transparent p-2 text-3xl font-black focus:outline-none">
+                    <span class="text-blue-500 font-black text-sm">TON</span>
+                </div>
             </div>
-            <button onclick="copyAddr()" class="bg-blue-600/20 text-blue-400 px-8 py-3 rounded-full font-bold active:scale-95 transition">COPY ADDRESS</button>
+            <button onclick="processSend()" class="w-full bg-blue-600 py-5 rounded-[24px] font-black text-sm tracking-[0.2em] shadow-lg shadow-blue-600/30 btn-press">INITIALIZE TRANSFER</button>
         </div>
     </div>
 
-    <div id="history" class="tab-content">
-        <h2 class="text-2xl font-bold mb-6">History</h2>
-        <div class="text-center py-20">
-            <div class="text-gray-700 text-4xl mb-4">📜</div>
-            <p class="text-gray-500">No recent transactions found</p>
+    <div id="deposit" class="tab-content animate__animated animate__fadeInUp">
+        <h2 class="text-center text-xl font-black mb-8 tracking-widest italic">INBOUND TRANSFER</h2>
+        <div class="glass p-10 flex flex-col items-center">
+            <div id="qrcode" class="bg-white p-4 rounded-[32px] mb-8 shadow-[0_0_30px_rgba(255,255,255,0.1)]"></div>
+            <p class="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-4">Click to copy address</p>
+            <button onclick="copyAddr()" class="bg-black/40 border border-gray-800 p-4 rounded-2xl w-full text-[10px] font-mono break-all text-gray-300 active:bg-blue-600/10 transition">
+                <span id="wallet-addr">Loading...</span>
+            </button>
         </div>
     </div>
 
-    <div class="fixed bottom-0 left-0 right-0 h-20 bg-[#1c1c1e]/80 backdrop-blur-2xl rounded-t-[32px] border-t border-white/5 flex justify-around items-center px-6">
-        <button onclick="showTab('home')" id="nav-home" class="nav-btn active-nav flex flex-col items-center gap-1">
-            <span>🏠</span>
-            <span class="text-[9px] font-black uppercase">Wallet</span>
+    <nav class="fixed bottom-6 left-6 right-6 h-20 glass flex justify-around items-center px-4 border-t-0 shadow-2xl z-50">
+        <button onclick="showTab('home')" id="nav-home" class="flex flex-col items-center gap-1 nav-active transition-all">
+            <span class="text-xl">🏛️</span>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Vault</span>
         </button>
-        <button onclick="showTab('history')" id="nav-history" class="nav-btn flex flex-col items-center gap-1 text-white/30">
-            <span>🕒</span>
-            <span class="text-[9px] font-black uppercase">History</span>
+        <button onclick="tele.showAlert('Coming Soon!')" class="flex flex-col items-center gap-1 text-gray-600">
+            <span class="text-xl">🛡️</span>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Security</span>
         </button>
-    </div>
+        <button onclick="showTab('deposit')" id="nav-deposit" class="flex flex-col items-center gap-1 text-gray-600">
+            <span class="text-xl">💳</span>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Receive</span>
+        </button>
+    </nav>
 
     <script>
         const tele = window.Telegram.WebApp;
         tele.expand();
         tele.enableClosingConfirmation();
+        tele.setHeaderColor('#050505');
 
-        // ১. আপনার আসল অ্যাড্রেস এখানে দিন
+        // আপনার অ্যাড্রেস
         const MY_WALLET = "UQB T6y0FDsQD6DO0VLGOrNjqtBFwL1j5gijfd0jmXzP-8QT"; 
+        let isBalanceVisible = true;
+
+        function toggleBalance() {
+            const btn = document.getElementById('balance-text');
+            isBalanceVisible = !isBalanceVisible;
+            btn.innerText = isBalanceVisible ? "124.50 TON" : "**** TON";
+            tele.HapticFeedback.impactOccurred('light');
+        }
 
         function showTab(id) {
-            tele.HapticFeedback.impactOccurred('light');
+            tele.HapticFeedback.impactOccurred('medium');
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            // Nav Highlighting
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-nav', 'text-white/30'));
-            if(id === 'home') document.getElementById('nav-home').classList.add('active-nav');
-            else if(id === 'history') document.getElementById('nav-history').classList.add('active-nav');
-            else document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.add('text-white/30'));
+            // Nav Updates
+            document.querySelectorAll('nav button').forEach(b => b.classList.add('text-gray-600'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
+            const activeNav = document.getElementById('nav-' + (id === 'send' ? 'home' : id));
+            if(activeNav) activeNav.classList.add('nav-active');
 
             if (id === 'deposit') {
                 document.getElementById('qrcode').innerHTML = "";
                 new QRCode(document.getElementById("qrcode"), {
                     text: MY_WALLET,
-                    width: 180,
-                    height: 180,
+                    width: 200,
+                    height: 200,
                     colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
+                    colorLight : "#ffffff"
                 });
                 document.getElementById('wallet-addr').innerText = MY_WALLET;
             }
@@ -144,7 +177,7 @@
         function copyAddr() {
             navigator.clipboard.writeText(MY_WALLET);
             tele.HapticFeedback.notificationOccurred('success');
-            tele.showAlert("Address Copied to Clipboard!");
+            tele.showAlert("Address Copied! ✅");
         }
 
         function processSend() {
@@ -153,22 +186,26 @@
 
             if(!to || !amount || amount <= 0) {
                 tele.HapticFeedback.notificationOccurred('error');
-                return tele.showAlert("Please enter valid address and amount!");
+                return tele.showAlert("Invalid transaction details!");
             }
 
-            tele.showConfirm(`Confirm sending ${amount} TON to:\n${to}`, (ok) => {
+            tele.showConfirm(`Initiate transfer of ${amount} TON?`, (ok) => {
                 if(ok) {
+                    document.getElementById('loader-overlay').style.display = 'flex';
                     tele.HapticFeedback.impactOccurred('heavy');
-                    // বোটের কাছে ডাটা পাঠানো হচ্ছে
-                    tele.sendData(JSON.stringify({
-                        action: "send",
-                        to: to,
-                        amount: amount
-                    }));
+                    
+                    setTimeout(() => {
+                        tele.sendData(JSON.stringify({
+                            action: "send",
+                            to: to,
+                            amount: amount
+                        }));
+                        tele.close();
+                    }, 2000); // ২ সেকেন্ড লোডিং ইফেক্ট দেখাবে
                 }
             });
         }
     </script>
 </body>
-                </html>
+                    </html>
                 
