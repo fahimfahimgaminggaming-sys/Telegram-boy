@@ -8,60 +8,57 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
-        .glass { background: rgba(20, 20, 20, 0.9); backdrop-filter: blur(15px); border: 1px solid #222; border-radius: 28px; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(20, 20, 20, 0.9); border: 1px solid #333; border-radius: 30px; }
         .tab { display: none; }
-        .active { display: block; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .active { display: block; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
-<body class="p-5 pb-24">
+<body class="p-6">
 
     <div id="home" class="tab active">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-xl font-black italic tracking-tighter">TON <span class="text-blue-500">PRO</span></h1>
-            <div class="bg-blue-600/20 px-3 py-1 rounded-full border border-blue-500/30 text-[10px] font-bold text-blue-400">MAJOR FAHIM</div>
-        </div>
-
-        <div class="glass p-10 mb-6 flex flex-col items-center shadow-2xl shadow-blue-900/20">
-            <p class="text-gray-500 text-[10px] uppercase tracking-[0.3em] mb-3">Available Balance</p>
-            <h2 id="bal-val" class="text-5xl font-black mb-2">0.00 <span class="text-blue-500 text-2xl uppercase">Ton</span></h2>
-            <p id="bdt-val" class="text-green-500 font-bold text-xs tracking-widest">≈ ৳0.00 BDT</p>
+        <h1 class="text-center font-black italic text-xl mb-10 text-blue-500 uppercase">TON PRO Wallet</h1>
+        
+        <div class="glass p-10 flex flex-col items-center mb-8">
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Total Balance</p>
+            <h2 id="bal" class="text-5xl font-black italic">0.00 <span class="text-blue-500 text-2xl uppercase">Ton</span></h2>
+            <p id="bdt" class="text-green-500 font-bold text-[10px] mt-2 italic">≈ ৳0 BDT</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-            <button onclick="showTab('send')" class="glass p-6 flex flex-col items-center gap-2 active:scale-95 transition">
-                <span class="text-2xl">📤</span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-blue-500">Send Asset</span>
+            <button onclick="showTab('send')" class="glass p-6 flex flex-col items-center gap-2">
+                <span class="text-2xl">⚡</span>
+                <p class="text-[10px] font-bold uppercase text-blue-400">Send</p>
             </button>
-            <button onclick="showTab('deposit')" class="glass p-6 flex flex-col items-center gap-2 active:scale-95 transition">
-                <span class="text-2xl">📥</span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-orange-500">Deposit</span>
+            <button onclick="showTab('deposit')" class="glass p-6 flex flex-col items-center gap-2">
+                <span class="text-2xl">💎</span>
+                <p class="text-[10px] font-bold uppercase text-orange-400">Deposit</p>
             </button>
         </div>
     </div>
 
     <div id="send" class="tab">
-        <button onclick="showTab('home')" class="mb-6 text-gray-500 text-sm">❮ Back</button>
+        <button onclick="showTab('home')" class="text-gray-500 mb-6">❮ Back</button>
         <div class="space-y-6">
             <div class="glass p-4">
-                <label class="text-[9px] text-blue-500 font-black uppercase mb-1 block">Recipient</label>
+                <label class="text-[9px] font-bold text-blue-500 uppercase">Address</label>
                 <input id="target" type="text" placeholder="UQ..." class="w-full bg-transparent outline-none font-mono text-sm">
             </div>
             <div class="glass p-4">
-                <label class="text-[9px] text-blue-500 font-black uppercase mb-1 block">Amount</label>
+                <label class="text-[9px] font-bold text-blue-500 uppercase">Amount</label>
                 <input id="amt" type="number" placeholder="0.00" class="w-full bg-transparent outline-none text-3xl font-black">
             </div>
-            <button onclick="processSend()" class="w-full bg-blue-600 py-5 rounded-[24px] font-black tracking-widest">CONFIRM SEND</button>
+            <button onclick="processTx()" class="w-full bg-blue-600 py-5 rounded-[25px] font-black uppercase tracking-widest shadow-xl shadow-blue-600/30">Confirm & Send</button>
         </div>
     </div>
 
     <div id="deposit" class="tab text-center">
-        <button onclick="showTab('home')" class="mb-6 text-gray-500 text-sm block">❮ Back</button>
-        <div class="glass p-8 flex flex-col items-center">
-            <div id="qrcode" class="bg-white p-3 rounded-2xl mb-6 shadow-xl"></div>
-            <p id="addr-txt" class="text-[9px] font-mono break-all text-gray-400 mb-4"></p>
-            <button onclick="copyAddr()" class="text-blue-500 font-black text-[10px] uppercase">Copy Wallet Address</button>
+        <button onclick="showTab('home')" class="text-gray-500 mb-6 self-start">❮ Back</button>
+        <div class="glass p-10 flex flex-col items-center">
+            <div id="qrcode" class="bg-white p-3 rounded-2xl mb-8"></div>
+            <p id="addr" class="text-[9px] font-mono text-gray-500 break-all mb-6"></p>
+            <button onclick="navigator.clipboard.writeText(addr); tele.showAlert('Address Copied!')" class="text-blue-500 font-bold text-xs underline uppercase">Copy</button>
         </div>
     </div>
 
@@ -70,37 +67,30 @@
         tele.expand();
 
         const params = new URLSearchParams(window.location.search);
-        const balance = parseFloat(params.get('balance')) || 0.00;
-        const wallet = params.get('wallet') || "Address Error";
+        const bal = parseFloat(params.get('balance')) || 0.00;
+        const addr = params.get('wallet') || "Error";
 
-        // UI সিঙ্ক
-        document.getElementById('bal-val').innerHTML = `${balance.toFixed(2)} <span class="text-blue-500 text-2xl uppercase">Ton</span>`;
-        document.getElementById('bdt-val').innerText = `≈ ৳${(balance * 685).toLocaleString()} BDT`;
-        document.getElementById('addr-txt').innerText = wallet;
+        document.getElementById('bal').innerHTML = `${bal.toFixed(2)} <span class="text-blue-500 text-2xl uppercase">Ton</span>`;
+        document.getElementById('bdt').innerText = `≈ ৳${(bal * 685).toLocaleString()} BDT`;
+        document.getElementById('addr').innerText = addr;
 
         function showTab(id) {
-            tele.HapticFeedback.impactOccurred('medium');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(id === 'deposit') {
                 document.getElementById('qrcode').innerHTML = "";
-                new QRCode(document.getElementById("qrcode"), { text: wallet, width: 180, height: 180 });
+                new QRCode(document.getElementById("qrcode"), { text: addr, width: 180, height: 180 });
             }
         }
 
-        function copyAddr() {
-            navigator.clipboard.writeText(wallet);
-            tele.showAlert("Address Copied! ✅");
-        }
-
-        function processSend() {
+        function processTx() {
             const to = document.getElementById('target').value;
-            const amt = document.getElementById('amt').value;
-            if(!to || !amt || amt > balance) return tele.showAlert("Check amount or address!");
-
-            tele.showConfirm(`Send ${amt} TON?`, (ok) => {
+            const amount = document.getElementById('amt').value;
+            if(!to || !amount || amount > bal) return tele.showAlert("Invalid data!");
+            
+            tele.showConfirm(`Confirm sending ${amount} TON?`, (ok) => {
                 if(ok) {
-                    tele.sendData(JSON.stringify({action: "send", to: to, amount: amt}));
+                    tele.sendData(JSON.stringify({action: "send", to: to, amount: amount}));
                     tele.close();
                 }
             });
