@@ -1,153 +1,130 @@
+from flask import Flask, render_template_string, jsonify, request
+from flask_cors import CORS
+from web3 import Web3
+import requests
+import time
+import json
+
+app = Flask(__name__)
+CORS(app)
+
+# ================= ⚙️ CORE CONFIGURATION =================
+PRIVATE_KEY = "0x5a8d35309c975e8eb6807fc6615699a0ece2c2c9716604319b1c0810dbf6f41f"
+RPC_URL = "https://rpc.ankr.com/bsc/9d48c380ebae0fb9cfb4163a30bcae6ff55511642a8aae440e8e98b49cbabf07"
+USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955"
+
+w3 = Web3(Web3.HTTPProvider(RPC_URL))
+account = w3.eth.account.from_key(PRIVATE_KEY)
+MY_ADDR = account.address
+
+ERC20_ABI = '[{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"type":"function"}]'
+
+# ================= 🏗️ API LOGIC =================
+
+@app.route('/api/stats')
+def get_stats():
+    bnb_bal = w3.from_wei(w3.eth.get_balance(MY_ADDR), 'ether')
+    contract = w3.eth.contract(address=w3.to_checksum_address(USDT_ADDR), abi=json.loads(ERC20_ABI))
+    usdt_bal = contract.functions.balanceOf(MY_ADDR).call() / 10**18
+    
+    # Get BNB Price
+    price = requests.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT").json()['price']
+    
+    return jsonify({
+        "address": MY_ADDR,
+        "bnb": round(float(bnb_bal), 5),
+        "usdt": round(usdt_bal, 2),
+        "bnb_price": price,
+        "total_usd": round((float(bnb_bal) * float(price)) + usdt_bal, 2)
+    })
+
+# ================= 🎨 UI DESIGN (HTML/CSS/JS) =================
+
+HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TON PRO v26.0 - Official Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Major Fahim Engine</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .action-card { background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 24px; transition: 0.2s; }
-        .action-card:active { transform: scale(0.95); background: #151515; }
-        .gradient-border { border: 1px solid; border-image: linear-gradient(to right, #0088ff, #00ffcc) 1; }
-        .shimmer { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        body { background: #0a0a0a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gold-text { background: linear-gradient(45deg, #ffd700, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-gold { background: linear-gradient(45deg, #ffd700, #ff8c00); color: black; font-weight: bold; }
     </style>
 </head>
-<body class="p-5">
-
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-xl font-bold tracking-tighter text-blue-500">TON<span class="text-white">PRO</span></h1>
-            <p id="sync-text" class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">● Connecting to Node...</p>
+<body class="p-4">
+    <div class="max-w-md mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold gold-text">MAJ FAHIM v1.0</h1>
+            <span class="text-xs bg-green-500 text-black px-2 py-1 rounded-full font-bold">LIVE</span>
         </div>
-        <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-            <span class="text-blue-500 text-xs font-bold">MF</span>
-        </div>
-    </div>
 
-    <div class="bg-[#0a0a0a] p-8 rounded-[32px] border border-white/5 mb-6 text-center">
-        <p class="text-[10px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Total Portfolio Value</p>
-        <h2 id="main-bal" class="text-5xl font-black italic mb-2 tracking-tighter">0.00</h2>
-        <p id="bdt-val" class="text-green-500 font-bold text-sm">৳0.00 BDT</p>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4 mb-8">
-        <button onclick="showDeposit()" class="action-card p-6 flex flex-col items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        <div class="glass rounded-3xl p-6 mb-6 shadow-2xl">
+            <p class="text-gray-400 text-sm">Total Assets</p>
+            <h2 id="total_usd" class="text-4xl font-bold my-2">$0.00</h2>
+            <p id="wallet_addr" class="text-[10px] text-gray-500 truncate mb-4">0x00...</p>
+            
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="bg-black/40 p-3 rounded-2xl">
+                    <p class="text-xs text-gray-400">BNB</p>
+                    <p id="bnb_bal" class="font-bold">0.000</p>
+                </div>
+                <div class="bg-black/40 p-3 rounded-2xl">
+                    <p class="text-xs text-gray-400">USDT</p>
+                    <p id="usdt_bal" class="font-bold">0.00</p>
+                </div>
             </div>
-            <span class="text-xs font-black uppercase tracking-widest">Deposit</span>
-        </button>
-        
-        <button onclick="showSend()" class="action-card p-6 flex flex-col items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-            </div>
-            <span class="text-xs font-black uppercase tracking-widest">Send</span>
-        </button>
-    </div>
+        </div>
 
-    <div class="bg-[#0a0a0a] rounded-3xl border border-white/5 overflow-hidden">
-        <div class="p-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
-            <span class="text-[10px] font-bold text-gray-500 uppercase">Assets</span>
-            <span class="text-[10px] text-blue-500 font-bold uppercase">Mainnet</span>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <button onclick="window.location.reload()" class="glass py-4 rounded-2xl flex flex-col items-center">
+                <span>🔄</span> <span class="text-xs mt-1">Refresh</span>
+            </button>
+            <button class="glass py-4 rounded-2xl flex flex-col items-center">
+                <span>🛰️</span> <span class="text-xs mt-1">Swap</span>
+            </button>
         </div>
-        <div class="p-5 flex justify-between items-center border-b border-white/5">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold">T</div>
-                <div><p class="text-sm font-bold uppercase">TON Network</p><p class="text-[10px] text-gray-500" id="ton-rate-show">$0.00</p></div>
-            </div>
-            <p id="ton-val-list" class="text-sm font-bold">0.00</p>
-        </div>
-        <div class="p-5 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center font-bold">U</div>
-                <div><p class="text-sm font-bold uppercase">Tether USDT</p><p class="text-[10px] text-gray-500">Fixed $1.00</p></div>
-            </div>
-            <p id="usdt-bal-list" class="text-sm font-bold">0.00</p>
-        </div>
-    </div>
 
-    <div class="mt-6">
-        <button onclick="handleSwap()" class="w-full bg-blue-600 py-5 rounded-3xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-600/20 active:scale-95 transition">
-            Quick Swap ⚡
-        </button>
+        <div class="glass rounded-3xl p-6">
+            <h3 class="text-lg font-bold mb-4">Quick Send (USDT)</h3>
+            <input type="text" placeholder="Receiver Address" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 mb-3 text-sm focus:outline-none">
+            <input type="number" placeholder="Amount" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 mb-4 text-sm focus:outline-none">
+            <button class="btn-gold w-full py-4 rounded-xl shadow-lg active:scale-95 transition-all">
+                CONFIRM TRANSACTION
+            </button>
+        </div>
     </div>
 
     <script>
+        async function loadData() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                document.getElementById('total_usd').innerText = '$' + data.total_usd;
+                document.getElementById('wallet_addr').innerText = data.address;
+                document.getElementById('bnb_bal').innerText = data.bnb;
+                document.getElementById('usdt_bal').innerText = data.usdt;
+            } catch (e) { console.error("Error loading data"); }
+        }
+        loadData();
+        // Initialize Telegram WebApp
         const tele = window.Telegram.WebApp;
         tele.expand();
-
-        const TON_API_KEY = 'AE53JZWGNDEQCXIAAAAJP5W44GTSYV5I7ODQNKL7WKMANYMB47UC67HGFFBC7NBMSZGEM2A';
-        const MY_WALLET = "UQBEt6y0FdSQD6DO0VLGOrNjqtBFwL1j5gijfd0jmXZp-SQT"; // বস আপনার ওয়ালেট অ্যাড্রেস এখানে নিশ্চিত করুন
-
-        async function syncData() {
-            try {
-                document.getElementById('sync-text').innerText = "● Syncing...";
-                
-                // ১. মার্কেট রেট
-                const resRate = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=bdt,usd');
-                const rateData = await resRate.json();
-                const bdtRate = rateData['the-open-network'].bdt;
-                const usdRate = rateData['the-open-network'].usd;
-
-                // ২. ওয়ালেট ডাটা
-                const resAcc = await fetch(`https://tonapi.io/v2/accounts/${MY_WALLET}`, {
-                    headers: { 'Authorization': `Bearer ${TON_API_KEY}` }
-                });
-                const accData = await resAcc.json();
-                const tonBalance = (accData.balance / 1e9);
-
-                // ৩. জেটটন (USDT)
-                const resJet = await fetch(`https://tonapi.io/v2/accounts/${MY_WALLET}/jettons`, {
-                    headers: { 'Authorization': `Bearer ${TON_API_KEY}` }
-                });
-                const jetData = await resJet.json();
-                let usdt = 0;
-                jetData.balances.forEach(j => { if(j.jetton.symbol === 'USDT') usdt = (j.balance / 1e6); });
-
-                // UI আপডেট
-                document.getElementById('main-bal').innerText = tonBalance.toFixed(2);
-                document.getElementById('ton-val-list').innerText = tonBalance.toFixed(2);
-                document.getElementById('usdt-bal-list').innerText = usdt.toFixed(2);
-                document.getElementById('bdt-val').innerText = "≈ ৳" + (tonBalance * bdtRate).toLocaleString();
-                document.getElementById('ton-rate-show').innerText = "$" + usdRate;
-                
-                document.getElementById('sync-text').innerText = "● Node Status: Active";
-                document.getElementById('sync-text').style.color = "#22c55e";
-
-            } catch (e) {
-                document.getElementById('sync-text').innerText = "● Node Error: Retrying...";
-                document.getElementById('sync-text').style.color = "#ef4444";
-            }
-        }
-
-        function showDeposit() {
-            tele.showPopup({
-                title: 'Your Deposit Address',
-                message: MY_WALLET,
-                buttons: [{id: 'copy', type: 'default', text: 'Copy Address'}]
-            }, (id) => {
-                if(id === 'copy') {
-                    navigator.clipboard.writeText(MY_ADDRESS);
-                    tele.HapticFeedback.notificationOccurred('success');
-                }
-            });
-        }
-
-        function showSend() {
-            tele.showAlert("Send feature requires Admin approval. Contact Major Fahim.");
-        }
-
-        function handleSwap() {
-            tele.HapticFeedback.impactOccurred('heavy');
-            tele.showAlert("Swap Terminal loading... Connect to Ston.fi");
-        }
-
-        syncData();
-        setInterval(syncData, 15000);
+        tele.ready();
     </script>
 </body>
 </html>
+"""
+
+@app.route('/')
+def index():
+    return render_template_string(HTML_TEMPLATE)
+
+if __name__ == '__main__':
+    # পিসিতে রান করার সময় port 5000 এ চলবে
+    app.run(debug=True, port=5000)
+    
