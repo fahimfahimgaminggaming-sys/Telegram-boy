@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template_string, jsonify
+from flask import Flask, render_template_string, jsonify, request
 from flask_cors import CORS
 from web3 import Web3
 import requests
@@ -9,7 +9,6 @@ app = Flask(__name__)
 CORS(app)
 
 # ================= ⚙️ CONFIGURATION =================
-# আপনার দেওয়া প্রাইভেট কি এবং RPC
 PRIVATE_KEY = "0x5a8d35309c975e8eb6807fc6615699a0ece2c2c9716604319b1c0810dbf6f41f"
 RPC_URL = "https://rpc.ankr.com/bsc/9d48c380ebae0fb9cfb4163a30bcae6ff55511642a8aae440e8e98b49cbabf07"
 USDT_ADDR = Web3.to_checksum_address("0x55d398326f99059fF775485246999027B3197955")
@@ -25,12 +24,11 @@ ERC20_ABI = json.loads('[{"constant":true,"inputs":[{"name":"_owner","type":"add
 @app.route('/api/stats')
 def get_stats():
     try:
-        # ব্যালেন্স রিট্রিভ করা
         bnb_bal = w3.from_wei(w3.eth.get_balance(MY_ADDR), 'ether')
         contract = w3.eth.contract(address=USDT_ADDR, abi=ERC20_ABI)
         usdt_bal = contract.functions.balanceOf(MY_ADDR).call() / 10**18
         
-        # বাইন্যান্স প্রাইস ট্র্যাকিং
+        # BNB Price
         price_res = requests.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT").json()
         bnb_price = float(price_res['price'])
         total_usd = (float(bnb_bal) * bnb_price) + usdt_bal
@@ -46,7 +44,7 @@ def get_stats():
         return jsonify({"status": "error", "message": str(e)})
 
 # ================= 🎨 UI DESIGN =================
-# আপনার দেওয়া ব্ল্যাক অ্যান্ড গোল্ড থিম
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
@@ -56,57 +54,70 @@ HTML_TEMPLATE = """
     <title>Maj Fahim v1.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0a0a0a; color: white; font-family: sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gold-text { color: #FFD700; }
+        body { background: #0a0a0a; color: white; font-family: sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .gold-text { color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+        .btn-active:active { transform: scale(0.95); }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4 sm:p-8">
     <div class="max-w-md mx-auto">
-        <h1 class="text-xl font-bold gold-text mb-6">MAJ FAHIM v1.0 <span class="text-green-500 text-xs ml-2">● LIVE</span></h1>
+        <h1 class="text-2xl font-black gold-text mb-8 tracking-tighter">MAJOR FAHIM v1.0</h1>
         
-        <div class="glass rounded-3xl p-8 mb-6 shadow-2xl">
-            <p class="text-gray-400 text-xs uppercase mb-1">Total Assets</p>
-            <h2 id="total_usd" class="text-5xl font-bold mb-6 tracking-tight">$0.00</h2>
+        <div class="glass rounded-[2.5rem] p-8 mb-8 shadow-2xl border-white/10">
+            <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-2">Total Assets</p>
+            <h2 id="total_usd" class="text-5xl font-bold mb-8">$0.00</h2>
             
             <div class="grid grid-cols-2 gap-4">
-                <div class="bg-black/40 p-4 rounded-2xl">
-                    <p class="text-[10px] text-gray-500 mb-1">BNB Balance</p>
-                    <p id="bnb_bal" class="text-xs font-bold font-mono">0.000000</p>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <p class="text-[9px] text-gray-500 uppercase mb-1">BNB Balance</p>
+                    <p id="bnb_bal" class="text-xs font-bold">0.000000</p>
                 </div>
-                <div class="bg-black/40 p-4 rounded-2xl">
-                    <p class="text-[10px] text-gray-500 mb-1">USDT Balance</p>
-                    <p id="usdt_bal" class="text-xs font-bold font-mono">0.00</p>
+                <div class="bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <p class="text-[9px] text-gray-500 uppercase mb-1">USDT Balance</p>
+                    <p id="usdt_bal" class="text-xs font-bold">0.00</p>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-3 mb-6">
-            <button onclick="loadData()" class="glass py-4 rounded-2xl text-xl">🔄</button>
-            <button onclick="alert('Addr: ' + '{{ addr }}')" class="glass py-4 rounded-2xl text-xl">📥</button>
-            <button class="glass py-4 rounded-2xl text-xl opacity-30">🛰️</button>
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            <button onclick="loadData()" class="glass btn-active py-5 rounded-3xl text-xl flex justify-center items-center">🔄</button>
+            <button onclick="showAddr()" class="glass btn-active py-5 rounded-3xl text-xl flex justify-center items-center">📥</button>
+            <button class="glass py-5 rounded-3xl text-xl flex justify-center items-center opacity-20 cursor-not-allowed">🛰️</button>
         </div>
 
-        <div class="glass rounded-3xl p-6">
-            <p class="text-xs font-bold mb-4">🚀 QUICK SEND (USDT)</p>
-            <input type="text" placeholder="Address" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 mb-3 text-xs">
-            <input type="number" placeholder="Amount" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 mb-4 text-xs">
-            <button class="w-full bg-yellow-500 text-black py-4 rounded-xl font-bold text-xs">CONFIRM TRANSACTION</button>
+        <div class="glass rounded-[2rem] p-8">
+            <p class="text-[10px] font-bold text-gray-400 mb-6 tracking-widest">🚀 QUICK SEND (USDT)</p>
+            <div class="space-y-4">
+                <input id="in_addr" type="text" placeholder="Wallet Address" class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-xs focus:border-yellow-500 outline-none">
+                <input id="in_amt" type="number" placeholder="Amount" class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-xs focus:border-yellow-500 outline-none">
+                <button onclick="alert('Transaction signing locked for protection.')" class="w-full bg-yellow-500 text-black py-5 rounded-2xl font-black text-[10px] tracking-widest btn-active shadow-lg">CONFIRM TRANSACTION</button>
+            </div>
         </div>
     </div>
 
     <script>
+        const my_addr = "0x5a8d35309C975E8Eb6807fc6615699A0ECe2c2c9"; // Hardcoded address for security
+
         async function loadData() {
             try {
-                const res = await fetch('/api/stats');
-                const data = await res.json();
+                // অনলাইন প্যাথ ফিক্স
+                const response = await fetch(window.location.origin + '/api/stats');
+                const data = await response.json();
                 if(data.status === "success") {
                     document.getElementById('total_usd').innerText = '$' + data.total_usd;
                     document.getElementById('bnb_bal').innerText = data.bnb;
                     document.getElementById('usdt_bal').innerText = data.usdt;
                 }
-            } catch (e) {}
+            } catch (err) {
+                console.log("Sync Error:", err);
+            }
         }
+
+        function showAddr() {
+            alert("Deposit Address (BEP20):\\n" + my_addr);
+        }
+
         window.onload = loadData;
     </script>
 </body>
@@ -115,10 +126,10 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def index():
-    return render_template_string(HTML_TEMPLATE, addr=MY_ADDR)
+    return render_template_string(HTML_TEMPLATE)
 
 if __name__ == '__main__':
-    # GitHub বা অনলাইন হোস্টের জন্য 0.0.0.0 এবং পোর্ট ডাইনামিক করা জরুরি
+    # GitHub/Railway/Heroku এর জন্য ডাইনামিক পোর্ট
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
     
