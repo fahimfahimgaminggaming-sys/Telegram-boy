@@ -4,117 +4,163 @@ from web3 import Web3
 import requests
 import time
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
 
-# ================= ⚙️ CORE CONFIGURATION =================
+# ================= ⚙️ CONFIGURATION =================
+# আপনার দেওয়া তথ্য অনুযায়ী আপডেট করা
 PRIVATE_KEY = "0x5a8d35309c975e8eb6807fc6615699a0ece2c2c9716604319b1c0810dbf6f41f"
 RPC_URL = "https://rpc.ankr.com/bsc/9d48c380ebae0fb9cfb4163a30bcae6ff55511642a8aae440e8e98b49cbabf07"
-USDT_ADDR = "0x55d398326f99059fF775485246999027B3197955"
+USDT_ADDR = Web3.to_checksum_address("0x55d398326f99059fF775485246999027B3197955")
 
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
 account = w3.eth.account.from_key(PRIVATE_KEY)
 MY_ADDR = account.address
 
-ERC20_ABI = '[{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"type":"function"}]'
+ERC20_ABI = json.loads('[{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"type":"function"}]')
 
-# ================= 🏗️ API LOGIC =================
+# ================= 🏗️ BACKEND API =================
 
 @app.route('/api/stats')
 def get_stats():
-    bnb_bal = w3.from_wei(w3.eth.get_balance(MY_ADDR), 'ether')
-    contract = w3.eth.contract(address=w3.to_checksum_address(USDT_ADDR), abi=json.loads(ERC20_ABI))
-    usdt_bal = contract.functions.balanceOf(MY_ADDR).call() / 10**18
-    
-    # Get BNB Price
-    price = requests.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT").json()['price']
-    
-    return jsonify({
-        "address": MY_ADDR,
-        "bnb": round(float(bnb_bal), 5),
-        "usdt": round(usdt_bal, 2),
-        "bnb_price": price,
-        "total_usd": round((float(bnb_bal) * float(price)) + usdt_bal, 2)
-    })
+    try:
+        # ব্যালেন্স চেক
+        bnb_wei = w3.eth.get_balance(MY_ADDR)
+        bnb_bal = w3.from_wei(bnb_wei, 'ether')
+        
+        contract = w3.eth.contract(address=USDT_ADDR, abi=ERC20_ABI)
+        usdt_bal = contract.functions.balanceOf(MY_ADDR).call() / 10**18
+        
+        # বাইন্যান্স থেকে রিয়েল-টাইম প্রাইস
+        price_res = requests.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT").json()
+        bnb_price = float(price_res['price'])
+        
+        total_usd = (float(bnb_bal) * bnb_price) + usdt_bal
+        
+        return jsonify({
+            "status": "success",
+            "address": MY_ADDR,
+            "bnb": f"{float(bnb_bal):.6f}",
+            "usdt": f"{usdt_bal:.2f}",
+            "total_usd": f"{total_usd:.2f}"
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 
-# ================= 🎨 UI DESIGN (HTML/CSS/JS) =================
+# ================= 🎨 UI DESIGN =================
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Major Fahim Engine</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Major Fahim Supreme Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0a0a0a; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gold-text { background: linear-gradient(45deg, #ffd700, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-gold { background: linear-gradient(45deg, #ffd700, #ff8c00); color: black; font-weight: bold; }
+        body { background-color: #0d0d0d; color: #ffffff; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .gold-gradient { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .action-btn { transition: all 0.3s ease; }
+        .action-btn:active { transform: scale(0.92); }
+        .success-card { border-left: 4px solid #4ade80; }
     </style>
 </head>
-<body class="p-4">
-    <div class="max-w-md mx-auto">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold gold-text">MAJ FAHIM v1.0</h1>
-            <span class="text-xs bg-green-500 text-black px-2 py-1 rounded-full font-bold">LIVE</span>
+<body class="p-4 flex flex-col items-center">
+    <div class="w-full max-w-md">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-xl font-black gold-gradient tracking-tighter">MAJOR FAHIM v99.0</h1>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Supreme PC Terminal</p>
+            </div>
+            <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
         </div>
 
-        <div class="glass rounded-3xl p-6 mb-6 shadow-2xl">
-            <p class="text-gray-400 text-sm">Total Assets</p>
-            <h2 id="total_usd" class="text-4xl font-bold my-2">$0.00</h2>
-            <p id="wallet_addr" class="text-[10px] text-gray-500 truncate mb-4">0x00...</p>
+        <div class="glass rounded-[2rem] p-8 mb-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10 text-4xl">💰</div>
+            <p class="text-gray-400 text-xs font-medium mb-1">Total Net Worth</p>
+            <h2 id="total_usd" class="text-5xl font-bold mb-6 tracking-tight">$0.00</h2>
             
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <div class="bg-black/40 p-3 rounded-2xl">
-                    <p class="text-xs text-gray-400">BNB</p>
-                    <p id="bnb_bal" class="font-bold">0.000</p>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+                    <p class="text-[10px] text-gray-500 mb-1">BNB Balance</p>
+                    <p id="bnb_bal" class="text-sm font-bold tracking-wide">0.000000</p>
                 </div>
-                <div class="bg-black/40 p-3 rounded-2xl">
-                    <p class="text-xs text-gray-400">USDT</p>
-                    <p id="usdt_bal" class="font-bold">0.00</p>
+                <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+                    <p class="text-[10px] text-gray-500 mb-1">USDT Balance</p>
+                    <p id="usdt_bal" class="text-sm font-bold tracking-wide">0.00</p>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <button onclick="window.location.reload()" class="glass py-4 rounded-2xl flex flex-col items-center">
-                <span>🔄</span> <span class="text-xs mt-1">Refresh</span>
+        <div class="grid grid-cols-3 gap-3 mb-8">
+            <button onclick="loadData()" class="glass action-btn py-5 rounded-3xl flex flex-col items-center">
+                <span class="text-xl mb-1">🔄</span>
+                <span class="text-[9px] font-bold text-gray-400">REFRESH</span>
             </button>
-            <button class="glass py-4 rounded-2xl flex flex-col items-center">
-                <span>🛰️</span> <span class="text-xs mt-1">Swap</span>
+            <button onclick="copyAddr()" class="glass action-btn py-5 rounded-3xl flex flex-col items-center">
+                <span class="text-xl mb-1">📥</span>
+                <span class="text-[9px] font-bold text-gray-400">DEPOSIT</span>
+            </button>
+            <button class="glass action-btn py-5 rounded-3xl flex flex-col items-center opacity-50">
+                <span class="text-xl mb-1">🛰️</span>
+                <span class="text-[9px] font-bold text-gray-400">SWAP</span>
             </button>
         </div>
 
-        <div class="glass rounded-3xl p-6">
-            <h3 class="text-lg font-bold mb-4">Quick Send (USDT)</h3>
-            <input type="text" placeholder="Receiver Address" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 mb-3 text-sm focus:outline-none">
-            <input type="number" placeholder="Amount" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 mb-4 text-sm focus:outline-none">
-            <button class="btn-gold w-full py-4 rounded-xl shadow-lg active:scale-95 transition-all">
-                CONFIRM TRANSACTION
-            </button>
+        <div class="glass rounded-[2.5rem] p-8 shadow-inner">
+            <h3 class="text-sm font-bold mb-6 flex items-center">
+                <span class="mr-2">🚀</span> SMART SEND (USDT)
+            </h3>
+            <div class="space-y-4">
+                <input id="target_addr" type="text" placeholder="Receiver Address" 
+                    class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-xs focus:outline-none focus:border-yellow-500/50 transition-all">
+                <input id="amount" type="number" placeholder="Amount (USDT)" 
+                    class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-xs focus:outline-none focus:border-yellow-500/50 transition-all">
+                <button onclick="executeTx()" class="w-full py-5 rounded-2xl font-black text-xs tracking-widest shadow-xl action-btn" 
+                    style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000;">
+                    EXECUTE BROADCAST
+                </button>
+            </div>
         </div>
+        
+        <p id="status_msg" class="mt-6 text-center text-[10px] text-gray-600 font-mono"></p>
     </div>
 
     <script>
+        const MY_ADDR = "{{ addr }}";
+
         async function loadData() {
+            document.getElementById('status_msg').innerText = "🛰️ Syncing with BSC Mainnet...";
             try {
                 const res = await fetch('/api/stats');
                 const data = await res.json();
-                document.getElementById('total_usd').innerText = '$' + data.total_usd;
-                document.getElementById('wallet_addr').innerText = data.address;
-                document.getElementById('bnb_bal').innerText = data.bnb;
-                document.getElementById('usdt_bal').innerText = data.usdt;
-            } catch (e) { console.error("Error loading data"); }
+                if(data.status === "success") {
+                    document.getElementById('total_usd').innerText = '$' + data.total_usd;
+                    document.getElementById('bnb_bal').innerText = data.bnb;
+                    document.getElementById('usdt_bal').innerText = data.usdt;
+                    document.getElementById('status_msg').innerText = "✅ System Synced";
+                }
+            } catch (e) {
+                document.getElementById('status_msg').innerText = "❌ Sync Failed";
+            }
         }
-        loadData();
-        // Initialize Telegram WebApp
-        const tele = window.Telegram.WebApp;
-        tele.expand();
-        tele.ready();
+
+        function copyAddr() {
+            navigator.clipboard.writeText(MY_ADDR);
+            alert("Deposit Address Copied: " + MY_ADDR);
+        }
+
+        async function executeTx() {
+            const addr = document.getElementById('target_addr').value;
+            const amount = document.getElementById('amount').value;
+            if(!addr || !amount) { alert("Data missing!"); return; }
+            alert("Feature locking for security. Use Bot for signing transactions.");
+        }
+
+        window.onload = loadData;
     </script>
 </body>
 </html>
@@ -122,9 +168,9 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def index():
-    return render_template_string(HTML_TEMPLATE)
+    return render_template_string(HTML_TEMPLATE, addr=MY_ADDR)
 
 if __name__ == '__main__':
-    # পিসিতে রান করার সময় port 5000 এ চলবে
+    print(f"🔥 MAJOR FAHIM ENGINE v99.0 STARTING...")
     app.run(debug=True, port=5000)
     
