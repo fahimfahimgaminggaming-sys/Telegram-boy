@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Shop Pro</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<header class="bg-blue-600 text-white p-4 text-center text-xl font-bold">
+🛒 BUY SHOP PRO
+</header>
+
+<div class="max-w-4xl mx-auto p-4">
+
+<!-- AUTH -->
+<div id="authBox" class="bg-white p-4 rounded shadow mb-4 text-center">
+<button onclick="register()" class="bg-green-500 text-white px-4 py-2 m-1 rounded">Register</button>
+<button onclick="login()" class="bg-blue-500 text-white px-4 py-2 m-1 rounded">Login</button>
+<button onclick="logout()" class="bg-red-500 text-white px-4 py-2 m-1 rounded">Logout</button>
+</div>
+
+<!-- USER PANEL -->
+<div id="userPanel" class="hidden">
+
+<div class="bg-white p-4 rounded shadow mb-4 text-center">
+<h2 class="text-lg">Balance: ৳ <span id="balance">0</span></h2>
+<input id="depAmount" type="number" placeholder="Deposit amount" class="border p-2 mt-2">
+<button onclick="requestDeposit()" class="bg-green-600 text-white px-4 py-2 mt-2 rounded">Request Deposit</button>
+</div>
+
+<h3 class="font-bold mb-2">Products</h3>
+<div id="products" class="grid grid-cols-2 gap-4"></div>
+
+<h3 class="font-bold mt-6">Orders</h3>
+<div id="orders"></div>
+
+</div>
+
+<!-- ADMIN -->
+<div class="text-center mt-6">
+<button onclick="adminLogin()" class="text-xs text-gray-400">Admin</button>
+</div>
+
+<div id="adminPanel" class="hidden bg-white p-4 mt-4 rounded shadow">
+
+<h3 class="font-bold">Add Product</h3>
+<input id="pName" placeholder="Name" class="border p-2 w-full my-1">
+<input id="pPrice" type="number" placeholder="Price" class="border p-2 w-full my-1">
+<button onclick="addProduct()" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Add</button>
+
+<h3 class="font-bold mt-4">Deposit Requests</h3>
+<div id="depositList"></div>
+
+</div>
+
+</div>
+
+<script>
+// STORAGE
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let deposits = JSON.parse(localStorage.getItem("deposits")) || [];
+let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+// AUTH
+function register(){
+let email = prompt("Email");
+let pass = prompt("Password");
+
+users.push({email, pass, balance:0, orders:[]});
+localStorage.setItem("users", JSON.stringify(users));
+alert("Registered!");
+}
+
+function login(){
+let email = prompt("Email");
+let pass = prompt("Password");
+
+let user = users.find(u=>u.email===email && u.pass===pass);
+
+if(user){
+localStorage.setItem("currentUser", JSON.stringify(user));
+location.reload();
+}else alert("Wrong!");
+}
+
+function logout(){
+localStorage.removeItem("currentUser");
+location.reload();
+}
+
+// USER LOAD
+function loadUser(){
+if(!currentUser) return;
+
+document.getElementById("userPanel").classList.remove("hidden");
+document.getElementById("balance").innerText = currentUser.balance;
+
+renderProducts();
+renderOrders();
+}
+
+// PRODUCTS
+function renderProducts(){
+let div = document.getElementById("products");
+div.innerHTML = products.map((p,i)=>`
+<div class="bg-white p-2 rounded shadow">
+<h4>${p.name}</h4>
+<p>৳ ${p.price}</p>
+<button onclick="buy(${i})" class="bg-blue-600 text-white w-full mt-2">Buy</button>
+</div>
+`).join("");
+}
+
+// BUY
+function buy(i){
+let location = prompt("Location?");
+let product = products[i];
+let total = product.price + 120;
+
+if(currentUser.balance < total){
+alert("Not enough balance");
+return;
+}
+
+currentUser.balance -= total;
+currentUser.orders.push({
+name: product.name,
+price: product.price,
+location,
+status:"Pending"
+});
+
+updateUser();
+alert("Order Done!");
+}
+
+// ORDERS
+function renderOrders(){
+let div = document.getElementById("orders");
+div.innerHTML = currentUser.orders.map(o=>`
+<div class="bg-white p-2 mb-2 rounded">
+${o.name} - ${o.price}৳ <br>
+📍 ${o.location} <br>
+Status: ${o.status}
+</div>
+`).join("");
+}
+
+// DEPOSIT
+function requestDeposit(){
+let amount = document.getElementById("depAmount").value;
+
+deposits.push({
+email: currentUser.email,
+amount,
+status:"pending"
+});
+
+localStorage.setItem("deposits", JSON.stringify(deposits));
+alert("Request sent");
+}
+
+// ADMIN
+function adminLogin(){
+let pass = prompt("Admin password");
+if(pass==="1234"){
+document.getElementById("adminPanel").classList.remove("hidden");
+renderDeposits();
+}
+}
+
+function addProduct(){
+let name = document.getElementById("pName").value;
+let price = Number(document.getElementById("pPrice").value);
+
+products.push({name, price});
+localStorage.setItem("products", JSON.stringify(products));
+location.reload();
+}
+
+// APPROVE DEPOSIT
+function renderDeposits(){
+let div = document.getElementById("depositList");
+
+div.innerHTML = deposits.map((d,i)=>`
+<div class="border p-2 my-1">
+${d.email} - ${d.amount}
+<button onclick="approve(${i})" class="bg-green-500 text-white px-2">Approve</button>
+</div>
+`).join("");
+}
+
+function approve(i){
+let dep = deposits[i];
+let user = users.find(u=>u.email===dep.email);
+
+user.balance += Number(dep.amount);
+
+updateAllUsers();
+deposits.splice(i,1);
+localStorage.setItem("deposits", JSON.stringify(deposits));
+
+alert("Approved");
+location.reload();
+}
+
+// UPDATE
+function updateUser(){
+let index = users.findIndex(u=>u.email===currentUser.email);
+users[index] = currentUser;
+
+localStorage.setItem("users", JSON.stringify(users));
+localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+loadUser();
+}
+
+function updateAllUsers(){
+localStorage.setItem("users", JSON.stringify(users));
+}
+
+// INIT
+loadUser();
+</script>
+
+</body>
+</html>
