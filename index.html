@@ -1,126 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>Buy Shop - Crypto Deposit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Shop - All in One</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
-        .card { background: white; padding: 20px; margin: 10px auto; width: 80%; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        button { background: #0088cc; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 50; }
+        .modal.active { display: flex; }
     </style>
 </head>
-<body>
-    <h1>🛒 Welcome to Our Shop</h1>
-    
-    <div class="card">
-        <h3>Deposit Money</h3>
-        <button onclick="showAddress('USDT BEP20', '0x22e745437ee19d36f579e93685040d1a502269bc')">USDT (BEP20)</button>
-        <button onclick="showAddress('TRX TRC20', 'TWASfH7D7ZbZ1pkH9tzja4b37RgNHScTtQ')">TRX (TRC20)</button>
-        <p id="addrDisplay"></p>
-        <input type="number" id="amount" placeholder="Amount in $">
-        <button onclick="submitDeposit()">Confirm Deposit</button>
+<body class="bg-gray-100 font-sans">
+
+    <header class="bg-blue-600 text-white p-4 text-center text-xl font-bold shadow-lg">
+        🛒 BUY SHOP - PREMIUM
+    </header>
+
+    <div class="max-w-4xl mx-auto p-4">
+        <div id="userSection">
+            <div class="bg-white rounded-xl p-6 text-center shadow-md mb-6">
+                <p class="text-gray-500">আপনার ব্যালেন্স</p>
+                <h2 class="text-3xl font-bold text-blue-600">৳ <span id="balance">0.00</span></h2>
+                <button onclick="toggleModal('depositModal')" class="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg font-bold">ডিপোজিট করুন</button>
+            </div>
+
+            <h3 class="border-l-4 border-blue-600 pl-2 text-lg font-bold mb-4">প্রোডাক্ট লিস্ট</h3>
+            <div id="productGrid" class="grid grid-cols-2 gap-4">
+                </div>
+        </div>
+
+        <div class="mt-10 text-center">
+            <button onclick="showAdmin()" class="text-gray-400 text-xs">Admin Login</button>
+        </div>
+    </div>
+
+    <div id="depositModal" class="modal">
+        <div class="bg-white p-6 rounded-xl w-80 text-center">
+            <h3 class="font-bold mb-4">পেমেন্ট মেথড সিলেক্ট করুন</h3>
+            <button onclick="showAddress('USDT BEP20', '0x22e745...')" class="w-full bg-blue-100 py-2 mb-2 rounded">USDT (BEP20)</button>
+            <button onclick="showAddress('TRX TRC20', 'TWASfH7D...')" class="w-full bg-red-100 py-2 mb-2 rounded">TRX (TRC20)</button>
+            
+            <div id="addrArea" class="hidden mt-4">
+                <p class="text-xs break-all bg-gray-100 p-2 rounded" id="targetAddr"></p>
+                <input type="number" id="depAmount" placeholder="কত ডলার?" class="w-full border p-2 mt-2 rounded">
+                <button onclick="submitDeposit()" class="w-full bg-green-600 text-white mt-2 py-2 rounded">Confirm</button>
+            </div>
+            <button onclick="toggleModal('depositModal')" class="mt-4 text-red-500">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <div id="adminPanel" class="hidden fixed inset-0 bg-white z-[100] p-6 overflow-y-auto">
+        <h2 class="text-2xl font-bold mb-4">Admin Dashboard</h2>
+        <div class="bg-blue-50 p-4 rounded-lg mb-6">
+            <h3 class="font-bold mb-2">নতুন প্রোডাক্ট অ্যাড করুন</h3>
+            <input type="text" id="pName" placeholder="নাম" class="w-full border p-2 mb-2">
+            <input type="number" id="pPrice" placeholder="দাম" class="w-full border p-2 mb-2">
+            <input type="text" id="pImg" placeholder="ছবির লিঙ্ক (URL)" class="w-full border p-2 mb-2">
+            <button onclick="addProduct()" class="bg-blue-600 text-white w-full py-2 rounded">Add to Web</button>
+        </div>
+        <button onclick="hideAdmin()" class="bg-gray-500 text-white px-4 py-2 rounded">Back to Shop</button>
     </div>
 
     <script>
-        let selectedMethod = '';
-        function showAddress(method, addr) {
-            selectedMethod = method;
-            document.getElementById('addrDisplay').innerText = `Send to: ${addr}`;
+        // ডেটা সেভ করার জন্য LocalStorage ব্যবহার করা হয়েছে (সার্ভার ছাড়া কাজ করবে)
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+
+        function toggleModal(id) { document.getElementById(id).classList.toggle('active'); }
+
+        function showAddress(name, addr) {
+            document.getElementById('addrArea').classList.remove('hidden');
+            document.getElementById('targetAddr').innerText = name + ": " + addr;
         }
 
-        async function submitDeposit() {
-            const amount = document.getElementById('amount').value;
-            const res = await fetch('/api/deposit', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ uid: '682872', amount, method: selectedMethod })
-            });
-            if(res.ok) alert('Request sent to Admin Telegram!');
+        // প্রোডাক্ট অ্যাড করা (Admin Only)
+        function addProduct() {
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const img = document.getElementById('pImg').value;
+
+            if(!name || !price) return alert("তথ্য দিন");
+
+            products.push({ name, price, img });
+            localStorage.setItem('products', JSON.stringify(products));
+            alert("প্রোডাক্ট অ্যাড হয়েছে!");
+            location.reload();
         }
+
+        // প্রোডাক্ট শো করা
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = products.map(p => `
+                <div class="bg-white p-3 rounded-lg shadow">
+                    <img src="${p.img || 'https://via.placeholder.com/150'}" class="w-full h-32 object-cover rounded">
+                    <h4 class="font-bold mt-2">${p.name}</h4>
+                    <p class="text-blue-600">৳ ${p.price}</p>
+                    <button class="bg-blue-600 text-white w-full py-1 mt-2 rounded text-sm">কিনুন</button>
+                </div>
+            `).join('');
+        }
+
+        function showAdmin() { document.getElementById('adminPanel').classList.remove('hidden'); }
+        function hideAdmin() { document.getElementById('adminPanel').classList.add('hidden'); }
+
+        renderProducts();
     </script>
 </body>
 </html>
-const express = require('express');
-const mongoose = require('mongoose');
-const { Telegraf, Markup } = require('telegraf');
-const bodyParser = require('body-parser');
-
-const app = express();
-app.use(bodyParser.json());
-app.use(express.static('public')); // HTML ফাইল রাখার জন্য
-
-// --- CONFIGURATIONS ---
-const MONGO_URI = "mongodb+srv://fahim:Fahim123456@cluster0.3sihfnt.mongodb.net/?retryWrites=true&w=majority";
-const BOT_TOKEN = "8638229137:AAGwR9V6l3XWRtRv3vtkTWChtZS-C0vy3oE"
-const ADMIN_ID = "7015857680";
-
-const bot = new Telegraf(BOT_TOKEN);
-
-// --- DATABASE MODELS ---
-mongoose.connect(MONGO_URI).then(() => console.log("MongoDB Connected ✅"));
-
-const UserSchema = new mongoose.Schema({
-    uid: String,
-    balance: { type: Number, default: 0 },
-    location: { type: String, default: "Not Set" }
-});
-const ProductSchema = new mongoose.Schema({
-    name: String,
-    price: Number,
-    stock: Number,
-    image: String
-});
-
-const User = mongoose.model('User', UserSchema);
-const Product = mongoose.model('Product', ProductSchema);
-
-// --- BOT LOGIC (Add Product & Notifications) ---
-bot.start((ctx) => ctx.reply("Welcome to Buy Shop Admin Bot!"));
-
-// প্রোডাক্ট অ্যাড করার সিম্পল কমান্ড (Admin Only)
-bot.command('add', (ctx) => {
-    if (ctx.from.id.toString() !== ADMIN_ID) return;
-    ctx.reply("প্রোডাক্ট অ্যাড করতে লিখুন: /new [নাম] [দাম] [স্টক]");
-});
-
-bot.command('new', async (ctx) => {
-    const args = ctx.message.text.split(' ');
-    const [_, name, price, stock] = args;
-    const newProd = new Product({ name, price: Number(price), stock: Number(stock), image: 'https://via.placeholder.com/150' });
-    await newProd.save();
-    ctx.reply(`✅ ${name} ওয়েবসাইটে অ্যাড হয়েছে!`);
-});
-
-// --- WEB API ROUTES ---
-
-// ১. ডিপোজিট রিকোয়েস্ট (Web -> Telegram)
-app.post('/api/deposit', async (req, res) => {
-    const { uid, amount, method } = req.body;
-    const msg = `💰 **DEPOSIT REQUEST**\nID: ${uid}\nAmount: ${amount}$\nMethod: ${method}\nDate: ${new Date().toLocaleDateString()}`;
-    
-    await bot.telegram.sendMessage(ADMIN_ID, msg, Markup.inlineKeyboard([
-        [Markup.button.callback('Confirm ✅', `approve_${uid}_${amount}`)]
-    ]));
-    res.json({ success: true });
-});
-
-// ২. অর্ডার রিকোয়েস্ট (Web -> Telegram)
-app.post('/api/order', async (req, res) => {
-    const { uid, pName, price, location } = req.body;
-    const total = Number(price) + 120; // ১২০ টাকা ডেলিভারি ফি
-    
-    const msg = `📦 **NEW ORDER**\nProduct: ${pName}\nPrice: ${price}\nDelivery: 120\nTotal: ${total}\nLocation: ${location}`;
-    
-    await bot.telegram.sendMessage(ADMIN_ID, msg, Markup.inlineKeyboard([
-        [Markup.button.callback('Pending ⏳', 'st_pending')],
-        [Markup.button.callback('Success ✅', 'st_done')],
-        [Markup.button.callback('Cancel ❌', 'st_cancel')]
-    ]));
-    res.json({ success: true });
-});
-
-// --- SERVER START ---
-bot.launch();
-app.listen(3000, () => console.log("Server running on http://localhost:3000 🚀"));
-
-
