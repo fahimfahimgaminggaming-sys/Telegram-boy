@@ -1,158 +1,126 @@
-import os
-from flask import Flask, render_template_string, jsonify
-from flask_cors import CORS
-from web3 import Web3
-import requests
-import json
-
-app = Flask(__name__)
-CORS(app)
-
-# ================= ⚙️ CONFIGURATION =================
-# আপনার দেওয়া প্রাইভেট কি (এটি দিয়ে অটো অ্যাড্রেস তৈরি হবে)
-PRIVATE_KEY = "0x5a8d35309c975e8eb6807fc6615699a0ece2c2c9716604319b1c0810dbf6f41f"
-RPC_URL = "https://rpc.ankr.com/bsc/9d48c380ebae0fb9cfb4163a30bcae6ff55511642a8aae440e8e98b49cbabf07"
-USDT_ADDR = Web3.to_checksum_address("0x55d398326f99059fF775485246999027B3197955")
-
-w3 = Web3(Web3.HTTPProvider(RPC_URL))
-
-# প্রাইভেট কি থেকে অটোমেটিক অ্যাড্রেস বের করা
-account = w3.eth.account.from_key(PRIVATE_KEY)
-MY_ADDR = account.address
-
-ERC20_ABI = json.loads('[{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}]')
-
-# ================= 🏗️ API LOGIC =================
-
-@app.route('/api/stats')
-def get_stats():
-    try:
-        # বিএনবি ব্যালেন্স চেক
-        bnb_wei = w3.eth.get_balance(MY_ADDR)
-        bnb_bal = float(w3.from_wei(bnb_wei, 'ether'))
-        
-        # ইউএসডিটি ব্যালেন্স চেক
-        contract = w3.eth.contract(address=USDT_ADDR, abi=ERC20_ABI)
-        usdt_bal = contract.functions.balanceOf(MY_ADDR).call() / 10**18
-        
-        # বাইন্যান্স থেকে রিয়েল প্রাইস নেওয়া
-        price_res = requests.get("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT").json()
-        bnb_price = float(price_res['price'])
-        
-        total_usd = (bnb_bal * bnb_price) + usdt_bal
-        
-        return jsonify({
-            "status": "success",
-            "address": MY_ADDR,
-            "bnb": f"{bnb_bal:.6f}",
-            "usdt": f"{usdt_bal:.2f}",
-            "total_usd": f"{total_usd:.2f}"
-        })
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
-
-# ================= 🎨 UI DESIGN (Full Fixed) =================
-
-HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Major Fahim v1.0</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Buy Shop - Crypto Deposit</title>
     <style>
-        body { background: #0d0d0d; color: white; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); }
-        .gold-text { color: #FFD700; }
-        .btn-active:active { transform: scale(0.95); }
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
+        .card { background: white; padding: 20px; margin: 10px auto; width: 80%; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        button { background: #0088cc; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
-<body class="p-6 flex flex-col items-center">
-    <div class="w-full max-w-md">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-xl font-black gold-text tracking-tighter">MAJOR FAHIM SUPREME</h1>
-            <span class="bg-green-500/20 text-green-500 text-[10px] px-3 py-1 rounded-full font-bold">LIVE</span>
-        </div>
-
-        <div class="glass rounded-[2.5rem] p-8 mb-6 shadow-2xl relative overflow-hidden">
-            <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-2">Net Worth</p>
-            <h2 id="total_usd" class="text-5xl font-bold mb-8">$0.00</h2>
-            
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white/5 p-4 rounded-2xl">
-                    <p class="text-[9px] text-gray-500 uppercase mb-1">BNB Balance</p>
-                    <p id="bnb_bal" class="text-xs font-bold font-mono text-yellow-500/80">0.000000</p>
-                </div>
-                <div class="bg-white/5 p-4 rounded-2xl">
-                    <p class="text-[9px] text-gray-500 uppercase mb-1">USDT Balance</p>
-                    <p id="usdt_bal" class="text-xs font-bold font-mono">0.00</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-3 mb-8">
-            <button onclick="loadData()" class="glass btn-active py-5 rounded-3xl flex flex-col items-center">
-                <span class="text-xl">🔄</span>
-                <span class="text-[8px] font-bold mt-1 text-gray-400">REFRESH</span>
-            </button>
-            <button onclick="copyAddr()" class="glass btn-active py-5 rounded-3xl flex flex-col items-center">
-                <span class="text-xl">📥</span>
-                <span class="text-[8px] font-bold mt-1 text-gray-400">DEPOSIT</span>
-            </button>
-            <button class="glass py-5 rounded-3xl flex flex-col items-center opacity-20 cursor-not-allowed">
-                <span class="text-xl">🛰️</span>
-                <span class="text-[8px] font-bold mt-1 text-gray-400">SWAP</span>
-            </button>
-        </div>
-
-        <div class="glass rounded-3xl p-6 text-center">
-            <p class="text-[9px] text-gray-600 mb-4 font-mono truncate" id="full_addr">Fetching wallet...</p>
-            <button onclick="copyAddr()" class="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black text-[10px] tracking-widest shadow-lg btn-active uppercase">
-                Copy Deposit Address
-            </button>
-        </div>
+<body>
+    <h1>🛒 Welcome to Our Shop</h1>
+    
+    <div class="card">
+        <h3>Deposit Money</h3>
+        <button onclick="showAddress('USDT BEP20', '0x22e745437ee19d36f579e93685040d1a502269bc')">USDT (BEP20)</button>
+        <button onclick="showAddress('TRX TRC20', 'TWASfH7D7ZbZ1pkH9tzja4b37RgNHScTtQ')">TRX (TRC20)</button>
+        <p id="addrDisplay"></p>
+        <input type="number" id="amount" placeholder="Amount in $">
+        <button onclick="submitDeposit()">Confirm Deposit</button>
     </div>
 
     <script>
-        let walletAddr = "";
-
-        async function loadData() {
-            try {
-                // অনলাইন এবং লোকাল দুই জায়গাতেই কাজ করার প্যাথ
-                const res = await fetch(window.location.origin + '/api/stats');
-                const data = await res.json();
-                if(data.status === "success") {
-                    walletAddr = data.address;
-                    document.getElementById('total_usd').innerText = '$' + data.total_usd;
-                    document.getElementById('bnb_bal').innerText = data.bnb;
-                    document.getElementById('usdt_bal').innerText = data.usdt;
-                    document.getElementById('full_addr').innerText = walletAddr;
-                }
-            } catch (e) {
-                console.log("Fetch error:", e);
-            }
+        let selectedMethod = '';
+        function showAddress(method, addr) {
+            selectedMethod = method;
+            document.getElementById('addrDisplay').innerText = `Send to: ${addr}`;
         }
 
-        function copyAddr() {
-            if(walletAddr) {
-                navigator.clipboard.writeText(walletAddr);
-                alert("Deposit Address Copied!\\n" + walletAddr);
-            }
+        async function submitDeposit() {
+            const amount = document.getElementById('amount').value;
+            const res = await fetch('/api/deposit', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ uid: '682872', amount, method: selectedMethod })
+            });
+            if(res.ok) alert('Request sent to Admin Telegram!');
         }
-
-        window.onload = loadData;
     </script>
 </body>
 </html>
-"""
+const express = require('express');
+const mongoose = require('mongoose');
+const { Telegraf, Markup } = require('telegraf');
+const bodyParser = require('body-parser');
 
-@app.route('/')
-def index():
-    return render_template_string(HTML_TEMPLATE)
+const app = express();
+app.use(bodyParser.json());
+app.use(express.static('public')); // HTML ফাইল রাখার জন্য
 
-if __name__ == '__main__':
-    # GitHub/Cloud Deployment এর জন্য কনফিগারেশন
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+// --- CONFIGURATIONS ---
+const MONGO_URI = "mongodb+srv://fahim:Fahim123456@cluster0.3sihfnt.mongodb.net/?retryWrites=true&w=majority";
+const BOT_TOKEN = "8638229137:AAGwR9V6l3XWRtRv3vtkTWChtZS-C0vy3oE"
+const ADMIN_ID = "7015857680";
+
+const bot = new Telegraf(BOT_TOKEN);
+
+// --- DATABASE MODELS ---
+mongoose.connect(MONGO_URI).then(() => console.log("MongoDB Connected ✅"));
+
+const UserSchema = new mongoose.Schema({
+    uid: String,
+    balance: { type: Number, default: 0 },
+    location: { type: String, default: "Not Set" }
+});
+const ProductSchema = new mongoose.Schema({
+    name: String,
+    price: Number,
+    stock: Number,
+    image: String
+});
+
+const User = mongoose.model('User', UserSchema);
+const Product = mongoose.model('Product', ProductSchema);
+
+// --- BOT LOGIC (Add Product & Notifications) ---
+bot.start((ctx) => ctx.reply("Welcome to Buy Shop Admin Bot!"));
+
+// প্রোডাক্ট অ্যাড করার সিম্পল কমান্ড (Admin Only)
+bot.command('add', (ctx) => {
+    if (ctx.from.id.toString() !== ADMIN_ID) return;
+    ctx.reply("প্রোডাক্ট অ্যাড করতে লিখুন: /new [নাম] [দাম] [স্টক]");
+});
+
+bot.command('new', async (ctx) => {
+    const args = ctx.message.text.split(' ');
+    const [_, name, price, stock] = args;
+    const newProd = new Product({ name, price: Number(price), stock: Number(stock), image: 'https://via.placeholder.com/150' });
+    await newProd.save();
+    ctx.reply(`✅ ${name} ওয়েবসাইটে অ্যাড হয়েছে!`);
+});
+
+// --- WEB API ROUTES ---
+
+// ১. ডিপোজিট রিকোয়েস্ট (Web -> Telegram)
+app.post('/api/deposit', async (req, res) => {
+    const { uid, amount, method } = req.body;
+    const msg = `💰 **DEPOSIT REQUEST**\nID: ${uid}\nAmount: ${amount}$\nMethod: ${method}\nDate: ${new Date().toLocaleDateString()}`;
     
+    await bot.telegram.sendMessage(ADMIN_ID, msg, Markup.inlineKeyboard([
+        [Markup.button.callback('Confirm ✅', `approve_${uid}_${amount}`)]
+    ]));
+    res.json({ success: true });
+});
+
+// ২. অর্ডার রিকোয়েস্ট (Web -> Telegram)
+app.post('/api/order', async (req, res) => {
+    const { uid, pName, price, location } = req.body;
+    const total = Number(price) + 120; // ১২০ টাকা ডেলিভারি ফি
+    
+    const msg = `📦 **NEW ORDER**\nProduct: ${pName}\nPrice: ${price}\nDelivery: 120\nTotal: ${total}\nLocation: ${location}`;
+    
+    await bot.telegram.sendMessage(ADMIN_ID, msg, Markup.inlineKeyboard([
+        [Markup.button.callback('Pending ⏳', 'st_pending')],
+        [Markup.button.callback('Success ✅', 'st_done')],
+        [Markup.button.callback('Cancel ❌', 'st_cancel')]
+    ]));
+    res.json({ success: true });
+});
+
+// --- SERVER START ---
+bot.launch();
+app.listen(3000, () => console.log("Server running on http://localhost:3000 🚀"));
+
+
