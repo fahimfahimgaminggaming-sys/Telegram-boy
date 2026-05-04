@@ -1,108 +1,231 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy Shop - All in One</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 50; }
-        .modal.active { display: flex; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Shop Pro</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans">
 
-    <header class="bg-blue-600 text-white p-4 text-center text-xl font-bold shadow-lg">
-        🛒 BUY SHOP - PREMIUM
-    </header>
+<body class="bg-gray-100">
 
-    <div class="max-w-4xl mx-auto p-4">
-        <div id="userSection">
-            <div class="bg-white rounded-xl p-6 text-center shadow-md mb-6">
-                <p class="text-gray-500">আপনার ব্যালেন্স</p>
-                <h2 class="text-3xl font-bold text-blue-600">৳ <span id="balance">0.00</span></h2>
-                <button onclick="toggleModal('depositModal')" class="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg font-bold">ডিপোজিট করুন</button>
-            </div>
+<header class="bg-blue-600 text-white p-4 text-center text-xl font-bold">
+🛒 BUY SHOP PRO
+</header>
 
-            <h3 class="border-l-4 border-blue-600 pl-2 text-lg font-bold mb-4">প্রোডাক্ট লিস্ট</h3>
-            <div id="productGrid" class="grid grid-cols-2 gap-4">
-                </div>
-        </div>
+<div class="max-w-4xl mx-auto p-4">
 
-        <div class="mt-10 text-center">
-            <button onclick="showAdmin()" class="text-gray-400 text-xs">Admin Login</button>
-        </div>
-    </div>
+<!-- AUTH -->
+<div id="authBox" class="bg-white p-4 rounded shadow mb-4 text-center">
+<button onclick="register()" class="bg-green-500 text-white px-4 py-2 m-1 rounded">Register</button>
+<button onclick="login()" class="bg-blue-500 text-white px-4 py-2 m-1 rounded">Login</button>
+<button onclick="logout()" class="bg-red-500 text-white px-4 py-2 m-1 rounded">Logout</button>
+</div>
 
-    <div id="depositModal" class="modal">
-        <div class="bg-white p-6 rounded-xl w-80 text-center">
-            <h3 class="font-bold mb-4">পেমেন্ট মেথড সিলেক্ট করুন</h3>
-            <button onclick="showAddress('USDT BEP20', '0x22e745...')" class="w-full bg-blue-100 py-2 mb-2 rounded">USDT (BEP20)</button>
-            <button onclick="showAddress('TRX TRC20', 'TWASfH7D...')" class="w-full bg-red-100 py-2 mb-2 rounded">TRX (TRC20)</button>
-            
-            <div id="addrArea" class="hidden mt-4">
-                <p class="text-xs break-all bg-gray-100 p-2 rounded" id="targetAddr"></p>
-                <input type="number" id="depAmount" placeholder="কত ডলার?" class="w-full border p-2 mt-2 rounded">
-                <button onclick="submitDeposit()" class="w-full bg-green-600 text-white mt-2 py-2 rounded">Confirm</button>
-            </div>
-            <button onclick="toggleModal('depositModal')" class="mt-4 text-red-500">বন্ধ করুন</button>
-        </div>
-    </div>
+<!-- USER PANEL -->
+<div id="userPanel" class="hidden">
 
-    <div id="adminPanel" class="hidden fixed inset-0 bg-white z-[100] p-6 overflow-y-auto">
-        <h2 class="text-2xl font-bold mb-4">Admin Dashboard</h2>
-        <div class="bg-blue-50 p-4 rounded-lg mb-6">
-            <h3 class="font-bold mb-2">নতুন প্রোডাক্ট অ্যাড করুন</h3>
-            <input type="text" id="pName" placeholder="নাম" class="w-full border p-2 mb-2">
-            <input type="number" id="pPrice" placeholder="দাম" class="w-full border p-2 mb-2">
-            <input type="text" id="pImg" placeholder="ছবির লিঙ্ক (URL)" class="w-full border p-2 mb-2">
-            <button onclick="addProduct()" class="bg-blue-600 text-white w-full py-2 rounded">Add to Web</button>
-        </div>
-        <button onclick="hideAdmin()" class="bg-gray-500 text-white px-4 py-2 rounded">Back to Shop</button>
-    </div>
+<div class="bg-white p-4 rounded shadow mb-4 text-center">
+<h2 class="text-lg">Balance: ৳ <span id="balance">0</span></h2>
+<input id="depAmount" type="number" placeholder="Deposit amount" class="border p-2 mt-2">
+<button onclick="requestDeposit()" class="bg-green-600 text-white px-4 py-2 mt-2 rounded">Request Deposit</button>
+</div>
 
-    <script>
-        // ডেটা সেভ করার জন্য LocalStorage ব্যবহার করা হয়েছে (সার্ভার ছাড়া কাজ করবে)
-        let products = JSON.parse(localStorage.getItem('products')) || [];
+<h3 class="font-bold mb-2">Products</h3>
+<div id="products" class="grid grid-cols-2 gap-4"></div>
 
-        function toggleModal(id) { document.getElementById(id).classList.toggle('active'); }
+<h3 class="font-bold mt-6">Orders</h3>
+<div id="orders"></div>
 
-        function showAddress(name, addr) {
-            document.getElementById('addrArea').classList.remove('hidden');
-            document.getElementById('targetAddr').innerText = name + ": " + addr;
-        }
+</div>
 
-        // প্রোডাক্ট অ্যাড করা (Admin Only)
-        function addProduct() {
-            const name = document.getElementById('pName').value;
-            const price = document.getElementById('pPrice').value;
-            const img = document.getElementById('pImg').value;
+<!-- ADMIN -->
+<div class="text-center mt-6">
+<button onclick="adminLogin()" class="text-xs text-gray-400">Admin</button>
+</div>
 
-            if(!name || !price) return alert("তথ্য দিন");
+<div id="adminPanel" class="hidden bg-white p-4 mt-4 rounded shadow">
 
-            products.push({ name, price, img });
-            localStorage.setItem('products', JSON.stringify(products));
-            alert("প্রোডাক্ট অ্যাড হয়েছে!");
-            location.reload();
-        }
+<h3 class="font-bold">Add Product</h3>
+<input id="pName" placeholder="Name" class="border p-2 w-full my-1">
+<input id="pPrice" type="number" placeholder="Price" class="border p-2 w-full my-1">
+<button onclick="addProduct()" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Add</button>
 
-        // প্রোডাক্ট শো করা
-        function renderProducts() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = products.map(p => `
-                <div class="bg-white p-3 rounded-lg shadow">
-                    <img src="${p.img || 'https://via.placeholder.com/150'}" class="w-full h-32 object-cover rounded">
-                    <h4 class="font-bold mt-2">${p.name}</h4>
-                    <p class="text-blue-600">৳ ${p.price}</p>
-                    <button class="bg-blue-600 text-white w-full py-1 mt-2 rounded text-sm">কিনুন</button>
-                </div>
-            `).join('');
-        }
+<h3 class="font-bold mt-4">Deposit Requests</h3>
+<div id="depositList"></div>
 
-        function showAdmin() { document.getElementById('adminPanel').classList.remove('hidden'); }
-        function hideAdmin() { document.getElementById('adminPanel').classList.add('hidden'); }
+</div>
 
-        renderProducts();
-    </script>
+</div>
+
+<script>
+// STORAGE
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let deposits = JSON.parse(localStorage.getItem("deposits")) || [];
+let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+// AUTH
+function register(){
+let email = prompt("Email");
+let pass = prompt("Password");
+
+users.push({email, pass, balance:0, orders:[]});
+localStorage.setItem("users", JSON.stringify(users));
+alert("Registered!");
+}
+
+function login(){
+let email = prompt("Email");
+let pass = prompt("Password");
+
+let user = users.find(u=>u.email===email && u.pass===pass);
+
+if(user){
+localStorage.setItem("currentUser", JSON.stringify(user));
+location.reload();
+}else alert("Wrong!");
+}
+
+function logout(){
+localStorage.removeItem("currentUser");
+location.reload();
+}
+
+// USER LOAD
+function loadUser(){
+if(!currentUser) return;
+
+document.getElementById("userPanel").classList.remove("hidden");
+document.getElementById("balance").innerText = currentUser.balance;
+
+renderProducts();
+renderOrders();
+}
+
+// PRODUCTS
+function renderProducts(){
+let div = document.getElementById("products");
+div.innerHTML = products.map((p,i)=>`
+<div class="bg-white p-2 rounded shadow">
+<h4>${p.name}</h4>
+<p>৳ ${p.price}</p>
+<button onclick="buy(${i})" class="bg-blue-600 text-white w-full mt-2">Buy</button>
+</div>
+`).join("");
+}
+
+// BUY
+function buy(i){
+let location = prompt("Location?");
+let product = products[i];
+let total = product.price + 120;
+
+if(currentUser.balance < total){
+alert("Not enough balance");
+return;
+}
+
+currentUser.balance -= total;
+currentUser.orders.push({
+name: product.name,
+price: product.price,
+location,
+status:"Pending"
+});
+
+updateUser();
+alert("Order Done!");
+}
+
+// ORDERS
+function renderOrders(){
+let div = document.getElementById("orders");
+div.innerHTML = currentUser.orders.map(o=>`
+<div class="bg-white p-2 mb-2 rounded">
+${o.name} - ${o.price}৳ <br>
+📍 ${o.location} <br>
+Status: ${o.status}
+</div>
+`).join("");
+}
+
+// DEPOSIT
+function requestDeposit(){
+let amount = document.getElementById("depAmount").value;
+
+deposits.push({
+email: currentUser.email,
+amount,
+status:"pending"
+});
+
+localStorage.setItem("deposits", JSON.stringify(deposits));
+alert("Request sent");
+}
+
+// ADMIN
+function adminLogin(){
+let pass = prompt("Admin password");
+if(pass==="1234"){
+document.getElementById("adminPanel").classList.remove("hidden");
+renderDeposits();
+}
+}
+
+function addProduct(){
+let name = document.getElementById("pName").value;
+let price = Number(document.getElementById("pPrice").value);
+
+products.push({name, price});
+localStorage.setItem("products", JSON.stringify(products));
+location.reload();
+}
+
+// APPROVE DEPOSIT
+function renderDeposits(){
+let div = document.getElementById("depositList");
+
+div.innerHTML = deposits.map((d,i)=>`
+<div class="border p-2 my-1">
+${d.email} - ${d.amount}
+<button onclick="approve(${i})" class="bg-green-500 text-white px-2">Approve</button>
+</div>
+`).join("");
+}
+
+function approve(i){
+let dep = deposits[i];
+let user = users.find(u=>u.email===dep.email);
+
+user.balance += Number(dep.amount);
+
+updateAllUsers();
+deposits.splice(i,1);
+localStorage.setItem("deposits", JSON.stringify(deposits));
+
+alert("Approved");
+location.reload();
+}
+
+// UPDATE
+function updateUser(){
+let index = users.findIndex(u=>u.email===currentUser.email);
+users[index] = currentUser;
+
+localStorage.setItem("users", JSON.stringify(users));
+localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+loadUser();
+}
+
+function updateAllUsers(){
+localStorage.setItem("users", JSON.stringify(users));
+}
+
+// INIT
+loadUser();
+</script>
+
 </body>
 </html>
