@@ -2,58 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fahim Shop Pro</title>
 <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
 </head>
 
-<body class="bg-gradient-to-br from-black via-gray-900 to-black text-white">
+<body class="bg-gray-900 text-white">
 
-<header class="text-center p-5 text-3xl font-bold tracking-wide">
-✨ FAHIM SHOP PRO
+<header class="text-center p-4 text-2xl font-bold">
+🛒 FAHIM SHOP PRO
 </header>
 
-<div class="max-w-5xl mx-auto p-4">
+<div class="max-w-4xl mx-auto p-4">
 
-<!-- AUTH -->
-<div class="flex justify-center gap-3 mb-6">
-<button onclick="register()" class="bg-green-500 px-5 py-2 rounded-xl">Register</button>
-<button onclick="login()" class="bg-blue-500 px-5 py-2 rounded-xl">Login</button>
-<button onclick="logout()" class="bg-red-500 px-5 py-2 rounded-xl">Logout</button>
+<!-- LOGIN -->
+<div class="bg-gray-800 p-4 rounded-xl">
+<h2 class="font-bold mb-2">Login / Register</h2>
+
+<input id="email" placeholder="Email" class="w-full p-2 text-black mb-2">
+<input id="pass" type="password" placeholder="Password" class="w-full p-2 text-black mb-2">
+
+<button onclick="register()" class="bg-green-500 px-4 py-2 rounded">Register</button>
+<button onclick="login()" class="bg-blue-500 px-4 py-2 rounded">Login</button>
+<button onclick="logout()" class="bg-red-500 px-4 py-2 rounded">Logout</button>
 </div>
 
 <!-- USER PANEL -->
-<div id="userPanel" class="hidden">
+<div id="panel" class="hidden mt-4">
 
-<!-- BALANCE -->
-<div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-xl text-center mb-6">
-<h2 class="text-xl mb-2">Balance</h2>
-<p class="text-3xl text-green-400 font-bold">৳ <span id="balance">0</span></p>
+<h2 class="text-lg">Balance: ৳ <span id="balance">0</span></h2>
 
-<h3 class="mt-4 font-semibold">💳 Crypto Deposit</h3>
+<h3 class="font-bold mt-4">Products</h3>
+<div id="products" class="grid grid-cols-2 gap-3"></div>
 
-<div class="mt-2 space-y-2">
-<div class="flex">
-<input id="usdt" value="0x22e745437ee19d36f579e93685040d1a502269bc" class="text-black w-full p-2 rounded-l">
-<button onclick="copy('usdt')" class="bg-blue-600 px-3 rounded-r">Copy</button>
-</div>
+<h3 class="font-bold mt-4">Cart</h3>
+<div id="cart"></div>
 
-<div class="flex">
-<input id="trx" value="TWASfH7D7ZbZ1pkH9tzja4b37RgNHScTtQ" class="text-black w-full p-2 rounded-l">
-<button onclick="copy('trx')" class="bg-blue-600 px-3 rounded-r">Copy</button>
-</div>
-</div>
-
-<input id="depAmount" type="number" placeholder="Enter amount" class="text-black p-2 mt-4 w-full rounded">
-<button onclick="requestDeposit()" class="bg-green-600 w-full mt-2 py-2 rounded-xl">Submit</button>
-</div>
-
-<!-- PRODUCTS -->
-<h3 class="text-xl mb-3 font-bold">🛍 Products</h3>
-<div id="products" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
-
-<!-- ORDERS -->
-<h3 class="text-xl mt-6 font-bold">📦 Orders</h3>
+<h3 class="font-bold mt-4">Orders</h3>
 <div id="orders"></div>
 
 </div>
@@ -63,149 +52,160 @@
 <button onclick="adminLogin()" class="text-gray-400 text-sm">Admin Panel</button>
 </div>
 
-<div id="adminPanel" class="hidden bg-white/10 p-5 mt-4 rounded-2xl">
+<div id="adminPanel" class="hidden bg-gray-800 p-4 mt-4 rounded-xl">
+<h3 class="font-bold">Add Product</h3>
 
-<h3 class="font-bold mb-2">Add Product</h3>
-<input id="pName" placeholder="Name" class="text-black p-2 w-full mb-2 rounded">
-<input id="pPrice" type="number" placeholder="Price" class="text-black p-2 w-full mb-2 rounded">
-<button onclick="addProduct()" class="bg-blue-600 w-full py-2 rounded-xl">Add</button>
+<input id="pName" placeholder="Name" class="w-full p-2 text-black mb-2">
+<input id="pPrice" type="number" placeholder="Price" class="w-full p-2 text-black mb-2">
 
-<h3 class="mt-4 font-bold">Deposits</h3>
-<div id="depositList"></div>
-
+<button onclick="addProduct()" class="bg-blue-600 w-full py-2">Add</button>
 </div>
 
 </div>
 
 <script>
+
+// 🔥 FIREBASE CONFIG (replace yours)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "fahimshop-4d622.firebaseapp.com",
+  databaseURL: "https://fahimshop-4d622-default-rtdb.firebaseio.com",
+  projectId: "fahimshop-4d622",
+  appId: "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.database();
+
 // ADMIN
 const ADMIN_EMAIL = "admin@fahim.com";
-const ADMIN_PASS = "admin123";
 
-// STORAGE
-let users = JSON.parse(localStorage.getItem("users")) || [];
-let products = JSON.parse(localStorage.getItem("products")) || [];
-let deposits = JSON.parse(localStorage.getItem("deposits")) || [];
-let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-// COPY
-function copy(id){
-let val = document.getElementById(id).value;
-navigator.clipboard.writeText(val);
-alert("Copied!");
-}
+// CART (local)
+let cart = [];
 
 // REGISTER
 function register(){
-let email = prompt("Email");
-let pass = prompt("Password");
-users.push({email, pass, balance:0, orders:[]});
-localStorage.setItem("users", JSON.stringify(users));
-alert("Account created!");
+let email = emailInput();
+let pass = passInput();
+
+auth.createUserWithEmailAndPassword(email, pass)
+.then(user=>{
+db.ref("users/"+user.user.uid).set({
+email,
+balance:0
+});
+alert("Registered");
+})
+.catch(e=>alert(e.message));
 }
 
 // LOGIN
 function login(){
-let email = prompt("Email");
-let pass = prompt("Password");
-
-let user = users.find(u=>u.email===email && u.pass===pass);
-
-if(user){
-localStorage.setItem("currentUser", JSON.stringify(user));
-location.reload();
-}else alert("Wrong!");
+auth.signInWithEmailAndPassword(emailInput(), passInput())
+.then(u=>{
+loadUser();
+})
+.catch(e=>alert(e.message));
 }
 
 // LOGOUT
 function logout(){
-localStorage.removeItem("currentUser");
+auth.signOut();
 location.reload();
 }
 
-// LOAD
+// LOAD USER
 function loadUser(){
-if(!currentUser) return;
+let user = auth.currentUser;
+if(!user) return;
 
-document.getElementById("userPanel").classList.remove("hidden");
-document.getElementById("balance").innerText = currentUser.balance;
+document.getElementById("panel").classList.remove("hidden");
 
-renderProducts();
-renderOrders();
+// balance
+db.ref("users/"+user.uid).on("value", snap=>{
+document.getElementById("balance").innerText = snap.val().balance || 0;
+});
+
+// products
+db.ref("products").on("value", snap=>{
+let data = snap.val() || {};
+renderProducts(data);
+});
+
+// orders
+db.ref("orders/"+user.uid).on("value", snap=>{
+let data = snap.val() || {};
+renderOrders(data);
+});
 }
 
 // PRODUCTS
-function renderProducts(){
+function renderProducts(data){
 let div = document.getElementById("products");
 
-div.innerHTML = products.map((p,i)=>`
-<div class="bg-white/10 backdrop-blur p-4 rounded-xl hover:scale-105 transition">
-<h4 class="font-bold">${p.name}</h4>
-<p class="text-green-400">৳ ${p.price}</p>
-<button onclick="buy(${i})" class="bg-gradient-to-r from-blue-500 to-purple-500 w-full mt-2 py-2 rounded-xl">Buy</button>
+div.innerHTML = Object.keys(data).map(id=>`
+<div class="bg-gray-700 p-3 rounded">
+${data[id].name} <br>
+৳ ${data[id].price}
+<button onclick="addToCart('${id}',${data[id].price})" class="bg-green-500 w-full mt-2">Add</button>
 </div>
 `).join("");
 }
 
-// BUY
-function buy(i){
-let location = prompt("Enter location");
-let product = products[i];
-let total = product.price + 120;
-
-if(currentUser.balance < total){
-alert("Balance low");
-return;
+// CART
+function addToCart(id,price){
+cart.push({id,price});
+renderCart();
 }
 
-currentUser.balance -= total;
+function renderCart(){
+let div = document.getElementById("cart");
 
-currentUser.orders.push({
-name: product.name,
-price: product.price,
-location,
-status:"Pending"
+div.innerHTML = cart.map((c,i)=>`
+<div>
+Item ${i+1} - ৳${c.price}
+</div>
+<button onclick="checkout()">Checkout</button>
+`).join("");
+}
+
+// CHECKOUT
+function checkout(){
+let user = auth.currentUser;
+if(!user) return;
+
+let total = cart.reduce((a,b)=>a+b.price,0);
+
+db.ref("orders/"+user.uid).push({
+items: cart,
+total,
+status:"pending"
 });
 
-updateUser();
+cart = [];
 alert("Order placed!");
 }
 
 // ORDERS
-function renderOrders(){
+function renderOrders(data){
 let div = document.getElementById("orders");
 
-div.innerHTML = currentUser.orders.map(o=>`
-<div class="bg-white/10 p-3 rounded mb-2">
-${o.name} - ৳${o.price} <br>
-📍 ${o.location} <br>
-Status: ${o.status}
+div.innerHTML = Object.values(data).map(o=>`
+<div class="bg-gray-800 p-2 mb-2">
+Total: ৳${o.total} | ${o.status}
 </div>
 `).join("");
 }
 
-// DEPOSIT
-function requestDeposit(){
-let amount = document.getElementById("depAmount").value;
-
-deposits.push({
-email: currentUser.email,
-amount,
-status:"pending"
-});
-
-localStorage.setItem("deposits", JSON.stringify(deposits));
-alert("Request sent");
-}
-
 // ADMIN LOGIN
 function adminLogin(){
-let email = prompt("Admin Email");
-let pass = prompt("Admin Password");
+let email = prompt("Email");
+let pass = prompt("Password");
 
-if(email===ADMIN_EMAIL && pass===ADMIN_PASS){
+if(email===ADMIN_EMAIL && pass==="admin123"){
 document.getElementById("adminPanel").classList.remove("hidden");
-renderDeposits();
 }else alert("Denied");
 }
 
@@ -214,56 +214,27 @@ function addProduct(){
 let name = document.getElementById("pName").value;
 let price = Number(document.getElementById("pPrice").value);
 
-products.push({name, price});
-localStorage.setItem("products", JSON.stringify(products));
-
-alert("Added");
-location.reload();
+db.ref("products").push({name,price});
+alert("Product added");
 }
 
-// DEPOSITS
-function renderDeposits(){
-let div = document.getElementById("depositList");
-
-div.innerHTML = deposits.map((d,i)=>`
-<div class="border p-2 my-1">
-${d.email} - ৳${d.amount}
-<button onclick="approve(${i})" class="bg-green-500 px-2 ml-2">Approve</button>
-</div>
-`).join("");
+// INPUT HELPERS
+function emailInput(){
+return document.getElementById("email").value;
 }
 
-// APPROVE
-function approve(i){
-let dep = deposits[i];
-let user = users.find(u=>u.email===dep.email);
-
-user.balance += Number(dep.amount);
-
-localStorage.setItem("users", JSON.stringify(users));
-
-deposits.splice(i,1);
-localStorage.setItem("deposits", JSON.stringify(deposits));
-
-alert("Approved");
-location.reload();
+function passInput(){
+return document.getElementById("pass").value;
 }
 
-// UPDATE
-function updateUser(){
-let index = users.findIndex(u=>u.email===currentUser.email);
-
-users[index] = currentUser;
-
-localStorage.setItem("users", JSON.stringify(users));
-localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
+// AUTH STATE
+auth.onAuthStateChanged(user=>{
+if(user){
 loadUser();
 }
+});
 
-// INIT
-loadUser();
 </script>
 
 </body>
-</html>
+  </html>
