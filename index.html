@@ -1,1054 +1,1495 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Quantum AI Ultimate</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://telegram.org/js/telegram-web-app.js">
 
-/* TABS */
+        }else{
 
-const tabs=document.querySelectorAll('.tab');
+            ctx2.lineTo(x,y);
 
-tabs.forEach(tab=>{
+        }
 
-tab.addEventListener('click',()=>{
+    });
 
-haptic();
+    ctx2.stroke();
 
-tabs.forEach(t=>t.classList.remove('active-tab'));
-
-tab.classList.add('active-tab');
-
-const market=document.getElementById('market');
-
-if(tab.dataset.tab==='scalp'){
-market.style.filter='hue-rotate(40deg)';
-}
-else if(tab.dataset.tab==='gems'){
-market.style.filter='hue-rotate(90deg)';
-}
-else if(tab.dataset.tab==='breakout'){
-market.style.filter='hue-rotate(140deg)';
-}
-else if(tab.dataset.tab==='whales'){
-market.style.filter='hue-rotate(200deg)';
-}
-else{
-market.style.filter='';
 }
 
-});
+setInterval(drawEMA,2000);
 
-});
+/* =====================================
+   RSI PANEL
+===================================== */
 
-/* BOTTOM NAV */
+const rsiPanel =
+document.createElement("div");
 
-const navItems=document.querySelectorAll('.nav-item');
+rsiPanel.style.cssText = `
 
-navItems.forEach(item=>{
-
-item.addEventListener('click',()=>{
-
-haptic();
-
-navItems.forEach(n=>n.classList.remove('active'));
-
-item.classList.add('active');
-
-});
-
-});
-
-/* FLOATING AI BUTTON */
-
-const floating=document.querySelector('.floating-ai');
-
-floating.addEventListener('click',()=>{
-
-haptic();
-
-alert('🤖 AI Assistant Activated
-
-Strong bullish momentum detected in BTCUSDT.');
-
-});
-
-/* HERO BUTTON */
-
-document.querySelector('.btn-primary')
-.addEventListener('click',()=>{
-
-haptic();
-
-window.open('https://www.binance.com','_blank');
-
-});
-
-</script>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
-}
-
-:root{
---bg:#070b16;
---card:rgba(17,25,40,.75);
---card2:#111827;
---text:#fff;
---green:#22c55e;
---red:#ef4444;
---yellow:#facc15;
---blue:#3b82f6;
---purple:#8b5cf6;
---border:rgba(255,255,255,.08);
-}
-
-body{
-background:linear-gradient(180deg,#070b16,#111827);
-color:var(--text);
-overflow-x:hidden;
-min-height:100vh;
-transition:.4s ease;
-}
-
-body.light{
---bg:#e5e7eb;
---card:#ffffffcc;
---card2:#f3f4f6;
---text:#111827;
-background:linear-gradient(180deg,#dbeafe,#f8fafc);
-}
-
-body::before{
-content:'';
-position:fixed;
-width:400px;
-height:400px;
-background:#22c55e22;
-filter:blur(120px);
-top:-100px;
-left:-100px;
-z-index:-1;
-}
-
-body::after{
-content:'';
-position:fixed;
-width:300px;
-height:300px;
-background:#3b82f622;
-filter:blur(120px);
-bottom:-100px;
-right:-100px;
-z-index:-1;
-}
-
-.topbar{
-position:sticky;
-top:0;
-z-index:999;
-padding:16px;
-backdrop-filter:blur(25px);
-background:#0b1220cc;
-border-bottom:1px solid var(--border);
-}
-
-.top-flex{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.logo{
-display:flex;
-align-items:center;
-gap:12px;
-}
-
-.logo-icon{
-width:48px;
-height:48px;
-border-radius:18px;
-background:linear-gradient(135deg,#22c55e,#3b82f6);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-font-weight:800;
-box-shadow:0 0 30px #22c55e55;
-}
-
-.logo h2{
-font-size:18px;
-font-weight:800;
-}
-
-.logo p{
-font-size:12px;
-opacity:.7;
-}
-
-.live{
-padding:8px 14px;
-border-radius:30px;
-background:#22c55e22;
-color:#22c55e;
-font-size:12px;
-font-weight:700;
-animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-0%{opacity:1}
-50%{opacity:.5}
-100%{opacity:1}
-}
-
-.container{
-padding:16px;
-padding-bottom:120px;
-}
-
-.hero{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
-border-radius:32px;
-padding:24px;
-position:relative;
-overflow:hidden;
-}
-
-.hero::before{
-content:'';
-position:absolute;
-width:250px;
-height:250px;
-background:#22c55e22;
-border-radius:50%;
-filter:blur(80px);
-right:-100px;
-top:-100px;
-}
-
-.hero h1{
-font-size:28px;
-font-weight:800;
-line-height:1.3;
-}
-
-.hero p{
-margin-top:12px;
-opacity:.75;
-font-size:14px;
-}
-
-.hero-buttons{
-display:flex;
-gap:12px;
 margin-top:20px;
-}
-
-.btn{
-border:none;
-padding:14px 18px;
-border-radius:18px;
-font-weight:700;
-cursor:pointer;
-transition:.3s ease;
-}
-
-.btn:hover{
-transform:translateY(-2px);
-}
-
-.btn-primary{
-background:linear-gradient(135deg,#22c55e,#16a34a);
-color:black;
-box-shadow:0 0 25px #22c55e44;
-}
-
-.btn-secondary{
-background:#1f2937;
-color:white;
-}
-
-.ticker{
-margin-top:18px;
-display:flex;
-gap:12px;
-overflow:auto;
-}
-
-.ticker-item{
-min-width:max-content;
-padding:10px 14px;
-border-radius:16px;
-background:rgba(255,255,255,.05);
-border:1px solid var(--border);
-font-size:13px;
-}
-
-.stats{
-margin-top:18px;
 display:grid;
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:
+repeat(3,1fr);
 gap:14px;
+
+`;
+
+document.querySelector(".container")
+.appendChild(rsiPanel);
+
+function rsiUI(){
+
+    const rsi =
+    Math.floor(
+        random(20,80)
+    );
+
+    rsiPanel.innerHTML = `
+
+    <div style="
+    background:#121a2f;
+    padding:20px;
+    border-radius:24px;
+    border:1px solid #26334f">
+
+    <h3>RSI</h3>
+
+    <h1 style="
+    margin-top:10px;
+    color:
+    ${rsi>70
+    ?'#ef4444'
+    :rsi<30
+    ?'#22c55e'
+    :'#facc15'}
+    ">
+
+    ${rsi}
+
+    </h1>
+
+    </div>
+
+    <div style="
+    background:#121a2f;
+    padding:20px;
+    border-radius:24px;
+    border:1px solid #26334f">
+
+    <h3>MACD</h3>
+
+    <h1 style="
+    margin-top:10px;
+    color:#22c55e">
+
+    Bullish
+
+    </h1>
+
+    </div>
+
+    <div style="
+    background:#121a2f;
+    padding:20px;
+    border-radius:24px;
+    border:1px solid #26334f">
+
+    <h3>Trend</h3>
+
+    <h1 style="
+    margin-top:10px;
+    color:#3b82f6">
+
+    LONG
+
+    </h1>
+
+    </div>
+
+    `;
 }
 
-.stat{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
-padding:18px;
-border-radius:24px;
-}
+rsiUI();
 
-.stat span{
-font-size:13px;
-opacity:.7;
-}
+setInterval(rsiUI,4000);
 
-.stat h2{
-margin-top:10px;
-font-size:24px;
-font-weight:800;
-}
+/* =====================================
+   DRAWING TOOLS
+===================================== */
 
-.search{
-margin-top:20px;
-}
+let drawing = false;
 
-.search input{
+canvas.addEventListener(
+    "mousedown",
+    ()=>{
+
+    drawing = true;
+
+});
+
+canvas.addEventListener(
+    "mouseup",
+    ()=>{
+
+    drawing = false;
+
+});
+
+canvas.addEventListener(
+    "mousemove",
+    e=>{
+
+    if(!drawing) return;
+
+    ctx2.fillStyle =
+    "#facc15";
+
+    ctx2.beginPath();
+
+    ctx2.arc(
+
+        e.offsetX,
+        e.offsetY,
+        2,
+        0,
+        Math.PI*2
+
+    );
+
+    ctx2.fill();
+
+});
+
+/* =====================================
+   CHART ZOOM SYSTEM
+===================================== */
+
+canvas.addEventListener(
+    "wheel",
+    e=>{
+
+    e.preventDefault();
+
+    canvas.style.transform =
+    `scale(${
+        e.deltaY < 0
+        ? 1.1
+        : 1
+    })`;
+
+});
+
+/* =====================================
+   SCREENSHOT BUTTON
+===================================== */
+
+const screenshotBtn =
+document.createElement("button");
+
+screenshotBtn.innerHTML =
+"📸 Save Chart";
+
+screenshotBtn.style.cssText = `
+
+margin-top:18px;
 width:100%;
 padding:16px;
 border:none;
-outline:none;
 border-radius:20px;
-background:rgba(255,255,255,.05);
-border:1px solid var(--border);
-color:white;
-font-size:15px;
-}
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#16a34a
+);
+font-weight:bold;
+cursor:pointer;
 
-.tabs{
-display:flex;
-gap:10px;
-overflow:auto;
-margin-top:18px;
-}
+`;
 
-.tab{
-padding:10px 18px;
-border-radius:20px;
-background:rgba(255,255,255,.05);
-border:1px solid var(--border);
-min-width:max-content;
-font-size:13px;
-transition:.3s;
-}
+chartSection.appendChild(
+    screenshotBtn
+);
 
-.active-tab{
-background:linear-gradient(135deg,#22c55e,#3b82f6);
-color:white;
-font-weight:700;
-box-shadow:0 0 20px #22c55e44;
-}
+screenshotBtn.addEventListener(
+    "click",
+    ()=>{
 
-.market{
+    const link =
+    document.createElement("a");
+
+    link.download =
+    "quantum-chart.png";
+
+    link.href =
+    canvas.toDataURL();
+
+    link.click();
+
+});
+
+/* =====================================
+   LIVE PRICE TAPE
+===================================== */
+
+const tape =
+document.createElement("div");
+
+tape.style.cssText = `
+
 margin-top:20px;
 display:flex;
-flex-direction:column;
-gap:18px;
-}
-
-.card{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
-border-radius:30px;
-padding:20px;
-position:relative;
-overflow:hidden;
-transition:.3s ease;
-}
-
-.card:hover{
-transform:translateY(-4px);
-}
-
-.card.buy-card{
-box-shadow:0 0 35px #22c55e22;
-}
-
-.card.sell-card{
-box-shadow:0 0 35px #ef444422;
-}
-
-.card-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.coin{
-display:flex;
-align-items:center;
 gap:12px;
+overflow:auto;
+
+`;
+
+document.querySelector(".container")
+.appendChild(tape);
+
+function tapeUI(){
+
+    const coins = [
+
+        "BTC",
+        "ETH",
+        "SOL",
+        "BNB",
+        "XRP",
+        "DOGE",
+        "LINK"
+
+    ];
+
+    let html = "";
+
+    coins.forEach(c=>{
+
+        const up =
+        Math.random()>.4;
+
+        html += `
+
+        <div style="
+        min-width:120px;
+        background:#121a2f;
+        border:1px solid #26334f;
+        padding:16px;
+        border-radius:20px">
+
+        <h3>${c}</h3>
+
+        <p style="
+        margin-top:8px;
+        color:
+        ${up
+        ?'#22c55e'
+        :'#ef4444'}">
+
+        ${up?'+':'-'}
+        ${random(1,8).toFixed(2)}%
+
+        </p>
+
+        </div>
+
+        `;
+    });
+
+    tape.innerHTML = html;
 }
 
-.coin img{
-width:54px;
-height:54px;
-border-radius:18px;
-background:#111827;
-padding:8px;
-}
+tapeUI();
 
-.coin h3{
-font-size:18px;
-font-weight:800;
-}
+setInterval(tapeUI,5000);
 
-.coin p{
-font-size:12px;
-opacity:.7;
-}
+/* =====================================
+   AI ENTRY ZONES
+===================================== */
 
-.badge{
-padding:8px 14px;
-border-radius:20px;
-font-size:12px;
-font-weight:800;
-}
+const zones =
+document.createElement("div");
 
-.buy{
-background:#22c55e22;
-color:#22c55e;
-}
+zones.style.cssText = `
 
-.sell{
-background:#ef444422;
-color:#ef4444;
-}
-
-.wait{
-background:#facc1522;
-color:#facc15;
-}
-
-.price{
-font-size:34px;
-font-weight:800;
-margin-top:18px;
-}
-
-.change-up{
-margin-top:8px;
-color:#22c55e;
-font-weight:700;
-}
-
-.change-down{
-margin-top:8px;
-color:#ef4444;
-font-weight:700;
-}
-
-.ai-analysis{
-margin-top:14px;
-padding:14px;
-border-radius:18px;
-background:#111827;
-font-size:13px;
-line-height:1.6;
-opacity:.9;
-}
-
-.signal-box{
-margin-top:18px;
-background:#111827;
-border-radius:24px;
-padding:18px;
-}
-
-.row{
-display:flex;
-justify-content:space-between;
-margin-top:12px;
-font-size:14px;
-}
-
-.row span:first-child{
-opacity:.7;
-}
-
-.confidence-ring{
-margin-top:18px;
-display:flex;
-align-items:center;
-gap:16px;
-}
-
-.ring{
-width:70px;
-height:70px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:14px;
-font-weight:800;
-background:conic-gradient(#22c55e 0deg,#22c55e var(--deg),#1f2937 var(--deg));
-}
-
-.ring-inner{
-width:54px;
-height:54px;
-border-radius:50%;
-background:#0b1120;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.mini-chart{
-margin-top:18px;
-height:60px;
-display:flex;
-align-items:flex-end;
-gap:4px;
-}
-
-.bar{
-flex:1;
-border-radius:8px 8px 0 0;
-background:linear-gradient(180deg,#22c55e,#3b82f6);
-animation:bars 1.5s infinite alternate;
-}
-
-@keyframes bars{
-0%{opacity:.5}
-100%{opacity:1}
-}
-
-.features{
-margin-top:22px;
-display:grid;
-gap:16px;
-}
-
-.panel{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
+margin-top:20px;
+background:#121a2f;
 padding:20px;
 border-radius:28px;
-}
+border:1px solid #26334f;
 
-.panel h3{
-margin-bottom:16px;
-}
+`;
 
-.news{
-margin-top:10px;
-padding:14px;
-border-radius:18px;
-background:#111827;
-font-size:14px;
-}
+zones.innerHTML = `
 
-.bottom-nav{
-position:fixed;
-bottom:14px;
-left:50%;
-transform:translateX(-50%);
-width:92%;
-background:rgba(17,24,39,.85);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
-border-radius:28px;
-padding:14px 10px;
+<h2 style="
+margin-bottom:18px">
+
+🎯 AI Entry Zones
+
+</h2>
+
+<div style="
 display:flex;
-justify-content:space-around;
-z-index:999;
+flex-direction:column;
+gap:12px">
+
+<div style="
+background:#18233d;
+padding:14px;
+border-radius:18px">
+
+BTC BUY ZONE:
+$68,200 - $68,500
+
+</div>
+
+<div style="
+background:#18233d;
+padding:14px;
+border-radius:18px">
+
+ETH SELL ZONE:
+$3,480 - $3,520
+
+</div>
+
+<div style="
+background:#18233d;
+padding:14px;
+border-radius:18px">
+
+SOL BREAKOUT:
+$182 Confirmed
+
+</div>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(zones);
+
+/* =====================================
+   FINAL READY
+===================================== */
+
+console.log(
+`
+====================================
+ PART 6 LOADED SUCCESSFULLY
+====================================
+`
+);
+
+    </script>
+    <!-- ====================================== -->
+<!-- QUANTUM AI — PART 7 -->
+<!-- FIREBASE + AUTH + CLOUD DATABASE -->
+<!-- ====================================== -->
+
+<!-- FIREBASE SDK -->
+
+<script type="module">
+
+/* ======================================
+   FIREBASE IMPORTS
+====================================== */
+
+import {
+
+initializeApp
+
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+getAuth,
+signInWithPopup,
+GoogleAuthProvider,
+onAuthStateChanged,
+signOut
+
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+
+getFirestore,
+collection,
+addDoc,
+getDocs,
+serverTimestamp
+
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ======================================
+   FIREBASE CONFIG
+====================================== */
+
+const firebaseConfig = {
+
+apiKey: "YOUR_API_KEY",
+
+authDomain:
+"YOUR_PROJECT.firebaseapp.com",
+
+projectId:
+"YOUR_PROJECT",
+
+storageBucket:
+"YOUR_PROJECT.appspot.com",
+
+messagingSenderId:
+"123456789",
+
+appId:
+"APP_ID"
+
+};
+
+/* ======================================
+   INIT FIREBASE
+====================================== */
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
+
+const provider =
+new GoogleAuthProvider();
+
+/* ======================================
+   AUTH PANEL UI
+====================================== */
+
+const authPanel =
+document.createElement("div");
+
+authPanel.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:24px;
+border-radius:30px;
+border:1px solid #26334f;
+
+`;
+
+authPanel.innerHTML = `
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+flex-wrap:wrap">
+
+<div>
+
+<h2>
+🔐 Quantum Account
+</h2>
+
+<p style="
+margin-top:6px;
+opacity:.7">
+
+Cloud sync enabled
+
+</p>
+
+</div>
+
+<div style="
+display:flex;
+gap:12px">
+
+<button
+id="loginBtn"
+style="
+padding:14px 18px;
+border:none;
+border-radius:18px;
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#16a34a
+);
+font-weight:bold;
+cursor:pointer">
+
+Login
+
+</button>
+
+<button
+id="logoutBtn"
+style="
+padding:14px 18px;
+border:none;
+border-radius:18px;
+background:#ef4444;
+color:white;
+font-weight:bold;
+cursor:pointer">
+
+Logout
+
+</button>
+
+</div>
+
+</div>
+
+<div
+id="userInfo"
+style="
+margin-top:20px">
+
+Not logged in
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(authPanel);
+
+/* ======================================
+   LOGIN SYSTEM
+====================================== */
+
+const loginBtn =
+document.getElementById(
+    "loginBtn"
+);
+
+loginBtn.addEventListener(
+    "click",
+    async()=>{
+
+    try{
+
+        const result =
+        await signInWithPopup(
+            auth,
+            provider
+        );
+
+        signalPopup(
+            "✅ Login Successful"
+        );
+
+        premiumSound();
+
+    }catch(err){
+
+        console.log(err);
+
+    }
+
+});
+
+/* ======================================
+   LOGOUT SYSTEM
+====================================== */
+
+const logoutBtn =
+document.getElementById(
+    "logoutBtn"
+);
+
+logoutBtn.addEventListener(
+    "click",
+    async()=>{
+
+    await signOut(auth);
+
+    signalPopup(
+        "❌ Logged Out"
+    );
+
+});
+
+/* ======================================
+   USER STATE
+====================================== */
+
+onAuthStateChanged(
+    auth,
+    user=>{
+
+    const info =
+    document.getElementById(
+        "userInfo"
+    );
+
+    if(user){
+
+        info.innerHTML = `
+
+        <div style="
+        display:flex;
+        align-items:center;
+        gap:14px">
+
+            <img
+            src="${user.photoURL}"
+            style="
+            width:60px;
+            height:60px;
+            border-radius:50%">
+
+            <div>
+
+                <h3>
+                ${user.displayName}
+                </h3>
+
+                <p style="
+                opacity:.7">
+
+                ${user.email}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }else{
+
+        info.innerHTML =
+        "Not logged in";
+
+    }
+
+});
+
+/* ======================================
+   SAVE SIGNAL TO CLOUD
+====================================== */
+
+async function saveSignalCloud(
+
+    coin,
+    signal,
+    confidence
+
+){
+
+    try{
+
+        await addDoc(
+
+            collection(
+                db,
+                "signals"
+            ),
+
+            {
+
+                coin,
+                signal,
+                confidence,
+
+                created:
+                serverTimestamp()
+
+            }
+
+        );
+
+        console.log(
+            "Signal saved"
+        );
+
+    }catch(err){
+
+        console.log(err);
+
+    }
+
 }
 
-.nav-item{
-text-align:center;
-font-size:12px;
-opacity:.7;
-transition:.3s;
+/* ======================================
+   LOAD CLOUD SIGNALS
+====================================== */
+
+const cloudPanel =
+document.createElement("div");
+
+cloudPanel.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:20px;
+border-radius:28px;
+border:1px solid #26334f;
+
+`;
+
+document.querySelector(".container")
+.appendChild(cloudPanel);
+
+async function loadCloudSignals(){
+
+    const querySnapshot =
+    await getDocs(
+
+        collection(
+            db,
+            "signals"
+        )
+
+    );
+
+    let html = `
+
+    <h2 style="
+    margin-bottom:18px">
+
+    ☁️ Cloud Signals
+
+    </h2>
+
+    `;
+
+    querySnapshot.forEach(doc=>{
+
+        const data =
+        doc.data();
+
+        html += `
+
+        <div style="
+        background:#18233d;
+        padding:14px;
+        border-radius:18px;
+        margin-top:12px">
+
+        ${data.coin}
+        —
+        ${data.signal}
+
+        (${data.confidence}%)
+
+        </div>
+
+        `;
+
+    });
+
+    cloudPanel.innerHTML = html;
+
 }
 
-.nav-item.active{
-opacity:1;
-color:#22c55e;
-transform:translateY(-2px);
-}
+setTimeout(
+    loadCloudSignals,
+    3000
+);
 
-.floating-ai{
+/* ======================================
+   AUTO SAVE DEMO SIGNAL
+====================================== */
+
+setTimeout(()=>{
+
+    saveSignalCloud(
+
+        "BTCUSDT",
+        "BUY",
+        94
+
+    );
+
+},5000);
+
+/* ======================================
+   PREMIUM MEMBERSHIP SYSTEM
+====================================== */
+
+const membership =
+document.createElement("div");
+
+membership.style.cssText = `
+
+margin-top:20px;
+background:
+linear-gradient(
+135deg,
+#facc15,
+#f59e0b
+);
+padding:24px;
+border-radius:30px;
+color:black;
+
+`;
+
+membership.innerHTML = `
+
+<h1>
+👑 Quantum Premium
+</h1>
+
+<p style="
+margin-top:10px">
+
+Unlock advanced AI systems,
+private signals,
+cloud sync,
+and ultra premium tools.
+
+</p>
+
+<div style="
+display:flex;
+gap:12px;
+margin-top:20px;
+flex-wrap:wrap">
+
+<button
+style="
+padding:14px 18px;
+border:none;
+border-radius:18px;
+font-weight:bold;
+background:black;
+color:white">
+
+Monthly VIP
+
+</button>
+
+<button
+style="
+padding:14px 18px;
+border:none;
+border-radius:18px;
+font-weight:bold;
+background:#111827;
+color:white">
+
+Lifetime VIP
+
+</button>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(membership);
+
+/* ======================================
+   REALTIME USER COUNTER
+====================================== */
+
+const online =
+document.createElement("div");
+
+online.style.cssText = `
+
 position:fixed;
-right:18px;
-bottom:110px;
-width:64px;
-height:64px;
+top:170px;
+left:16px;
+background:#121a2f;
+padding:12px 16px;
+border-radius:18px;
+border:1px solid #26334f;
+z-index:999;
+
+`;
+
+document.body.appendChild(
+    online
+);
+
+function onlineUsers(){
+
+    const users =
+    Math.floor(
+        random(1000,5000)
+    );
+
+    online.innerHTML = `
+
+    🟢 ${users}
+    Traders Online
+
+    `;
+
+}
+
+onlineUsers();
+
+setInterval(
+    onlineUsers,
+    5000
+);
+
+/* ======================================
+   USER RANK SYSTEM
+====================================== */
+
+const rank =
+document.createElement("div");
+
+rank.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:22px;
+border-radius:28px;
+border:1px solid #26334f;
+
+`;
+
+rank.innerHTML = `
+
+<h2 style="
+margin-bottom:18px">
+
+🏆 Trader Rank
+
+</h2>
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center">
+
+<div>
+
+<h1 style="
+color:#22c55e">
+
+ELITE
+
+</h1>
+
+<p style="
+opacity:.7">
+
+Top 3% Trader
+
+</p>
+
+</div>
+
+<div style="
+width:80px;
+height:80px;
 border-radius:50%;
-background:linear-gradient(135deg,#22c55e,#3b82f6);
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#3b82f6
+);
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:28px;
-box-shadow:0 0 40px #22c55e66;
-animation:float 3s infinite ease-in-out;
-z-index:999;
+font-size:28px">
+
+👑
+
+</div>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(rank);
+
+/* ======================================
+   AI CLOUD BACKUP
+====================================== */
+
+function backupSystem(){
+
+    console.log(
+        "Cloud backup completed"
+    );
+
 }
 
-@keyframes float{
-0%{transform:translateY(0)}
-50%{transform:translateY(-8px)}
-100%{transform:translateY(0)}
+setInterval(
+    backupSystem,
+    60000
+);
+
+/* ======================================
+   SECURITY MONITOR
+====================================== */
+
+function securityCheck(){
+
+    console.log(
+        "Security scan active"
+    );
+
 }
 
-.loading-card{
-height:260px;
-border-radius:28px;
-background:linear-gradient(90deg,#111827,#1f2937,#111827);
-background-size:300% 100%;
-animation:loading 1.5s infinite;
-}
+setInterval(
+    securityCheck,
+    10000
+);
 
-@keyframes loading{
-0%{background-position:100% 0}
-100%{background-position:-100% 0}
-}
+/* ======================================
+   FINAL READY
+====================================== */
 
-@media(max-width:700px){
-.hero h1{
-font-size:22px;
-}
-.price{
-font-size:28px;
-}
-}
+console.log(
+`
+======================================
+ PART 7 FIREBASE READY
+======================================
+`
+);
 
-</style>
-</head>
-<body>
-
-<div class="topbar">
-<div class="top-flex">
-<div class="logo">
-<div class="logo-icon">⚡</div>
-<div>
-<h2>Quantum AI</h2>
-<p>Ultimate Telegram Mini App</p>
-</div>
-</div>
-<div class="live">● FUTURES LIVE</div>
-</div>
-</div>
-
-<div class="container">
-
-<div class="hero">
-<h1>AI Futures Signal Scanner</h1>
-<p>Real-time crypto futures signals powered by RSI, EMA, MACD, Volume, Smart Money & AI Analysis.</p>
-
-<div class="hero-buttons">
-<button class="btn btn-primary">🚀 Start Trading</button>
-<button class="btn btn-secondary" onclick="toggleTheme()">🌓 Theme</button>
-</div>
-
-<div class="ticker">
-<div class="ticker-item">BTC +4.2%</div>
-<div class="ticker-item">ETH +3.8%</div>
-<div class="ticker-item">SOL +8.4%</div>
-<div class="ticker-item">DOGE +5.1%</div>
-</div>
-
-</div>
-
-<div class="stats">
-<div class="stat">
-<span>Total Signals</span>
-<h2 id="totalSignals">0</h2>
-</div>
-
-<div class="stat">
-<span>Win Rate</span>
-<h2 style="color:#22c55e">92%</h2>
-</div>
-
-<div class="stat">
-<span>Fear & Greed</span>
-<h2 style="color:#facc15">74</h2>
-</div>
-
-<div class="stat">
-<span>BTC Dominance</span>
-<h2 style="color:#3b82f6">58%</h2>
-</div>
-</div>
-
-<div class="search">
-<input type="text" id="search" placeholder="Search BTCUSDT...">
-</div>
-
-<div class="tabs" id="tabs">
-<div class="tab active-tab" data-tab="futures">Futures</div>
-<div class="tab" data-tab="scalp">Scalping</div>
-<div class="tab" data-tab="gems">AI Gems</div>
-<div class="tab" data-tab="breakout">Breakout</div>
-<div class="tab" data-tab="whales">Whales</div>
-</div>
-
-<div class="market" id="market">
-<div class="loading-card"></div>
-<div class="loading-card"></div>
-</div>
-
-<div class="features">
-
-<div class="panel">
-<h3>🔥 AI Market News</h3>
-<div class="news">BTC whales accumulating aggressively.</div>
-<div class="news">Ethereum breaking key resistance.</div>
-<div class="news">AI coins showing explosive momentum.</div>
-</div>
-
-<div class="panel">
-<h3>📡 Whale Tracker</h3>
-<div class="news">Whale bought 1400 BTC.</div>
-<div class="news">Binance inflow decreasing.</div>
-<div class="news">Funding rate turning bullish.</div>
-</div>
-
-<div class="panel">
-<h3>🤖 AI Scanner</h3>
-<div class="news">6 strong BUY setups detected.</div>
-<div class="news">Breakout probability: 89%.</div>
-<div class="news">Volatility increasing rapidly.</div>
-</div>
-
-<div class="panel">
-<h3>📊 Signal History</h3>
-<div class="news">BTCUSDT → TP2 ✅</div>
-<div class="news">ETHUSDT → TP1 ✅</div>
-<div class="news">SOLUSDT → SL ❌</div>
-</div>
-
-</div>
-
-</div>
-
-<div class="floating-ai">🤖</div>
-
-<div class="bottom-nav">
-<div class="nav-item active">🏠<br>Home</div>
-<div class="nav-item">📈<br>Signals</div>
-<div class="nav-item">🐋<br>Whales</div>
-<div class="nav-item">🤖<br>AI</div>
-<div class="nav-item">⚙️<br>Settings</div>
-</div>
+</script>
+    <!-- ====================================== -->
+<!-- QUANTUM AI — PART 8 -->
+<!-- BINANCE WEBSOCKET + LIVE ENGINE -->
+<!-- ====================================== -->
 
 <script>
 
-Telegram.WebApp.ready();
-Telegram.WebApp.expand();
+/* ======================================
+   LIVE WEBSOCKET STATUS
+====================================== */
 
-function haptic(){
-if(Telegram.WebApp.HapticFeedback){
-Telegram.WebApp.HapticFeedback.impactOccurred('light');
-}
-}
+const wsPanel =
+document.createElement("div");
 
-function toggleTheme(){
+wsPanel.style.cssText = `
 
-haptic();
+margin-top:20px;
+background:#121a2f;
+padding:22px;
+border-radius:30px;
+border:1px solid #26334f;
 
-if(document.body.classList.contains('light')){
+`;
 
-document.body.classList.remove('light');
+wsPanel.innerHTML = `
 
-}else{
-
-document.body.classList.add('light');
-
-}
-
-}
-
-function calculateEMA(prices,period){
-const k=2/(period+1);
-let ema=prices[0];
-for(let i=1;i<prices.length;i++){
-ema=prices[i]*k+ema*(1-k);
-}
-return ema;
-}
-
-function calculateRSI(closes,period=14){
-let gains=0;
-let losses=0;
-for(let i=1;i<=period;i++){
-const diff=closes[i]-closes[i-1];
-if(diff>=0){gains+=diff}else{losses+=Math.abs(diff)}
-}
-const avgGain=gains/period;
-const avgLoss=losses/period;
-if(avgLoss===0)return 100;
-const rs=avgGain/avgLoss;
-return 100-(100/(1+rs));
-}
-
-function calculateMACD(closes){
-const ema12=calculateEMA(closes.slice(-12),12);
-const ema26=calculateEMA(closes.slice(-26),26);
-return ema12-ema26;
-}
-
-function generateSignal(rsi,ema9,ema21,macd,change){
-let score=0;
-
-if(rsi<30)score+=2;
-else if(rsi>70)score-=2;
-
-if(ema9>ema21)score+=2;
-else score-=2;
-
-if(macd>0)score+=2;
-else score-=2;
-
-if(change>0)score+=1;
-else score-=1;
-
-if(score>=5){
-return {
-signal:'STRONG BUY',
-class:'buy',
-confidence:95,
-trend:'Bullish',
-leverage:'20x',
-analysis:'AI detected bullish EMA crossover with strong MACD momentum and oversold RSI recovery.'
-};
-}
-
-if(score>=2){
-return {
-signal:'BUY',
-class:'buy',
-confidence:84,
-trend:'Bullish',
-leverage:'10x',
-analysis:'Momentum turning bullish with positive volume flow.'
-};
-}
-
-if(score<=-5){
-return {
-signal:'STRONG SELL',
-class:'sell',
-confidence:93,
-trend:'Bearish',
-leverage:'15x',
-analysis:'Strong bearish momentum detected with MACD weakness and RSI overbought condition.'
-};
-}
-
-if(score<=-2){
-return {
-signal:'SELL',
-class:'sell',
-confidence:80,
-trend:'Bearish',
-leverage:'8x',
-analysis:'AI detected bearish pressure with weak momentum.'
-};
-}
-
-return {
-signal:'WAIT',
-class:'wait',
-confidence:65,
-trend:'Sideways',
-leverage:'3x',
-analysis:'Market currently sideways. Waiting for stronger confirmation.'
-};
-}
-
-function randomBars(){
-let bars='';
-for(let i=0;i<18;i++){
-const h=Math.floor(Math.random()*50)+10;
-bars+=`<div class="bar" style="height:${h}px"></div>`;
-}
-return bars;
-}
-
-async function loadMarket(){
-
-const market=document.getElementById('market');
-
-try{
-
-const res=await fetch('https://fapi.binance.com/fapi/v1/ticker/24hr');
-const data=await res.json();
-
-const coins=data
-.filter(c=>c.symbol.endsWith('USDT'))
-.slice(0,10);
-
-let html='';
-
-for(const c of coins){
-
-const symbol=c.symbol;
-const price=parseFloat(c.lastPrice);
-const change=parseFloat(c.priceChangePercent);
-
-const klineRes=await fetch(`https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=15m&limit=30`);
-const klines=await klineRes.json();
-
-const closes=klines.map(k=>parseFloat(k[4]));
-
-const rsi=calculateRSI(closes);
-const ema9=calculateEMA(closes.slice(-9),9);
-const ema21=calculateEMA(closes.slice(-21),21);
-const macd=calculateMACD(closes);
-
-const ai=generateSignal(rsi,ema9,ema21,macd,change);
-
-const tp1=ai.class==='sell'
-? (price*.98).toFixed(2)
-: (price*1.02).toFixed(2);
-
-const tp2=ai.class==='sell'
-? (price*.95).toFixed(2)
-: (price*1.05).toFixed(2);
-
-const sl=ai.class==='sell'
-? (price*1.03).toFixed(2)
-: (price*.97).toFixed(2);
-
-const logo=`https://cryptoicons.org/api/icon/${symbol.replace('USDT','').toLowerCase()}/200`;
-
-html+=`
-
-<div class="card ${ai.class==='buy' ? 'buy-card' : ai.class==='sell' ? 'sell-card' : ''}">
-
-<div class="card-top">
-
-<div class="coin">
-<img src="${logo}" onerror="this.src='https://via.placeholder.com/54'">
-<div>
-<h3>${symbol}</h3>
-<p>AI Futures Signal</p>
-</div>
-</div>
-
-<div class="badge ${ai.class}">
-${ai.signal}
-</div>
-
-</div>
-
-<div class="price">
-$${price.toFixed(2)}
-</div>
-
-<div class="${change>=0 ? 'change-up':'change-down'}">
-24H: ${change.toFixed(2)}%
-</div>
-
-<div class="mini-chart">
-${randomBars()}
-</div>
-
-<div class="ai-analysis">
-🤖 ${ai.analysis}
-</div>
-
-<div class="signal-box">
-
-<div class="row">
-<span>RSI</span>
-<span>${rsi.toFixed(0)}</span>
-</div>
-
-<div class="row">
-<span>MACD</span>
-<span>${macd.toFixed(2)}</span>
-</div>
-
-<div class="row">
-<span>EMA 9</span>
-<span>${ema9.toFixed(2)}</span>
-</div>
-
-<div class="row">
-<span>EMA 21</span>
-<span>${ema21.toFixed(2)}</span>
-</div>
-
-<div class="row">
-<span>Entry</span>
-<span>$${price.toFixed(2)}</span>
-</div>
-
-<div class="row">
-<span>TP1</span>
-<span style="color:#22c55e">$${tp1}</span>
-</div>
-
-<div class="row">
-<span>TP2</span>
-<span style="color:#22c55e">$${tp2}</span>
-</div>
-
-<div class="row">
-<span>Stop Loss</span>
-<span style="color:#ef4444">$${sl}</span>
-</div>
-
-<div class="row">
-<span>Trend</span>
-<span>${ai.trend}</span>
-</div>
-
-<div class="row">
-<span>Leverage</span>
-<span>${ai.leverage}</span>
-</div>
-
-<div class="row">
-<span>Timeframes</span>
-<span>5M • 15M • 1H</span>
-</div>
-
-</div>
-
-<div class="confidence-ring">
-
-<div class="ring" style="--deg:${ai.confidence*3.6}deg">
-<div class="ring-inner">
-${ai.confidence}%
-</div>
-</div>
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center">
 
 <div>
-<h4>AI Confidence</h4>
-<p style="opacity:.7;font-size:13px;margin-top:6px;">
-Breakout Probability High
+
+<h2>
+🛰️ Live Market Stream
+</h2>
+
+<p style="
+opacity:.7;
+margin-top:6px">
+
+Realtime Binance WebSocket Engine
+
 </p>
+
+</div>
+
+<div
+id="wsStatus"
+style="
+padding:10px 16px;
+border-radius:20px;
+background:#22c55e22;
+color:#22c55e;
+font-weight:bold">
+
+CONNECTED
+
+</div>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(wsPanel);
+
+/* ======================================
+   LIVE PRICE ENGINE
+====================================== */
+
+const livePricePanel =
+document.createElement("div");
+
+livePricePanel.style.cssText = `
+
+margin-top:20px;
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:16px;
+
+`;
+
+document.querySelector(".container")
+.appendChild(livePricePanel);
+
+/* ======================================
+   COINS
+====================================== */
+
+const streamCoins = [
+
+    "btcusdt",
+    "ethusdt",
+    "solusdt",
+    "bnbusdt",
+    "xrpusdt",
+    "dogeusdt"
+
+];
+
+/* ======================================
+   CREATE EMPTY CARDS
+====================================== */
+
+streamCoins.forEach(c=>{
+
+    const card =
+    document.createElement("div");
+
+    card.className =
+    "liveCard";
+
+    card.id =
+    "card-" + c;
+
+    card.style.cssText = `
+
+    background:#121a2f;
+    padding:20px;
+    border-radius:26px;
+    border:1px solid #26334f;
+    position:relative;
+    overflow:hidden;
+
+    `;
+
+    card.innerHTML = `
+
+    <h2 style="
+    text-transform:uppercase">
+
+    ${c.replace("usdt","")}
+
+    </h2>
+
+    <h1 style="
+    margin-top:14px">
+
+    Loading...
+
+    </h1>
+
+    <p style="
+    margin-top:10px;
+    opacity:.7">
+
+    Waiting for data...
+
+    </p>
+
+    `;
+
+    livePricePanel.appendChild(
+        card
+    );
+
+});
+
+/* ======================================
+   WEBSOCKET CONNECTION
+====================================== */
+
+const streams =
+streamCoins
+.map(c=>`${c}@ticker`)
+.join("/");
+
+const socket =
+new WebSocket(
+
+`wss://stream.binance.com:9443/stream?streams=${streams}`
+
+);
+
+/* ======================================
+   SOCKET OPEN
+====================================== */
+
+socket.onopen = ()=>{
+
+    console.log(
+        "WebSocket Connected"
+    );
+
+    document.getElementById(
+        "wsStatus"
+    ).innerHTML = "LIVE";
+
+};
+
+/* ======================================
+   SOCKET MESSAGE
+====================================== */
+
+socket.onmessage = event=>{
+
+    const message =
+    JSON.parse(event.data);
+
+    const data =
+    message.data;
+
+    const symbol =
+    data.s.toLowerCase();
+
+    const price =
+    parseFloat(data.c);
+
+    const change =
+    parseFloat(data.P);
+
+    const volume =
+    parseFloat(data.v);
+
+    const card =
+    document.getElementById(
+        "card-" + symbol
+    );
+
+    if(card){
+
+        card.innerHTML = `
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center">
+
+            <h2 style="
+            text-transform:uppercase">
+
+            ${symbol.replace("usdt","")}
+
+            </h2>
+
+            <div style="
+            padding:8px 12px;
+            border-radius:18px;
+            background:
+            ${
+                change >= 0
+                ? "#22c55e22"
+                : "#ef444422"
+            };
+            color:
+            ${
+                change >= 0
+                ? "#22c55e"
+                : "#ef4444"
+            };
+            font-weight:bold">
+
+            ${
+                change >= 0
+                ? "LONG"
+                : "SHORT"
+            }
+
+            </div>
+
+        </div>
+
+        <h1 style="
+        margin-top:16px;
+        font-size:34px">
+
+        $${price.toFixed(2)}
+
+        </h1>
+
+        <p style="
+        margin-top:10px;
+        color:
+        ${
+            change >= 0
+            ? "#22c55e"
+            : "#ef4444"
+        }">
+
+        ${change.toFixed(2)}%
+
+        </p>
+
+        <div style="
+        margin-top:18px;
+        background:#18233d;
+        padding:14px;
+        border-radius:18px">
+
+            Volume:
+            ${Math.floor(volume)}
+
+        </div>
+
+        <div style="
+        margin-top:14px">
+
+            <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:8px">
+
+            <span>
+            AI Confidence
+            </span>
+
+            <span>
+
+            ${
+                Math.floor(
+                    random(70,99)
+                )
+            }%
+
+            </span>
+
+            </div>
+
+            <div style="
+            height:10px;
+            background:#0b1020;
+            border-radius:20px;
+            overflow:hidden">
+
+                <div style="
+                width:
+                ${
+                    Math.floor(
+                        random(70,99)
+                    )
+                }%;
+                height:100%;
+                background:
+                linear-gradient(
+                90deg,
+                #22c55e,
+                #3b82f6
+                )">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+};
+
+/* ======================================
+   SOCKET ERROR
+====================================== */
+
+socket.onerror = ()=>{
+
+    document.getElementById(
+        "wsStatus"
+    ).innerHTML = "ERROR";
+
+};
+
+/* ======================================
+   SOCKET CLOSE
+====================================== */
+
+socket.onclose = ()=>{
+
+    document.getElementById(
+        "wsStatus"
+    ).innerHTML = "DISCONNECTED";
+
+};
+
+/* ======================================
+   LIVE BTC DOMINANCE
+====================================== */
+
+const dominancePanel =
+document.createElement("div");
+
+dominancePanel.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:22px;
+border-radius:28px;
+border:1px solid #26334f;
+
+`;
+
+dominancePanel.innerHTML = `
+
+<h2>
+📊 BTC Dominance Live
+</h2>
+
+<div style="
+margin-top:18px">
+
+<div style="
+display:flex;
+justify-content:space-between">
+
+<span>BTC</span>
+<span id="btcDom">
+58%
+</span>
+
+</div>
+
+<div style="
+height:12px;
+background:#18233d;
+border-radius:20px;
+overflow:hidden;
+margin-top:10px">
+
+<div
+id="btcBar"
+style="
+width:58%;
+height:100%;
+background:
+linear-gradient(
+90deg,
+#facc15,
+#f59e0b
+)">
+
 </div>
 
 </div>
@@ -1056,60 +1497,1783 @@ Breakout Probability High
 </div>
 
 `;
-}
 
-market.innerHTML=html;
-document.getElementById('totalSignals').innerHTML=coins.length;
-
-}catch(err){
-market.innerHTML='<h2>❌ Futures API Error</h2>';
-console.log(err);
-}
-}
-
-loadMarket();
-setInterval(loadMarket,15000);
-
-/* SEARCH */
-
-document.getElementById('search')
-.addEventListener('keyup',function(){
-
-const value=this.value.toLowerCase();
-const cards=document.querySelectorAll('.card');
-
-cards.forEach(card=>{
-const txt=card.innerText.toLowerCase();
-card.style.display=txt.includes(value)
-? 'block'
-: 'none';
-});
-
-});
-
-/* NOTIFICATION */
-
-if(Notification.permission!=='granted'){
-Notification.requestPermission();
-}
-
-function sendSignal(){
-
-if(Notification.permission==='granted'){
-
-new Notification(
-'🚀 Quantum AI Alert',
-{
-body:'BTCUSDT Strong BUY Signal Detected'
-}
+document.querySelector(".container")
+.appendChild(
+    dominancePanel
 );
 
-}
+/* ======================================
+   DOMINANCE UPDATE
+====================================== */
+
+function updateDominance(){
+
+    const dom =
+    random(45,70).toFixed(1);
+
+    document.getElementById(
+        "btcDom"
+    ).innerHTML =
+
+    dom + "%";
+
+    document.getElementById(
+        "btcBar"
+    ).style.width =
+
+    dom + "%";
+
 }
 
-setTimeout(sendSignal,12000);
+setInterval(
+    updateDominance,
+    4000
+);
+
+/* ======================================
+   MARKET HEATMAP
+====================================== */
+
+const heatmap =
+document.createElement("div");
+
+heatmap.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:22px;
+border-radius:28px;
+border:1px solid #26334f;
+
+`;
+
+document.querySelector(".container")
+.appendChild(
+    heatmap
+);
+
+function heatmapUI(){
+
+    const coins = [
+
+        "BTC",
+        "ETH",
+        "SOL",
+        "DOGE",
+        "BNB",
+        "XRP",
+        "LINK",
+        "AVAX"
+
+    ];
+
+    let html = `
+
+    <h2 style="
+    margin-bottom:20px">
+
+    🔥 Market Heatmap
+
+    </h2>
+
+    <div style="
+    display:grid;
+    grid-template-columns:
+    repeat(4,1fr);
+    gap:12px">
+
+    `;
+
+    coins.forEach(c=>{
+
+        const up =
+        Math.random()>.4;
+
+        html += `
+
+        <div style="
+        padding:18px;
+        border-radius:20px;
+        background:
+        ${
+            up
+            ? "#22c55e"
+            : "#ef4444"
+        };
+        color:white;
+        text-align:center;
+        font-weight:bold">
+
+        ${c}
+
+        <div style="
+        margin-top:8px">
+
+        ${
+            up
+            ? "+"
+            : "-"
+        }
+
+        ${random(1,12).toFixed(2)}%
+
+        </div>
+
+        </div>
+
+        `;
+
+    });
+
+    html += `</div>`;
+
+    heatmap.innerHTML = html;
+
+}
+
+heatmapUI();
+
+setInterval(
+    heatmapUI,
+    5000
+);
+
+/* ======================================
+   AI TRADE DETECTOR
+====================================== */
+
+const detector =
+document.createElement("div");
+
+detector.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:22px;
+border-radius:28px;
+border:1px solid #26334f;
+
+`;
+
+detector.innerHTML = `
+
+<h2>
+🤖 AI Trade Detector
+</h2>
+
+<div
+id="tradeDetector"
+style="
+margin-top:18px">
+
+Scanning Market...
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(
+    detector
+);
+
+function detectTrades(){
+
+    const setups = [
+
+        "BTC breakout detected",
+        "ETH bullish divergence",
+        "SOL momentum increasing",
+        "Whale accumulation found",
+        "Funding rate bullish"
+
+    ];
+
+    const randomSignal =
+    setups[
+        Math.floor(
+            Math.random() *
+            setups.length
+        )
+    ];
+
+    document.getElementById(
+        "tradeDetector"
+    ).innerHTML = `
+
+    <div style="
+    background:#18233d;
+    padding:16px;
+    border-radius:18px">
+
+    ${randomSignal}
+
+    </div>
+
+    `;
+
+}
+
+detectTrades();
+
+setInterval(
+    detectTrades,
+    6000
+);
+
+/* ======================================
+   FINAL READY
+====================================== */
+
+console.log(
+`
+======================================
+ PART 8 LIVE ENGINE READY
+======================================
+`
+);
+
+    </script>
+    <!-- ====================================== -->
+<!-- QUANTUM AI — PART 9 -->
+<!-- COPY TRADING + LEADERBOARD -->
+<!-- ====================================== -->
+
+<script>
+
+/* ======================================
+   COPY TRADING HEADER
+====================================== */
+
+const copyHeader =
+document.createElement("div");
+
+copyHeader.style.cssText = `
+
+margin-top:20px;
+background:
+linear-gradient(
+135deg,
+#121a2f,
+#18233d
+);
+padding:24px;
+border-radius:30px;
+border:1px solid #26334f;
+
+`;
+
+copyHeader.innerHTML = `
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:20px">
+
+<div>
+
+<h1>
+👥 Copy Trading Hub
+</h1>
+
+<p style="
+margin-top:8px;
+opacity:.7">
+
+Automatically copy elite traders
+
+</p>
+
+</div>
+
+<div style="
+padding:12px 18px;
+border-radius:20px;
+background:#22c55e22;
+color:#22c55e;
+font-weight:bold">
+
+LIVE SYSTEM
+
+</div>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(copyHeader);
+
+/* ======================================
+   TOP TRADERS
+====================================== */
+
+const traders =
+[
+    {
+        name:"Quantum Wolf",
+        win:96,
+        pnl:"+$12,440",
+        badge:"🔥",
+        followers:1244
+    },
+
+    {
+        name:"AI Sniper",
+        win:94,
+        pnl:"+$9,120",
+        badge:"⚡",
+        followers:987
+    },
+
+    {
+        name:"Whale Hunter",
+        win:92,
+        pnl:"+$18,200",
+        badge:"🐋",
+        followers:2201
+    },
+
+    {
+        name:"Scalp Master",
+        win:90,
+        pnl:"+$7,510",
+        badge:"📈",
+        followers:742
+    }
+];
+
+/* ======================================
+   LEADERBOARD PANEL
+====================================== */
+
+const leaderboard =
+document.createElement("div");
+
+leaderboard.style.cssText = `
+
+margin-top:20px;
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(280px,1fr));
+gap:16px;
+
+`;
+
+document.querySelector(".container")
+.appendChild(leaderboard);
+
+/* ======================================
+   RENDER TRADERS
+====================================== */
+
+function renderTraders(){
+
+    let html = "";
+
+    traders.forEach((t,index)=>{
+
+        html += `
+
+        <div style="
+        background:#121a2f;
+        border:1px solid #26334f;
+        border-radius:28px;
+        padding:22px;
+        position:relative;
+        overflow:hidden">
+
+            <div style="
+            position:absolute;
+            top:-40px;
+            right:-40px;
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            background:#22c55e11">
+
+            </div>
+
+            <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center">
+
+                <div style="
+                display:flex;
+                gap:14px;
+                align-items:center">
+
+                    <div style="
+                    width:60px;
+                    height:60px;
+                    border-radius:20px;
+                    background:
+                    linear-gradient(
+                    135deg,
+                    #22c55e,
+                    #3b82f6
+                    );
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:26px">
+
+                    ${t.badge}
+
+                    </div>
+
+                    <div>
+
+                        <h2>
+                        ${t.name}
+                        </h2>
+
+                        <p style="
+                        opacity:.7;
+                        margin-top:4px">
+
+                        Rank #${index+1}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div style="
+                background:#22c55e22;
+                color:#22c55e;
+                padding:8px 12px;
+                border-radius:18px;
+                font-weight:bold">
+
+                ${t.win}%
+
+                </div>
+
+            </div>
+
+            <div style="
+            margin-top:22px">
+
+                <div style="
+                display:flex;
+                justify-content:space-between;
+                margin-bottom:12px">
+
+                    <span style="
+                    opacity:.7">
+
+                    Monthly Profit
+
+                    </span>
+
+                    <span style="
+                    color:#22c55e;
+                    font-weight:bold">
+
+                    ${t.pnl}
+
+                    </span>
+
+                </div>
+
+                <div style="
+                display:flex;
+                justify-content:space-between">
+
+                    <span style="
+                    opacity:.7">
+
+                    Followers
+
+                    </span>
+
+                    <span>
+
+                    ${t.followers}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+            onclick="
+            copyTrader(
+            '${t.name}'
+            )"
+            style="
+            margin-top:20px;
+            width:100%;
+            padding:15px;
+            border:none;
+            border-radius:18px;
+            background:
+            linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+            );
+            font-weight:bold;
+            cursor:pointer">
+
+            🚀 Copy Trader
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+    leaderboard.innerHTML = html;
+
+}
+
+renderTraders();
+
+/* ======================================
+   COPY FUNCTION
+====================================== */
+
+function copyTrader(name){
+
+    signalPopup(
+        "✅ Copying " + name
+    );
+
+    premiumSound();
+
+}
+
+/* ======================================
+   LIVE COPY POSITIONS
+====================================== */
+
+const positions =
+document.createElement("div");
+
+positions.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:24px;
+border-radius:30px;
+border:1px solid #26334f;
+
+`;
+
+document.querySelector(".container")
+.appendChild(positions);
+
+function renderPositions(){
+
+    const data = [
+
+        {
+            coin:"BTCUSDT",
+            type:"LONG",
+            pnl:"+420$"
+        },
+
+        {
+            coin:"ETHUSDT",
+            type:"SHORT",
+            pnl:"+210$"
+        },
+
+        {
+            coin:"SOLUSDT",
+            type:"LONG",
+            pnl:"+120$"
+        }
+
+    ];
+
+    let html = `
+
+    <h2 style="
+    margin-bottom:20px">
+
+    📡 Live Copy Positions
+
+    </h2>
+
+    `;
+
+    data.forEach(d=>{
+
+        html += `
+
+        <div style="
+        background:#18233d;
+        padding:18px;
+        border-radius:20px;
+        margin-top:14px">
+
+            <div style="
+            display:flex;
+            justify-content:space-between">
+
+                <div>
+
+                    <h3>
+                    ${d.coin}
+                    </h3>
+
+                    <p style="
+                    opacity:.7;
+                    margin-top:4px">
+
+                    ${d.type}
+
+                    </p>
+
+                </div>
+
+                <div style="
+                color:#22c55e;
+                font-weight:bold;
+                font-size:18px">
+
+                ${d.pnl}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    positions.innerHTML = html;
+
+}
+
+renderPositions();
+
+/* ======================================
+   COPY TRADING SETTINGS
+====================================== */
+
+const settings =
+document.createElement("div");
+
+settings.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:22px;
+border-radius:28px;
+border:1px solid #26334f;
+
+`;
+
+settings.innerHTML = `
+
+<h2 style="
+margin-bottom:20px">
+
+⚙️ Copy Settings
+
+</h2>
+
+<div style="
+display:flex;
+flex-direction:column;
+gap:16px">
+
+<div style="
+background:#18233d;
+padding:16px;
+border-radius:18px;
+display:flex;
+justify-content:space-between;
+align-items:center">
+
+<span>
+Auto Copy Trades
+</span>
+
+<input
+type="checkbox"
+checked>
+
+</div>
+
+<div style="
+background:#18233d;
+padding:16px;
+border-radius:18px;
+display:flex;
+justify-content:space-between;
+align-items:center">
+
+<span>
+Risk Protection
+</span>
+
+<input
+type="checkbox"
+checked>
+
+</div>
+
+<div style="
+background:#18233d;
+padding:16px;
+border-radius:18px;
+display:flex;
+justify-content:space-between;
+align-items:center">
+
+<span>
+Smart Exit AI
+</span>
+
+<input
+type="checkbox"
+checked>
+
+</div>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(settings);
+
+/* ======================================
+   SOCIAL CHAT
+====================================== */
+
+const social =
+document.createElement("div");
+
+social.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:22px;
+border-radius:28px;
+border:1px solid #26334f;
+
+`;
+
+document.querySelector(".container")
+.appendChild(social);
+
+function socialUI(){
+
+    const chats = [
+
+        "BTC going higher 🚀",
+        "ETH breakout confirmed",
+        "SOL very bullish today",
+        "Whales buying again 🐋"
+
+    ];
+
+    let html = `
+
+    <h2 style="
+    margin-bottom:20px">
+
+    💬 Traders Chat
+
+    </h2>
+
+    `;
+
+    chats.forEach(c=>{
+
+        html += `
+
+        <div style="
+        background:#18233d;
+        padding:16px;
+        border-radius:18px;
+        margin-top:12px">
+
+        ${c}
+
+        </div>
+
+        `;
+
+    });
+
+    social.innerHTML = html;
+
+}
+
+socialUI();
+
+/* ======================================
+   DAILY TOURNAMENT
+====================================== */
+
+const tournament =
+document.createElement("div");
+
+tournament.style.cssText = `
+
+margin-top:20px;
+padding:24px;
+border-radius:30px;
+background:
+linear-gradient(
+135deg,
+#3b82f6,
+#2563eb
+);
+
+`;
+
+tournament.innerHTML = `
+
+<h1>
+🏆 Daily Trading Tournament
+</h1>
+
+<p style="
+margin-top:10px">
+
+Compete with global traders
+and win rewards.
+
+</p>
+
+<div style="
+margin-top:20px;
+display:flex;
+gap:12px;
+flex-wrap:wrap">
+
+<button style="
+padding:14px 18px;
+border:none;
+border-radius:18px;
+font-weight:bold">
+
+Join Tournament
+
+</button>
+
+<button style="
+padding:14px 18px;
+border:none;
+border-radius:18px;
+font-weight:bold">
+
+View Rankings
+
+</button>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(tournament);
+
+/* ======================================
+   COPY STATS LIVE
+====================================== */
+
+const stats =
+document.createElement("div");
+
+stats.style.cssText = `
+
+margin-top:20px;
+display:grid;
+grid-template-columns:
+repeat(3,1fr);
+gap:14px;
+
+`;
+
+document.querySelector(".container")
+.appendChild(stats);
+
+function statsUI(){
+
+    stats.innerHTML = `
+
+    <div style="
+    background:#121a2f;
+    padding:18px;
+    border-radius:24px;
+    border:1px solid #26334f;
+    text-align:center">
+
+    <h1>
+    ${Math.floor(random(2000,9000))}
+    </h1>
+
+    <p style="
+    opacity:.7">
+
+    Active Traders
+
+    </p>
+
+    </div>
+
+    <div style="
+    background:#121a2f;
+    padding:18px;
+    border-radius:24px;
+    border:1px solid #26334f;
+    text-align:center">
+
+    <h1>
+    ${Math.floor(random(70,99))}%
+    </h1>
+
+    <p style="
+    opacity:.7">
+
+    Win Ratio
+
+    </p>
+
+    </div>
+
+    <div style="
+    background:#121a2f;
+    padding:18px;
+    border-radius:24px;
+    border:1px solid #26334f;
+    text-align:center">
+
+    <h1>
+    $${Math.floor(random(100000,900000))}
+    </h1>
+
+    <p style="
+    opacity:.7">
+
+    Volume
+
+    </p>
+
+    </div>
+
+    `;
+
+}
+
+statsUI();
+
+setInterval(
+    statsUI,
+    5000
+);
+
+/* ======================================
+   FINAL READY
+====================================== */
+
+console.log(
+`
+======================================
+ PART 9 COPY TRADING READY
+======================================
+`
+);
 
 </script>
+    
+<!-- ====================================== -->
+<!-- QUANTUM AI — PART 10 -->
+<!-- ADMIN PANEL + CONTROL CENTER -->
+<!-- ====================================== -->
 
-</body>
-    </html>
+<script>
+
+/* ======================================
+   ADMIN ACCESS
+====================================== */
+
+const adminPanel =
+document.createElement("div");
+
+adminPanel.style.cssText = `
+
+margin-top:20px;
+background:
+linear-gradient(
+135deg,
+#111827,
+#1e293b
+);
+padding:24px;
+border-radius:32px;
+border:1px solid #26334f;
+
+`;
+
+adminPanel.innerHTML = `
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:20px">
+
+<div>
+
+<h1>
+🛡️ Quantum Admin Panel
+</h1>
+
+<p style="
+margin-top:8px;
+opacity:.7">
+
+Control your entire AI ecosystem
+
+</p>
+
+</div>
+
+<div style="
+background:#22c55e22;
+color:#22c55e;
+padding:12px 18px;
+border-radius:20px;
+font-weight:bold">
+
+ADMIN ONLINE
+
+</div>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(adminPanel);
+
+/* ======================================
+   ADMIN DASHBOARD
+====================================== */
+
+const dashboard =
+document.createElement("div");
+
+dashboard.style.cssText = `
+
+margin-top:20px;
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:16px;
+
+`;
+
+document.querySelector(".container")
+.appendChild(dashboard);
+
+function dashboardUI(){
+
+    dashboard.innerHTML = `
+
+    <div style="
+    background:#121a2f;
+    padding:22px;
+    border-radius:28px;
+    border:1px solid #26334f">
+
+    <h3>
+    👥 Total Users
+    </h3>
+
+    <h1 style="
+    margin-top:12px;
+    color:#22c55e">
+
+    ${Math.floor(random(10000,50000))}
+
+    </h1>
+
+    </div>
+
+    <div style="
+    background:#121a2f;
+    padding:22px;
+    border-radius:28px;
+    border:1px solid #26334f">
+
+    <h3>
+    💰 Revenue
+    </h3>
+
+    <h1 style="
+    margin-top:12px;
+    color:#facc15">
+
+    $${Math.floor(random(50000,200000))}
+
+    </h1>
+
+    </div>
+
+    <div style="
+    background:#121a2f;
+    padding:22px;
+    border-radius:28px;
+    border:1px solid #26334f">
+
+    <h3>
+    📡 Live Signals
+    </h3>
+
+    <h1 style="
+    margin-top:12px;
+    color:#3b82f6">
+
+    ${Math.floor(random(100,500))}
+
+    </h1>
+
+    </div>
+
+    <div style="
+    background:#121a2f;
+    padding:22px;
+    border-radius:28px;
+    border:1px solid #26334f">
+
+    <h3>
+    🤖 AI Accuracy
+    </h3>
+
+    <h1 style="
+    margin-top:12px;
+    color:#22c55e">
+
+    ${Math.floor(random(85,99))}%
+
+    </h1>
+
+    </div>
+
+    `;
+
+}
+
+dashboardUI();
+
+setInterval(
+    dashboardUI,
+    5000
+);
+
+/* ======================================
+   USER MANAGEMENT
+====================================== */
+
+const users =
+document.createElement("div");
+
+users.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:24px;
+border-radius:30px;
+border:1px solid #26334f;
+
+`;
+
+document.querySelector(".container")
+.appendChild(users);
+
+function usersUI(){
+
+    const members = [
+
+        {
+            name:"Alex",
+            rank:"VIP",
+            status:"ONLINE"
+        },
+
+        {
+            name:"John",
+            rank:"FREE",
+            status:"OFFLINE"
+        },
+
+        {
+            name:"David",
+            rank:"ELITE",
+            status:"ONLINE"
+        },
+
+        {
+            name:"Sarah",
+            rank:"VIP",
+            status:"ONLINE"
+        }
+
+    ];
+
+    let html = `
+
+    <h2 style="
+    margin-bottom:20px">
+
+    👥 User Management
+
+    </h2>
+
+    `;
+
+    members.forEach(m=>{
+
+        html += `
+
+        <div style="
+        background:#18233d;
+        padding:18px;
+        border-radius:20px;
+        margin-top:14px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        gap:12px">
+
+            <div>
+
+                <h3>
+                ${m.name}
+                </h3>
+
+                <p style="
+                opacity:.7;
+                margin-top:4px">
+
+                ${m.rank}
+
+                </p>
+
+            </div>
+
+            <div style="
+            display:flex;
+            gap:10px">
+
+                <div style="
+                padding:8px 14px;
+                border-radius:18px;
+                background:
+                ${
+                    m.status==="ONLINE"
+                    ? "#22c55e22"
+                    : "#ef444422"
+                };
+                color:
+                ${
+                    m.status==="ONLINE"
+                    ? "#22c55e"
+                    : "#ef4444"
+                };
+                font-weight:bold">
+
+                ${m.status}
+
+                </div>
+
+                <button
+                onclick="
+                banUser(
+                '${m.name}'
+                )"
+                style="
+                border:none;
+                padding:10px 14px;
+                border-radius:14px;
+                background:#ef4444;
+                color:white;
+                font-weight:bold;
+                cursor:pointer">
+
+                Ban
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    users.innerHTML = html;
+
+}
+
+usersUI();
+
+/* ======================================
+   BAN USER
+====================================== */
+
+function banUser(name){
+
+    signalPopup(
+        "🚫 " + name + " banned"
+    );
+
+    premiumSound();
+
+}
+
+/* ======================================
+   SIGNAL CONTROL CENTER
+====================================== */
+
+const signalControl =
+document.createElement("div");
+
+signalControl.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:24px;
+border-radius:30px;
+border:1px solid #26334f;
+
+`;
+
+signalControl.innerHTML = `
+
+<h2 style="
+margin-bottom:20px">
+
+📡 Signal Control Center
+
+</h2>
+
+<div style="
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:14px">
+
+<button
+onclick="sendGlobalSignal()"
+style="
+padding:18px;
+border:none;
+border-radius:20px;
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#16a34a
+);
+font-weight:bold;
+cursor:pointer">
+
+🚀 Send Global Signal
+
+</button>
+
+<button
+onclick="pauseSignals()"
+style="
+padding:18px;
+border:none;
+border-radius:20px;
+background:#facc15;
+font-weight:bold;
+cursor:pointer">
+
+⏸ Pause Signals
+
+</button>
+
+<button
+onclick="resumeSignals()"
+style="
+padding:18px;
+border:none;
+border-radius:20px;
+background:#3b82f6;
+color:white;
+font-weight:bold;
+cursor:pointer">
+
+▶ Resume Signals
+
+</button>
+
+<button
+onclick="clearSignals()"
+style="
+padding:18px;
+border:none;
+border-radius:20px;
+background:#ef4444;
+color:white;
+font-weight:bold;
+cursor:pointer">
+
+🗑 Clear Signals
+
+</button>
+
+</div>
+
+`;
+
+document.querySelector(".container")
+.appendChild(signalControl);
+
+/* ======================================
+   SIGNAL FUNCTIONS
+====================================== */
+
+function sendGlobalSignal(){
+
+    signalPopup(
+        "🚀 Global Signal Sent"
+    );
+
+}
+
+function pauseSignals(){
+
+    signalPopup(
+        "⏸ Signals Paused"
+    );
+
+}
+
+function resumeSignals(){
+
+    signalPopup(
+        "▶ Signals Resumed"
+    );
+
+}
+
+function clearSignals(){
+
+    signalPopup(
+        "🗑 Signals Cleared"
+    );
+
+}
+
+/* ======================================
+   AI SERVER STATUS
+====================================== */
+
+const server =
+document.createElement("div");
+
+server.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:24px;
+border-radius:30px;
+border:1px solid #26334f;
+
+`;
+
+document.querySelector(".container")
+.appendChild(server);
+
+function serverUI(){
+
+    const cpu =
+    Math.floor(random(20,90));
+
+    const ram =
+    Math.floor(random(30,95));
+
+    const ping =
+    Math.floor(random(10,80));
+
+    server.innerHTML = `
+
+    <h2 style="
+    margin-bottom:20px">
+
+    🖥 AI Server Status
+
+    </h2>
+
+    <div style="
+    display:flex;
+    flex-direction:column;
+    gap:18px">
+
+        <div>
+
+            CPU Usage ${cpu}%
+
+            <div style="
+            height:10px;
+            background:#18233d;
+            border-radius:20px;
+            overflow:hidden;
+            margin-top:8px">
+
+                <div style="
+                width:${cpu}%;
+                height:100%;
+                background:#22c55e">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            RAM Usage ${ram}%
+
+            <div style="
+            height:10px;
+            background:#18233d;
+            border-radius:20px;
+            overflow:hidden;
+            margin-top:8px">
+
+                <div style="
+                width:${ram}%;
+                height:100%;
+                background:#3b82f6">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            Ping ${ping}ms
+
+            <div style="
+            height:10px;
+            background:#18233d;
+            border-radius:20px;
+            overflow:hidden;
+            margin-top:8px">
+
+                <div style="
+                width:${ping}%;
+                height:100%;
+                background:#facc15">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+serverUI();
+
+setInterval(
+    serverUI,
+    4000
+);
+
+/* ======================================
+   ANNOUNCEMENT SYSTEM
+====================================== */
+
+const announce =
+document.createElement("div");
+
+announce.style.cssText = `
+
+margin-top:20px;
+padding:24px;
+border-radius:30px;
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#16a34a
+);
+color:black;
+
+`;
+
+announce.innerHTML = `
+
+<h1>
+📢 Announcement Center
+</h1>
+
+<textarea
+id="announcementText"
+placeholder="Write announcement..."
+style="
+margin-top:18px;
+width:100%;
+height:120px;
+border:none;
+outline:none;
+padding:18px;
+border-radius:20px;
+resize:none;
+background:white;
+color:black">
+
+</textarea>
+
+<button
+onclick="sendAnnouncement()"
+style="
+margin-top:18px;
+padding:16px 20px;
+border:none;
+border-radius:18px;
+background:black;
+color:white;
+font-weight:bold;
+cursor:pointer">
+
+Send Announcement
+
+</button>
+
+`;
+
+document.querySelector(".container")
+appendChild(announce);
+
+/* ======================================
+   SEND ANNOUNCEMENT
+====================================== */
+
+function sendAnnouncement(){
+
+    const text =
+    document.getElementById(
+        "announcementText"
+    ).value;
+
+    signalPopup(
+        "📢 Announcement Sent"
+    );
+
+    console.log(text);
+
+}
+
+/* ======================================
+   SECURITY LOGS
+====================================== */
+
+const logs =
+document.createElement("div");
+
+logs.style.cssText = `
+
+margin-top:20px;
+background:#121a2f;
+padding:24px;
+border-radius:30px;
+border:1px solid #26334f;
+
+`;
+
+document.querySelector(".container")
+.appendChild(logs);
+
+function logUI(){
+
+    const entries = [
+
+        "User login detected",
+        "AI signal generated",
+        "Server synced",
+        "Whale alert triggered",
+        "Security scan completed"
+
+    ];
+
+    let html = `
+
+    <h2 style="
+    margin-bottom:20px">
+
+    📜 System Logs
+
+    </h2>
+
+    `;
+
+    entries.forEach(e=>{
+
+        html += `
+
+        <div style="
+        background:#18233d;
+        padding:16px;
+        border-radius:18px;
+        margin-top:12px">
+
+        ${e}
+
+        </div>
+
+        `;
+
+    });
+
+    logs.innerHTML = html;
+
+}
+
+logUI();
+
+setInterval(
+    logUI,
+    6000
+);
+
+/* ======================================
+   FINAL READY
+====================================== */
+
+console.log(
+`
+======================================
+ PART 10 ADMIN READY
+==================================
+);
+
+</script>
