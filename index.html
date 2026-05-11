@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AI FUTURES SIGNAL BOT</title>
+<title>QUANTUM AI SIGNAL APP</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -16,46 +16,41 @@
     box-sizing:border-box;
 }
 
+:root{
+
+    --bg:#020617;
+    --card:#0f172a;
+    --card2:#111827;
+    --text:white;
+    --green:#22c55e;
+    --red:#ef4444;
+    --yellow:#facc15;
+    --blue:#3b82f6;
+}
+
 body{
     font-family:'Poppins',sans-serif;
-    background:#020617;
-    color:white;
+    background:var(--bg);
+    color:var(--text);
     overflow-x:hidden;
     transition:.4s;
 }
 
-/* THEMES */
+/* iOS Theme */
 
 body.ios{
-    background:#e5e7eb;
-    color:#111827;
+
+    --bg:#e5e7eb;
+    --card:rgba(255,255,255,.6);
+    --card2:rgba(255,255,255,.7);
+    --text:#111827;
 }
 
-body.ios .card,
-body.ios .topbar,
-body.ios .signal-box{
-    background:rgba(255,255,255,.6);
-    backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,.4);
-    color:#111827;
-}
-
-body.ios input{
-    background:white;
-    color:black;
-}
-
-body.ios .theme-btn{
-    color:black;
-}
-
-/* BACKGROUND */
-
-.bg-glow{
+.bg{
     position:fixed;
     width:500px;
     height:500px;
-    background:#22c55e33;
+    background:#22c55e22;
     filter:blur(140px);
     top:-200px;
     left:-200px;
@@ -65,186 +60,361 @@ body.ios .theme-btn{
 /* TOPBAR */
 
 .topbar{
-    position:sticky;
-    top:0;
-    z-index:100;
+
     display:flex;
     justify-content:space-between;
     align-items:center;
+
     padding:18px;
-    background:rgba(15,23,42,.8);
-    backdrop-filter:blur(12px);
+
+    position:sticky;
+    top:0;
+
+    z-index:100;
+
+    background:rgba(15,23,42,.7);
+
+    backdrop-filter:blur(20px);
+
     border-bottom:1px solid #1e293b;
 }
 
 .logo{
+
     font-size:22px;
     font-weight:700;
-    color:#22c55e;
+    color:var(--green);
 }
 
-.right{
+.actions{
     display:flex;
     gap:10px;
     align-items:center;
 }
 
 .live{
-    background:#16a34a;
+
+    background:var(--green);
+    color:black;
+
     padding:8px 14px;
+
     border-radius:30px;
+
     font-size:12px;
     font-weight:bold;
+
     animation:pulse 2s infinite;
 }
 
 @keyframes pulse{
+
     0%{opacity:1}
     50%{opacity:.5}
     100%{opacity:1}
 }
 
-.theme-btn{
+.btn{
+
     border:none;
+    background:var(--blue);
+
+    color:white;
+
     padding:10px 14px;
+
     border-radius:12px;
+
     cursor:pointer;
-    background:#22c55e;
-    color:black;
+
     font-weight:bold;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+
+    padding:18px;
+}
+
+/* STATS */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(160px,1fr));
+
+    gap:14px;
+}
+
+.stat{
+
+    background:var(--card);
+
+    padding:18px;
+
+    border-radius:24px;
+
+    border:1px solid #1f2937;
+
+    backdrop-filter:blur(20px);
+}
+
+.stat h4{
+
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.stat h2{
+
+    margin-top:10px;
 }
 
 /* SEARCH */
 
 .search{
-    padding:18px;
+
+    margin-top:18px;
 }
 
 .search input{
+
     width:100%;
+
     padding:16px;
+
     border:none;
-    border-radius:16px;
-    background:#0f172a;
-    color:white;
-    font-size:15px;
+
     outline:none;
+
+    border-radius:18px;
+
+    background:var(--card);
+
+    color:var(--text);
+
+    font-size:15px;
 }
 
 /* GRID */
 
 .grid{
+
+    margin-top:20px;
+
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(300px,1fr));
+
     gap:18px;
-    padding:18px;
 }
 
 /* CARD */
 
 .card{
-    background:linear-gradient(145deg,#111827,#1e293b);
+
+    background:var(--card);
+
     border:1px solid #1f2937;
-    border-radius:24px;
+
+    border-radius:28px;
+
     padding:20px;
-    transition:.3s;
+
     position:relative;
+
     overflow:hidden;
+
+    transition:.3s;
+
+    backdrop-filter:blur(20px);
 }
 
 .card:hover{
+
     transform:translateY(-5px);
-    border-color:#22c55e;
+
+    border-color:var(--green);
 }
 
 .card::before{
+
     content:"";
+
     position:absolute;
-    width:120px;
-    height:120px;
+
+    width:140px;
+    height:140px;
+
     background:#22c55e11;
+
     border-radius:50%;
-    top:-50px;
-    right:-50px;
+
+    top:-60px;
+    right:-60px;
 }
 
-/* TEXT */
-
 .coin{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.symbol{
+
     font-size:24px;
-    font-weight:700;
+    font-weight:bold;
+}
+
+.badge{
+
+    padding:6px 12px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+.buy{
+    background:#22c55e22;
+    color:var(--green);
+}
+
+.sell{
+    background:#ef444422;
+    color:var(--red);
+}
+
+.wait{
+    background:#facc1522;
+    color:var(--yellow);
 }
 
 .price{
-    margin-top:10px;
-    font-size:30px;
+
+    margin-top:18px;
+
+    font-size:34px;
+
     font-weight:bold;
 }
 
 .change-up{
-    color:#22c55e;
+    color:var(--green);
     margin-top:8px;
 }
 
 .change-down{
-    color:#ef4444;
+    color:var(--red);
     margin-top:8px;
 }
 
-/* SIGNAL */
+/* SIGNAL BOX */
 
-.signal-box{
+.signal{
+
     margin-top:18px;
-    background:#0f172a;
+
+    background:var(--card2);
+
     padding:16px;
-    border-radius:18px;
-}
 
-.buy{
-    color:#22c55e;
-    font-weight:bold;
-}
-
-.sell{
-    color:#ef4444;
-    font-weight:bold;
-}
-
-.wait{
-    color:#facc15;
-    font-weight:bold;
+    border-radius:20px;
 }
 
 .row{
+
     display:flex;
+
     justify-content:space-between;
+
     margin-top:10px;
+
+    font-size:14px;
 }
 
 /* AI BAR */
 
 .ai{
-    margin-top:16px;
+
+    margin-top:18px;
 }
 
 .progress{
-    height:10px;
-    background:#111827;
-    border-radius:30px;
-    overflow:hidden;
+
     margin-top:10px;
+
+    height:10px;
+
+    background:#111827;
+
+    border-radius:30px;
+
+    overflow:hidden;
 }
 
 .bar{
+
     height:100%;
-    background:linear-gradient(90deg,#22c55e,#3b82f6);
+
+    background:linear-gradient(
+    90deg,
+    #22c55e,
+    #3b82f6
+    );
+}
+
+/* FEATURES */
+
+.bottom{
+
+    margin-top:24px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(250px,1fr));
+
+    gap:18px;
+}
+
+.panel{
+
+    background:var(--card);
+
+    border-radius:24px;
+
+    padding:18px;
+
+    border:1px solid #1f2937;
+}
+
+.news{
+
+    margin-top:12px;
+
+    padding-bottom:12px;
+
+    border-bottom:1px solid #1f2937;
+
+    font-size:14px;
 }
 
 /* FOOTER */
 
 .footer{
-    text-align:center;
+
     padding:30px;
+
+    text-align:center;
+
     color:#64748b;
 }
 
@@ -257,7 +427,12 @@ body.ios .theme-btn{
 }
 
 .price{
-    font-size:24px;
+    font-size:28px;
+}
+
+.topbar{
+    flex-direction:column;
+    gap:12px;
 }
 
 }
@@ -267,41 +442,155 @@ body.ios .theme-btn{
 
 <body>
 
-<div class="bg-glow"></div>
+<div class="bg"></div>
 
 <div class="topbar">
 
     <div class="logo">
-        🤖 AI SIGNAL BOT
+        ⚡ QUANTUM AI SIGNAL
     </div>
 
-    <div class="right">
+    <div class="actions">
 
         <div class="live">
-            ● LIVE FUTURES
+            ● FUTURES LIVE
         </div>
 
-        <button class="theme-btn" onclick="toggleTheme()">
+        <button
+        class="btn"
+        onclick="toggleTheme()">
+
             🌓 Theme
+
         </button>
 
     </div>
 
 </div>
 
-<div class="search">
+<div class="dashboard">
 
-    <input
-    type="text"
-    placeholder="Search BTC, ETH..."
-    id="searchInput">
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <h4>Total Signals</h4>
+            <h2 id="signalsCount">
+                0
+            </h2>
+        </div>
+
+        <div class="stat">
+            <h4>Win Rate</h4>
+            <h2 style="color:#22c55e">
+                92%
+            </h2>
+        </div>
+
+        <div class="stat">
+            <h4>Fear & Greed</h4>
+            <h2 style="color:#facc15">
+                74
+            </h2>
+        </div>
+
+        <div class="stat">
+            <h4>Market Trend</h4>
+            <h2 style="color:#22c55e">
+                Bullish
+            </h2>
+        </div>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="search">
+
+        <input
+        type="text"
+        placeholder="Search BTCUSDT..."
+        id="search">
+
+    </div>
+
+    <!-- SIGNAL GRID -->
+
+    <div class="grid" id="market"></div>
+
+    <!-- EXTRA FEATURES -->
+
+    <div class="bottom">
+
+        <div class="panel">
+
+            <h3>
+                🔥 AI Market News
+            </h3>
+
+            <div class="news">
+                BTC whales buying aggressively.
+            </div>
+
+            <div class="news">
+                Ethereum momentum turning bullish.
+            </div>
+
+            <div class="news">
+                AI coins pumping across futures market.
+            </div>
+
+        </div>
+
+        <div class="panel">
+
+            <h3>
+                📡 Smart Money Tracker
+            </h3>
+
+            <div class="news">
+                Whale bought 1400 BTC.
+            </div>
+
+            <div class="news">
+                Binance inflow decreasing.
+            </div>
+
+            <div class="news">
+                Funding rate turning positive.
+            </div>
+
+        </div>
+
+        <div class="panel">
+
+            <h3>
+                🤖 AI Scanner
+            </h3>
+
+            <div class="news">
+                4 Strong BUY signals found.
+            </div>
+
+            <div class="news">
+                2 Possible breakout setups.
+            </div>
+
+            <div class="news">
+                Volatility increasing rapidly.
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-<div class="grid" id="market"></div>
-
 <div class="footer">
-© 2026 AI Futures Signal Bot
+
+© 2026 Quantum AI Signal Mini App
+
 </div>
 
 <script>
@@ -313,77 +602,109 @@ function toggleTheme(){
     document.body.classList.toggle("ios");
 }
 
-/* SIGNAL ENGINE */
+/* AI ENGINE */
 
-function getSignal(change){
+function getAI(change){
 
-    if(change > 4){
+    if(change > 5){
 
         return {
+
             signal:"BUY",
+
             class:"buy",
-            confidence:92,
-            trend:"Bullish"
+
+            confidence:95,
+
+            trend:"Bullish",
+
+            leverage:"10x"
         };
     }
 
     if(change < -3){
 
         return {
+
             signal:"SELL",
+
             class:"sell",
-            confidence:87,
-            trend:"Bearish"
+
+            confidence:88,
+
+            trend:"Bearish",
+
+            leverage:"7x"
         };
     }
 
     return {
+
         signal:"WAIT",
+
         class:"wait",
+
         confidence:60,
-        trend:"Neutral"
+
+        trend:"Sideways",
+
+        leverage:"3x"
     };
 }
 
 /* LOAD DATA */
 
-async function loadData(){
+async function loadMarket(){
 
     const market =
     document.getElementById("market");
 
     market.innerHTML =
-    "<h2>Loading AI Signals...</h2>";
+    "<h2>Loading AI Futures Signals...</h2>";
 
     try{
 
-        const res = await fetch(
-        "https://api.coincap.io/v2/assets"
+        const res =
+        await fetch(
+        "https://api.binance.com/api/v3/ticker/24hr"
         );
 
-        const data = await res.json();
+        const data =
+        await res.json();
 
         const coins =
-        data.data.slice(0,12);
+        data
+        .filter(c=>
+            c.symbol.endsWith("USDT")
+        )
+        .slice(0,12);
+
+        document
+        .getElementById(
+        "signalsCount"
+        )
+        .innerHTML = coins.length;
 
         let html = "";
 
         coins.forEach(c=>{
 
             const price =
-            parseFloat(c.priceUsd);
+            parseFloat(c.lastPrice);
 
             const change =
-            parseFloat(c.changePercent24Hr);
+            parseFloat(
+            c.priceChangePercent
+            );
 
             const ai =
-            getSignal(change);
+            getAI(change);
 
-            const entry =
-            price.toFixed(2);
-
-            const tp =
+            const tp1 =
             (price * 1.02).toFixed(2);
+
+            const tp2 =
+            (price * 1.04).toFixed(2);
 
             const sl =
             (price * 0.98).toFixed(2);
@@ -393,7 +714,18 @@ async function loadData(){
             <div class="card">
 
                 <div class="coin">
-                    💎 ${c.symbol}
+
+                    <div class="symbol">
+                        💎 ${c.symbol}
+                    </div>
+
+                    <div class="
+                    badge
+                    ${ai.class}
+                    ">
+                        ${ai.signal}
+                    </div>
+
                 </div>
 
                 <div class="price">
@@ -411,39 +743,58 @@ async function loadData(){
 
                 </div>
 
-                <div class="signal-box">
-
-                    <div class="${ai.class}">
-                        📊 ${ai.signal} SIGNAL
-                    </div>
+                <div class="signal">
 
                     <div class="row">
                         <span>Entry</span>
-                        <span>$${entry}</span>
+                        <span>
+                            $${price.toFixed(2)}
+                        </span>
                     </div>
 
                     <div class="row">
-                        <span>Take Profit</span>
-                        <span class="buy">
-                            $${tp}
+                        <span>TP1</span>
+                        <span style="
+                        color:#22c55e">
+                            $${tp1}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>TP2</span>
+                        <span style="
+                        color:#22c55e">
+                            $${tp2}
                         </span>
                     </div>
 
                     <div class="row">
                         <span>Stop Loss</span>
-                        <span class="sell">
+                        <span style="
+                        color:#ef4444">
                             $${sl}
                         </span>
                     </div>
 
                     <div class="row">
                         <span>Trend</span>
-                        <span>${ai.trend}</span>
+                        <span>
+                            ${ai.trend}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>Leverage</span>
+                        <span>
+                            ${ai.leverage}
+                        </span>
                     </div>
 
                     <div class="row">
                         <span>Timeframe</span>
-                        <span>15M</span>
+                        <span>
+                            15M
+                        </span>
                     </div>
 
                 </div>
@@ -476,36 +827,37 @@ async function loadData(){
     }catch(err){
 
         market.innerHTML =
-        "<h2>❌ API Error</h2>";
+        "<h2>❌ Binance API Error</h2>";
+
+        console.log(err);
     }
 }
 
-loadData();
+loadMarket();
 
-setInterval(loadData,10000);
+setInterval(loadMarket,10000);
 
 /* SEARCH */
 
 document
-.getElementById("searchInput")
+.getElementById("search")
 .addEventListener("keyup",function(){
 
-    let value =
+    const value =
     this.value.toLowerCase();
 
-    let cards =
+    const cards =
     document.querySelectorAll(".card");
 
     cards.forEach(card=>{
 
-        let coin =
+        const txt =
         card.innerText.toLowerCase();
 
         card.style.display =
-        coin.includes(value)
+        txt.includes(value)
         ? "block"
         : "none";
-
     });
 
 });
@@ -513,24 +865,30 @@ document
 /* NOTIFICATION */
 
 if(Notification.permission !== "granted"){
+
     Notification.requestPermission();
 }
 
-function sendSignalAlert(){
+function sendSignal(){
 
     if(Notification.permission === "granted"){
 
         new Notification(
-        "🚀 AI SIGNAL ALERT",
-        {
-            body:"BTCUSDT Strong BUY Signal Detected"
-        });
+
+            "🚀 AI Futures Alert",
+
+            {
+
+                body:
+                "BTCUSDT Strong BUY Signal Detected"
+            }
+        );
     }
 }
 
-setTimeout(sendSignalAlert,12000);
+setTimeout(sendSignal,12000);
 
 </script>
 
 </body>
-</html>
+    </html>
