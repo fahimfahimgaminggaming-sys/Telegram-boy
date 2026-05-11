@@ -6,7 +6,88 @@
 <title>Quantum AI Ultimate</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js">
+
+/* TABS */
+
+const tabs=document.querySelectorAll('.tab');
+
+tabs.forEach(tab=>{
+
+tab.addEventListener('click',()=>{
+
+haptic();
+
+tabs.forEach(t=>t.classList.remove('active-tab'));
+
+tab.classList.add('active-tab');
+
+const market=document.getElementById('market');
+
+if(tab.dataset.tab==='scalp'){
+market.style.filter='hue-rotate(40deg)';
+}
+else if(tab.dataset.tab==='gems'){
+market.style.filter='hue-rotate(90deg)';
+}
+else if(tab.dataset.tab==='breakout'){
+market.style.filter='hue-rotate(140deg)';
+}
+else if(tab.dataset.tab==='whales'){
+market.style.filter='hue-rotate(200deg)';
+}
+else{
+market.style.filter='';
+}
+
+});
+
+});
+
+/* BOTTOM NAV */
+
+const navItems=document.querySelectorAll('.nav-item');
+
+navItems.forEach(item=>{
+
+item.addEventListener('click',()=>{
+
+haptic();
+
+navItems.forEach(n=>n.classList.remove('active'));
+
+item.classList.add('active');
+
+});
+
+});
+
+/* FLOATING AI BUTTON */
+
+const floating=document.querySelector('.floating-ai');
+
+floating.addEventListener('click',()=>{
+
+haptic();
+
+alert('🤖 AI Assistant Activated
+
+Strong bullish momentum detected in BTCUSDT.');
+
+});
+
+/* HERO BUTTON */
+
+document.querySelector('.btn-primary')
+.addEventListener('click',()=>{
+
+haptic();
+
+window.open('https://www.binance.com','_blank');
+
+});
+
+</script>
 
 <style>
 
@@ -35,6 +116,15 @@ background:linear-gradient(180deg,#070b16,#111827);
 color:var(--text);
 overflow-x:hidden;
 min-height:100vh;
+transition:.4s ease;
+}
+
+body.light{
+--bg:#e5e7eb;
+--card:#ffffffcc;
+--card2:#f3f4f6;
+--text:#111827;
+background:linear-gradient(180deg,#dbeafe,#f8fafc);
 }
 
 body::before{
@@ -613,12 +703,12 @@ font-size:28px;
 <input type="text" id="search" placeholder="Search BTCUSDT...">
 </div>
 
-<div class="tabs">
-<div class="tab active-tab">Futures</div>
-<div class="tab">Scalping</div>
-<div class="tab">AI Gems</div>
-<div class="tab">Breakout</div>
-<div class="tab">Whales</div>
+<div class="tabs" id="tabs">
+<div class="tab active-tab" data-tab="futures">Futures</div>
+<div class="tab" data-tab="scalp">Scalping</div>
+<div class="tab" data-tab="gems">AI Gems</div>
+<div class="tab" data-tab="breakout">Breakout</div>
+<div class="tab" data-tab="whales">Whales</div>
 </div>
 
 <div class="market" id="market">
@@ -682,9 +772,19 @@ Telegram.WebApp.HapticFeedback.impactOccurred('light');
 }
 
 function toggleTheme(){
-document.body.style.filter=
-document.body.style.filter ? '' : 'hue-rotate(40deg)';
+
 haptic();
+
+if(document.body.classList.contains('light')){
+
+document.body.classList.remove('light');
+
+}else{
+
+document.body.classList.add('light');
+
+}
+
 }
 
 function calculateEMA(prices,period){
