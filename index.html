@@ -1,0 +1,1228 @@
+# Ultimate Quantum AI Signal Mini App (Single File)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ultimate Quantum AI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    --bg:#020617;
+    --card:rgba(15,23,42,.75);
+    --card2:rgba(17,24,39,.8);
+
+    --green:#22c55e;
+    --red:#ef4444;
+    --yellow:#facc15;
+    --blue:#3b82f6;
+
+    --text:#ffffff;
+    --muted:#94a3b8;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    overflow-x:hidden;
+}
+
+/* THEMES */
+
+body.ios{
+
+    --bg:#e5e7eb;
+
+    --card:rgba(255,255,255,.6);
+
+    --card2:rgba(255,255,255,.7);
+
+    --text:#111827;
+}
+
+body.cyber{
+
+    --bg:#05010d;
+
+    --green:#ff00ff;
+
+    --blue:#00ffff;
+}
+
+/* BACKGROUND */
+
+.bg1,
+.bg2{
+
+    position:fixed;
+
+    width:500px;
+    height:500px;
+
+    filter:blur(140px);
+
+    z-index:-1;
+}
+
+.bg1{
+
+    background:#22c55e22;
+
+    top:-180px;
+    left:-180px;
+}
+
+.bg2{
+
+    background:#3b82f622;
+
+    bottom:-180px;
+    right:-180px;
+}
+
+/* NAV */
+
+.nav{
+
+    position:sticky;
+    top:0;
+
+    z-index:999;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px;
+
+    background:rgba(2,6,23,.7);
+
+    backdrop-filter:blur(20px);
+
+    border-bottom:1px solid #1f2937;
+}
+
+.logo{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:var(--green);
+}
+
+.menu{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+}
+
+.btn{
+
+    border:none;
+
+    background:var(--card);
+
+    color:var(--text);
+
+    padding:10px 16px;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    border:1px solid #1f2937;
+
+    transition:.3s;
+}
+
+.btn:hover{
+
+    transform:translateY(-3px);
+
+    border-color:var(--green);
+}
+
+/* WRAP */
+
+.wrap{
+
+    padding:18px;
+}
+
+/* STATS */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(180px,1fr));
+
+    gap:16px;
+}
+
+.stat{
+
+    background:var(--card);
+
+    border-radius:24px;
+
+    padding:18px;
+
+    border:1px solid #1f2937;
+
+    backdrop-filter:blur(20px);
+}
+
+.stat h4{
+
+    color:var(--muted);
+
+    font-size:13px;
+}
+
+.stat h2{
+
+    margin-top:12px;
+
+    font-size:28px;
+}
+
+/* SEARCH */
+
+.search{
+
+    margin-top:18px;
+}
+
+.search input{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:18px;
+
+    background:var(--card);
+
+    color:var(--text);
+}
+
+/* MODES */
+
+.modes{
+
+    margin-top:18px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(160px,1fr));
+
+    gap:16px;
+}
+
+.mode{
+
+    background:var(--card);
+
+    border-radius:22px;
+
+    padding:18px;
+
+    text-align:center;
+
+    border:1px solid #1f2937;
+}
+
+/* GRID */
+
+.grid{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(320px,1fr));
+
+    gap:18px;
+}
+
+/* CARD */
+
+.card{
+
+    background:var(--card);
+
+    border-radius:28px;
+
+    padding:20px;
+
+    border:1px solid #1f2937;
+
+    position:relative;
+
+    overflow:hidden;
+
+    transition:.3s;
+
+    backdrop-filter:blur(20px);
+}
+
+.card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:var(--green);
+}
+
+.card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:160px;
+    height:160px;
+
+    background:#22c55e11;
+
+    border-radius:50%;
+
+    top:-60px;
+    right:-60px;
+}
+
+.coin{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+.symbol{
+
+    font-size:26px;
+
+    font-weight:bold;
+}
+
+.badge{
+
+    padding:6px 14px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+.buy{
+
+    background:#22c55e22;
+
+    color:var(--green);
+}
+
+.sell{
+
+    background:#ef444422;
+
+    color:var(--red);
+}
+
+.wait{
+
+    background:#facc1522;
+
+    color:var(--yellow);
+}
+
+.price{
+
+    margin-top:18px;
+
+    font-size:34px;
+
+    font-weight:bold;
+}
+
+.change-up{
+
+    color:var(--green);
+
+    margin-top:10px;
+}
+
+.change-down{
+
+    color:var(--red);
+
+    margin-top:10px;
+}
+
+.signal{
+
+    margin-top:18px;
+
+    background:var(--card2);
+
+    padding:16px;
+
+    border-radius:20px;
+}
+
+.row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-top:10px;
+
+    font-size:14px;
+}
+
+.progress{
+
+    margin-top:12px;
+
+    height:10px;
+
+    background:#111827;
+
+    border-radius:30px;
+
+    overflow:hidden;
+}
+
+.bar{
+
+    height:100%;
+
+    background:linear-gradient(
+    90deg,
+    #22c55e,
+    #3b82f6
+    );
+}
+
+/* PANELS */
+
+.bottom{
+
+    margin-top:22px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(260px,1fr));
+
+    gap:18px;
+}
+
+.panel{
+
+    background:var(--card);
+
+    border-radius:24px;
+
+    padding:18px;
+
+    border:1px solid #1f2937;
+}
+
+.news{
+
+    margin-top:12px;
+
+    padding-bottom:12px;
+
+    border-bottom:1px solid #1f2937;
+
+    font-size:14px;
+}
+
+/* HEATMAP */
+
+.heatmap{
+
+    margin-top:18px;
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(90px,1fr));
+
+    gap:10px;
+}
+
+.heat{
+
+    padding:18px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    font-weight:bold;
+}
+
+.green-box{
+
+    background:#22c55e22;
+
+    color:#22c55e;
+}
+
+.red-box{
+
+    background:#ef444422;
+
+    color:#ef4444;
+}
+
+/* VIP */
+
+.vip{
+
+    margin-top:20px;
+
+    background:linear-gradient(
+    135deg,
+    #facc15,
+    #f59e0b
+    );
+
+    padding:24px;
+
+    border-radius:28px;
+
+    color:black;
+}
+
+/* CHART */
+
+.chart{
+
+    margin-top:22px;
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    border:1px solid #1f2937;
+}
+
+iframe{
+
+    width:100%;
+
+    height:500px;
+
+    border:none;
+}
+
+/* POPUP */
+
+.popup{
+
+    position:fixed;
+
+    right:20px;
+    bottom:20px;
+
+    background:var(--card);
+
+    border:1px solid var(--green);
+
+    padding:18px;
+
+    border-radius:20px;
+
+    display:none;
+
+    backdrop-filter:blur(20px);
+
+    z-index:9999;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+.nav{
+
+    flex-direction:column;
+
+    gap:12px;
+}
+
+.logo{
+
+    font-size:18px;
+}
+
+.price{
+
+    font-size:28px;
+}
+
+iframe{
+
+    height:320px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="bg1"></div>
+<div class="bg2"></div>
+
+<!-- NAV -->
+
+<div class="nav">
+
+    <div class="logo">
+        ⚡ QUANTUM AI
+    </div>
+
+    <div class="menu">
+
+        <button class="btn" onclick="toggleTheme()">
+            🌓 Theme
+        </button>
+
+        <button class="btn">
+            Portfolio
+        </button>
+
+        <button class="btn">
+            VIP
+        </button>
+
+        <button class="btn">
+            Whale
+        </button>
+
+    </div>
+
+</div>
+
+<div class="wrap">
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <h4>Total Balance</h4>
+            <h2>$128,420</h2>
+        </div>
+
+        <div class="stat">
+            <h4>Today's Profit</h4>
+            <h2 style="color:#22c55e">
+                +$6,210
+            </h2>
+        </div>
+
+        <div class="stat">
+            <h4>AI Win Rate</h4>
+            <h2 style="color:#3b82f6">
+                93%
+            </h2>
+        </div>
+
+        <div class="stat">
+            <h4>Fear & Greed</h4>
+            <h2 style="color:#facc15">
+                74
+            </h2>
+        </div>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="search">
+
+        <input
+        type="text"
+        placeholder="Search BTCUSDT..."
+        id="search">
+
+    </div>
+
+    <!-- MODES -->
+
+    <div class="modes">
+
+        <div class="mode">
+            🎯
+            <h3>Sniper Mode</h3>
+        </div>
+
+        <div class="mode">
+            ⚡
+            <h3>Scalping Mode</h3>
+        </div>
+
+        <div class="mode">
+            🐋
+            <h3>Whale Tracker</h3>
+        </div>
+
+        <div class="mode">
+            📈
+            <h3>RSI Scanner</h3>
+        </div>
+
+    </div>
+
+    <!-- SIGNALS -->
+
+    <div class="grid" id="market"></div>
+
+    <!-- HEATMAP -->
+
+    <div class="panel" style="margin-top:20px">
+
+        <h2>
+            🔥 AI Heatmap
+        </h2>
+
+        <div class="heatmap">
+
+            <div class="heat green-box">
+                BTC
+            </div>
+
+            <div class="heat green-box">
+                ETH
+            </div>
+
+            <div class="heat red-box">
+                XRP
+            </div>
+
+            <div class="heat green-box">
+                SOL
+            </div>
+
+            <div class="heat green-box">
+                BNB
+            </div>
+
+            <div class="heat red-box">
+                DOGE
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CHART -->
+
+    <div class="chart">
+
+        <iframe
+        src="https://s.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&interval=15&theme=dark&style=1&locale=en">
+        </iframe>
+
+    </div>
+
+    <!-- PANELS -->
+
+    <div class="bottom">
+
+        <div class="panel">
+
+            <h3>
+                🐋 Whale Tracker
+            </h3>
+
+            <div class="news">
+                Whale bought 1,800 BTC.
+            </div>
+
+            <div class="news">
+                Binance outflow increasing.
+            </div>
+
+            <div class="news">
+                Smart money entering ETH.
+            </div>
+
+        </div>
+
+        <div class="panel">
+
+            <h3>
+                📡 AI Scanner
+            </h3>
+
+            <div class="news">
+                4 BUY signals detected.
+            </div>
+
+            <div class="news">
+                BTC breakout probability high.
+            </div>
+
+            <div class="news">
+                Volatility rapidly increasing.
+            </div>
+
+        </div>
+
+        <div class="panel">
+
+            <h3>
+                📊 Multi Timeframe
+            </h3>
+
+            <div class="news">
+                1M → Bullish
+            </div>
+
+            <div class="news">
+                15M → Bullish
+            </div>
+
+            <div class="news">
+                1H → Neutral
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- VIP -->
+
+    <div class="vip">
+
+        <h2>
+            👑 VIP SIGNAL ACCESS
+        </h2>
+
+        <p style="margin-top:10px">
+
+            Unlock hidden sniper entries,
+            smart money tracking,
+            whale alerts,
+            liquidation zones,
+            and premium AI analysis.
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- POPUP -->
+
+<div class="popup" id="popup">
+
+🚀 BTCUSDT Strong BUY Signal Detected
+
+</div>
+
+<script>
+
+/* THEME */
+
+function toggleTheme(){
+
+    if(document.body.classList.contains("ios")){
+
+        document.body.classList.remove("ios");
+
+        document.body.classList.add("cyber");
+
+        return;
+    }
+
+    if(document.body.classList.contains("cyber")){
+
+        document.body.classList.remove("cyber");
+
+        return;
+    }
+
+    document.body.classList.add("ios");
+}
+
+/* AI ENGINE */
+
+function getAI(change){
+
+    if(change > 5){
+
+        return {
+
+            signal:"BUY",
+
+            class:"buy",
+
+            confidence:95,
+
+            trend:"Bullish",
+
+            leverage:"10x",
+
+            rsi:28,
+
+            macd:"Bullish"
+        };
+    }
+
+    if(change < -3){
+
+        return {
+
+            signal:"SELL",
+
+            class:"sell",
+
+            confidence:86,
+
+            trend:"Bearish",
+
+            leverage:"7x",
+
+            rsi:78,
+
+            macd:"Bearish"
+        };
+    }
+
+    return {
+
+        signal:"WAIT",
+
+        class:"wait",
+
+        confidence:60,
+
+        trend:"Sideways",
+
+        leverage:"3x",
+
+        rsi:50,
+
+        macd:"Neutral"
+    };
+}
+
+/* REAL BINANCE API */
+
+async function loadMarket(){
+
+    const market =
+    document.getElementById("market");
+
+    market.innerHTML =
+    "<h2>Loading AI Signals...</h2>";
+
+    try{
+
+        const res =
+        await fetch(
+        "https://api.binance.com/api/v3/ticker/24hr"
+        );
+
+        const data =
+        await res.json();
+
+        const coins =
+        data
+        .filter(c =>
+            c.symbol.endsWith("USDT")
+        )
+        .slice(0,12);
+
+        let html = "";
+
+        coins.forEach(c => {
+
+            const price =
+            parseFloat(c.lastPrice);
+
+            const change =
+            parseFloat(
+            c.priceChangePercent
+            );
+
+            const ai =
+            getAI(change);
+
+            const tp1 =
+            (price * 1.02).toFixed(2);
+
+            const tp2 =
+            (price * 1.05).toFixed(2);
+
+            const sl =
+            (price * 0.98).toFixed(2);
+
+            html += `
+
+            <div class="card">
+
+                <div class="coin">
+
+                    <div class="symbol">
+                        💎 ${c.symbol}
+                    </div>
+
+                    <div class="badge ${ai.class}">
+                        ${ai.signal}
+                    </div>
+
+                </div>
+
+                <div class="price">
+                    $${price.toFixed(2)}
+                </div>
+
+                <div class="${
+                    change >= 0
+                    ? 'change-up'
+                    : 'change-down'
+                }">
+
+                    24H:
+                    ${change.toFixed(2)}%
+
+                </div>
+
+                <div class="signal">
+
+                    <div class="row">
+                        <span>Entry</span>
+                        <span>
+                            $${price.toFixed(2)}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>TP1</span>
+                        <span style="color:#22c55e">
+                            $${tp1}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>TP2</span>
+                        <span style="color:#22c55e">
+                            $${tp2}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>Stop Loss</span>
+                        <span style="color:#ef4444">
+                            $${sl}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>Trend</span>
+                        <span>
+                            ${ai.trend}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>Leverage</span>
+                        <span>
+                            ${ai.leverage}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>RSI</span>
+                        <span>
+                            ${ai.rsi}
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>MACD</span>
+                        <span>
+                            ${ai.macd}
+                        </span>
+                    </div>
+
+                </div>
+
+                <div style="margin-top:16px">
+
+                    🤖 AI Confidence:
+                    ${ai.confidence}%
+
+                    <div class="progress">
+
+                        <div
+                        class="bar"
+                        style="
+                        width:${ai.confidence}%
+                        ">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+        });
+
+        market.innerHTML = html;
+
+    }catch(err){
+
+        market.innerHTML =
+        "<h2>❌ Binance API Error</h2>";
+
+        console.log(err);
+    }
+}
+
+loadMarket();
+
+setInterval(loadMarket,10000);
+
+/* SEARCH */
+
+document
+.getElementById("search")
+.addEventListener("keyup",function(){
+
+    const value =
+    this.value.toLowerCase();
+
+    const cards =
+    document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+
+        const txt =
+        card.innerText.toLowerCase();
+
+        card.style.display =
+        txt.includes(value)
+        ? "block"
+        : "none";
+    });
+
+});
+
+/* POPUP */
+
+function popup(){
+
+    const pop =
+    document.getElementById("popup");
+
+    pop.style.display = "block";
+
+    setTimeout(() => {
+
+        pop.style.display = "none";
+
+    },4000);
+}
+
+setTimeout(popup,5000);
+
+/* NOTIFICATIONS */
+
+if(Notification.permission !== "granted"){
+
+    Notification.requestPermission();
+}
+
+function notify(){
+
+    if(Notification.permission === "granted"){
+
+        new Notification(
+
+            "🚀 AI Sniper Signal",
+
+            {
+
+                body:
+                "BTCUSDT Strong BUY Signal"
+            }
+        );
+    }
+}
+
+setTimeout(notify,7000);
+
+</script>
+</body>
+</html>
+```
+
+# Included Features
+
+* Real Binance API Fetch
+* AI Signal Engine
+* RSI + MACD Display
+* Sniper Mode
+* Scalping Mode
+* Whale Tracker
+* Portfolio Section
+* VIP Section
+* AI Heatmap
+* TradingView Live Chart
+* Glassmorphism Premium UI
+* Responsive Mobile UI
+* Signal Popup
+* Notification System
+* Smooth Animations
+* Search System
+* Multi Theme System
+* Cyber + iOS Theme
+* AI Confidence Meter
+* Futures Dashboard Layout
+  
