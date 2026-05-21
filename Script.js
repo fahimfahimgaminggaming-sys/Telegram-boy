@@ -37,3 +37,10 @@ loginForm.reset();
 });
 
 });
+<head>
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+<body>
+    <script src="Script.js"></script>
+</body>
