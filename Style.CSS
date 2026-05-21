@@ -260,3 +260,10 @@ color: #7dd3fc;
 text-decoration: underline;
 
 }
+<head>
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+<body>
+    <script src="Script.js"></script>
+</body>
