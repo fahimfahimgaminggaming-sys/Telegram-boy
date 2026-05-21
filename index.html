@@ -3,332 +3,352 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fahim Shop Pro Dashboard</title>
+  <title>Fahim Shop Pro - Premium Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #080c14; color: #f1f5f9; }
-    .glass-ui { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
-    .neon-border:focus { border-color: #3b82f6; box-shadow: 0 0 14px rgba(59, 130, 246, 0.25); }
-    .shimmer-anim { background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%); background-size: 200% 100%; animation: moveShimmer 1.6s infinite linear; }
-    @keyframes moveShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .tab-content { display: none; opacity: 0; transform: translateY(8px); transition: all 0.3s ease-out; }
-    .tab-content.active-view { display: block; opacity: 1; transform: translateY(0); }
+    body { background: radial-gradient(circle at top left, #0f172a, #020617); }
+    .glass { background: rgba(30, 41, 59, 0.45); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glow-btn { transition: all 0.3s ease; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+    .glow-btn:hover { box-shadow: 0 0 25px rgba(59, 130, 246, 0.6); transform: translateY(-2px); }
   </style>
 </head>
-<body class="min-h-screen relative pb-12">
+<body class="text-slate-100 min-h-screen font-sans">
 
-  <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-  <div class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-  <nav class="w-full glass-ui sticky top-0 z-50 px-8 py-4 flex justify-between items-center border-b border-slate-800">
-    <div class="flex items-center gap-3 cursor-pointer" onclick="viewTab('store-tab')">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-bold shadow-lg text-white">F</div>
-      <span class="text-lg font-bold tracking-tight text-white">FAHIM <span class="text-blue-500 text-xs tracking-widest font-mono block">SHOP PRO</span></span>
+  <header class="glass sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-lg">
+    <div class="flex items-center space-x-3">
+      <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-cyan-500/20 shadow-md">
+        <i class="fa-solid fa-bolt text-xl animate-pulse"></i>
+      </div>
+      <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">FAHIM SHOP PRO</h1>
     </div>
-    <div id="nav-links" class="hidden flex items-center gap-6">
-      <button onclick="viewTab('store-tab')" class="hover:text-blue-400 font-medium text-sm transition-colors">🛒 Marketplace</button>
-      <button onclick="viewTab('account-tab')" class="hover:text-blue-400 font-medium text-sm transition-colors">👤 Profile Wallet</button>
-      <button id="admin-nav-link" onclick="viewTab('admin-panel-tab')" class="hidden bg-red-950/40 text-red-400 border border-red-900/40 px-3 py-1 rounded-full text-xs font-bold transition-all">⚙️ Admin Override</button>
-      <button onclick="destroySession()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs px-4 py-2 rounded-xl transition-all">Logout</button>
+    <div id="authMenu" class="flex items-center space-x-4">
+      <button onclick="openModal('loginModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm font-semibold border border-slate-700 transition">
+        <i class="fa-solid fa-right-to-bracket mr-2"></i>Login / Sign Up
+      </button>
     </div>
-  </nav>
+  </header>
 
-  <main class="max-w-6xl mx-auto px-6 mt-10">
+  <main class="max-w-7xl mx-auto p-6 space-y-8">
+    <section class="glass rounded-3xl p-8 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-2xl">
+      <div class="space-y-4 max-w-xl z-10">
+        <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-widest">Premium Service Bot V2</span>
+        <h2 class="text-4xl font-extrabold tracking-tight leading-none md:text-5xl">⚡ Instant Delivery Secure Purchase</h2>
+        <p class="text-slate-400 text-sm md:text-base">আপনার প্রয়োজনীয় প্রিমিয়াম জিমেইল, সোশ্যাল অ্যাকাউন্ট এবং অনান্য ডিজিটাল সার্ভিসগুলো কিনুন একদম অটোমেটেড পেমেন্ট মেথডে সরাসরি আমাদের সাইট থেকে।</p>
+      </div>
+      <div class="mt-6 md:mt-0 flex flex-wrap gap-4 justify-center">
+        <div class="glass p-4 rounded-2xl text-center w-28"><i class="fa-solid fa-shield text-emerald-400 text-2xl mb-1"></i><p class="text-xs text-slate-400">100% Safe</p></div>
+        <div class="glass p-4 rounded-2xl text-center w-28"><i class="fa-solid fa-truck-fast text-blue-400 text-2xl mb-1"></i><p class="text-xs text-slate-400">Fast Auto</p></div>
+      </div>
+    </section>
 
-    <section id="auth-gate-tab" class="tab-content active-view max-w-md mx-auto mt-16">
-      <div class="glass-ui rounded-3xl p-8 shadow-2xl border border-slate-800">
-        <h2 id="auth-header-title" class="text-2xl font-bold tracking-tight text-white text-center mb-1">Secure Core Login</h2>
-        <p id="auth-header-desc" class="text-slate-400 text-xs text-center mb-8">Access your customized premium account node</p>
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <div class="space-y-6">
+        <div class="glass rounded-2xl p-6 shadow-xl space-y-4">
+          <h3 class="text-lg font-bold border-b border-slate-800 pb-2"><i class="fa-solid fa-circle-user text-blue-500 mr-2"></i>আপনার প্রোফাইল</h3>
+          <div id="profileBox" class="space-y-3 text-sm text-slate-400">
+            <p class="text-center py-4">অনুগ্রহ করে আপনার অ্যাকাউন্ট লগইন করুন।</p>
+          </div>
+          <div id="actionButtons" class="hidden grid grid-cols-2 gap-2 pt-2">
+            <button onclick="openModal('depositModal')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl text-xs transition"><i class="fa-solid fa-wallet mr-1"></i>Deposit</button>
+            <button onclick="loadUserOrders()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded-xl text-xs transition"><i class="fa-solid fa-history mr-1"></i>My Orders</button>
+          </div>
+        </div>
+
+        <div id="adminMenuBtn" class="hidden">
+          <button onclick="toggleAdminPanel()" class="w-full bg-gradient-to-r from-red-600 to-amber-600 text-white font-black p-4 rounded-xl shadow-lg hover:opacity-90 transition text-center">
+            <i class="fa-solid fa-user-gear mr-2"></i>OPEN ADMIN PANEL
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-3 space-y-8">
         
-        <form id="auth-form-handler" onsubmit="dispatchAuth(event)" class="space-y-5">
-          <div id="username-input-wrapper" class="hidden">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Display Username</label>
-            <input type="text" id="form-username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none neon-border text-white transition-all" placeholder="JohnDoe">
+        <div id="servicesSection" class="space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl font-black tracking-wide"><i class="fa-solid fa-cubes text-blue-500 mr-2"></i>এভেইলেবল সার্ভিসসমূহ</h3>
+            <button onclick="loadServices()" class="text-slate-400 hover:text-white transition text-sm"><i class="fa-solid fa-rotate mr-1"></i>Refresh</button>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
-            <input type="email" id="form-email" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none neon-border text-white transition-all" placeholder="fahimfahimf737@gmail.com">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Security Token Password</label>
-            <input type="password" id="form-password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none neon-border text-white transition-all" placeholder="••••••••">
-          </div>
-          <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 font-bold rounded-xl text-sm shadow-xl hover:opacity-95 text-white active:scale-[0.99] transition-all">Authenticate Credentials</button>
-        </form>
-        
-        <div class="mt-6 text-center">
-          <button onclick="toggleAuthGate()" id="switch-auth-mode-btn" class="text-xs text-slate-400 hover:text-blue-400 font-medium transition-colors">Don't have an account? Sign Up</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="store-tab" class="tab-content space-y-8">
-      <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-slate-800 pb-6">
-        <div>
-          <h1 class="text-2xl font-bold tracking-tight text-white">Premium Accounts Matrix</h1>
-          <p class="text-slate-400 text-xs mt-0.5">Automated product dispatch engine</p>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl px-5 py-3 flex items-center gap-4">
-          <span class="text-xs text-slate-400 uppercase font-bold tracking-wide">Available Vault:</span>
-          <span id="header-balance-view" class="text-xl font-bold text-emerald-400">$0.00</span>
-        </div>
-      </div>
-
-      <div id="shimmer-loader" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="shimmer-anim h-44 rounded-2xl opacity-40"></div>
-        <div class="shimmer-anim h-44 rounded-2xl opacity-40"></div>
-        <div class="shimmer-anim h-44 rounded-2xl opacity-40"></div>
-      </div>
-
-      <div id="live-services-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden"></div>
-    </section>
-
-    <section id="account-tab" class="tab-content space-y-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="glass-ui p-6 rounded-2xl border border-slate-800">
-          <span class="text-xs font-bold text-slate-400 uppercase">Available Cash Reserves</span>
-          <h3 id="card-user-balance" class="text-3xl font-bold text-blue-400 mt-2">$0.00</h3>
-        </div>
-        <div class="glass-ui p-6 rounded-2xl border border-slate-800">
-          <span class="text-xs font-bold text-slate-400 uppercase">Total Capital Invested</span>
-          <h3 id="card-user-spent" class="text-3xl font-bold text-indigo-400 mt-2">$0.00</h3>
-        </div>
-        <div class="glass-ui p-6 rounded-2xl border border-slate-800">
-          <span class="text-xs font-bold text-slate-400 uppercase">Acquired Packages</span>
-          <h3 id="card-user-count" class="text-3xl font-bold text-emerald-400 mt-2">0 Items</h3>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="glass-ui p-6 rounded-2xl border border-slate-800 h-fit space-y-4">
-          <h3 class="text-sm font-bold tracking-wider uppercase text-slate-300">File Deposit Ledger Alert</h3>
-          <form onsubmit="submitDepositTicket(event)" class="space-y-4">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Top-up Value (USD)</label>
-              <input type="number" step="any" id="ticket-amount" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none text-white focus:border-blue-500 transition-all" placeholder="10.00">
+          <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             </div>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Network Channels</label>
-              <select id="ticket-method" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none text-white focus:border-blue-500 transition-all">
-                <option value="USDT (BEP20)">USDT (BEP20)</option>
-                <option value="Binance Pay ID">Binance Pay ID</option>
-                <option value="TRX (TRC20)">TRX (TRC20)</option>
-              </select>
-            </div>
-            <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 font-bold text-xs rounded-xl text-white transition-all">Transmit Deposit Signal</button>
-          </form>
         </div>
 
-        <div class="glass-ui p-6 rounded-2xl border border-slate-800 md:col-span-2 space-y-4">
-          <h3 class="text-sm font-bold tracking-wider uppercase text-slate-300">Delivered Dynamic Assets Registry</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead>
-                <tr class="border-b border-slate-800 text-slate-400 uppercase">
-                  <th class="pb-3 font-semibold">Asset Product Matrix</th>
-                  <th class="pb-3 font-semibold">Account Gmail</th>
-                  <th class="pb-3 font-semibold">Decrypted Token Key</th>
-                  <th class="pb-3 font-semibold text-right">Value Charged</th>
-                </tr>
-              </thead>
-              <tbody id="user-purchase-rows" class="divide-y divide-slate-800/40 text-slate-300"></tbody>
-            </table>
+        <div id="adminPanelSection" class="hidden space-y-6 bg-slate-900/60 p-6 rounded-2xl border border-red-500/20">
+          <h3 class="text-2xl font-black text-amber-400 border-b border-slate-800 pb-3"><i class="fa-solid fa-lock-open mr-2"></i>অ্যাডমিন ড্যাশবোর্ড</h3>
+          
+          <div id="adminStatsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+
+          <div class="glass p-5 rounded-xl space-y-3">
+            <h4 class="font-bold text-emerald-400"><i class="fa-solid fa-clock-rotate-left mr-2"></i>পেন্ডিং ডিপোজিট রিকোয়েস্ট</h4>
+            <div id="pendingDepositsList" class="space-y-3 max-h-60 overflow-y-auto text-sm"></div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <section id="admin-panel-tab" class="tab-content space-y-8">
-      <div class="p-5 bg-red-950/20 border border-red-900/30 rounded-2xl">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-red-400">Administrative Terminal Active</h2>
-        <p class="text-xs text-red-300/70 mt-1">Direct system overrides, state deployments, and ledger approval engines active.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="glass-ui p-6 rounded-2xl border border-slate-800 space-y-4">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Inject Product Configuration Matrix</h3>
-          <form onsubmit="adminCreateService(event)" class="space-y-3">
-            <input type="text" id="adm-name" placeholder="Service Identifier Label Name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
-            <input type="number" step="any" id="adm-price" placeholder="Product Listing Cost Value ($)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
-            <input type="text" id="adm-cat" placeholder="System Routing Category Default" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
-            <textarea id="adm-desc" placeholder="System Meta Specifications Description Detail Data" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white h-16"></textarea>
-            <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 font-bold text-xs text-white rounded-xl transition-all">Deploy Configuration</button>
-          </form>
-        </div>
-
-        <div class="glass-ui p-6 rounded-2xl border border-slate-800 space-y-4">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Feed Stock Account Asset Blocks</h3>
-          <form onsubmit="adminLoadStock(event)" class="space-y-3">
-            <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Target Package Target ID Node</label>
-              <select id="adm-stock-id-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white"></select>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass p-5 rounded-xl space-y-3">
+              <h4 class="font-bold text-blue-400"><i class="fa-solid fa-plus-circle mr-2"></i>নতুন সার্ভিস যোগ করুন</h4>
+              <input id="addSName" type="text" placeholder="সার্ভিসের নাম" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <input id="addSPrice" type="number" placeholder="মূল্য (USD / $)" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <input id="addSCategory" type="text" placeholder="ক্যাটাগরি" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <textarea id="addSDesc" placeholder="বিস্তারিত বিবরণ" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none h-20"></textarea>
+              <button onclick="adminAddService()" class="w-full bg-blue-600 hover:bg-blue-500 font-bold py-2 rounded-lg text-sm transition">যোগ করুন</button>
             </div>
-            <input type="email" id="adm-stock-gmail" placeholder="Target Account Gmail Identity" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
-            <input type="text" id="adm-stock-pass" placeholder="Target Account Security Plaintext Pass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
-            <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-500 font-bold text-xs text-white rounded-xl transition-all">Append Stack Block</button>
-          </form>
-        </div>
-      </div>
 
-      <div class="glass-ui p-6 rounded-2xl border border-slate-800 space-y-4">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Pending Deposit Approvals Pipeline Queue</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="border-b border-slate-800 text-slate-400 uppercase">
-                <th class="pb-3">Transaction ID</th>
-                <th class="pb-3">User Target Identity</th>
-                <th class="pb-3">Value Amount</th>
-                <th class="pb-3">Routing Pipeline</th>
-                <th class="pb-3 text-right">System Action Overrides</th>
-              </tr>
-            </thead>
-            <tbody id="adm-pending-deposit-rows" class="divide-y divide-slate-800/40 text-slate-300"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+            <div class="glass p-5 rounded-xl space-y-3">
+              <h4 class="font-bold text-amber-400"><i class="fa-solid fa-box-open mr-2"></i>স্টক আপলোড করুন</h4>
+              <input id="stockServiceId" type="number" placeholder="সার্ভিস আইডি (Service ID)" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <input id="stockGmail" type="text" placeholder="Gmail / Username" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <input id="stockPassword" type="text" placeholder="Password" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <button onclick="adminAddStock()" class="w-full bg-amber-600 hover:bg-amber-500 font-bold py-2 rounded-lg text-sm transition">স্টক আপলোড করুন</button>
+            </div>
+          </div>
 
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass p-5 rounded-xl space-y-3">
+              <h4 class="font-bold text-red-400"><i class="fa-solid fa-user-slash mr-2"></i>ব্যান / আনব্যান সিস্টেম</h4>
+              <input id="banUserId" type="number" placeholder="ইউজার আইডি (User ID)" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <input id="banReason" type="text" placeholder="কারণ (Reason)" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="adminToggleBan('ban')" class="bg-red-600 hover:bg-red-500 font-bold py-2 rounded-lg text-sm transition">Ban User</button>
+                <button onclick="adminToggleBan('unban')" class="bg-slate-700 hover:bg-slate-600 font-bold py-2 rounded-lg text-sm transition">Unban</button>
+              </div>
+            </div>
+            <div class="glass p-5 rounded-xl flex flex-col justify-between">
+              <div>
+                <h4 class="font-bold text-purple-400 mb-2"><i class="fa-solid fa-gears mr-2"></i>মেইনটেইন্যান্স মোড</h4>
+                <p class="text-xs text-slate-400 mb-4">এটি অন থাকলে আপনি ছাড়া সাধারণ গ্রাহকরা সাইট ব্যবহার বা কেনাকাটা করতে পারবে না।</p>
+              </div>
+              <button onclick="adminToggleMaintenance()" class="w-full bg-purple-600 hover:bg-purple-500 font-bold py-3 rounded-lg text-sm transition">Toggle Maintenance Mode</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
   </main>
 
+  <div id="loginModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 transition-opacity">
+    <div class="glass max-w-sm w-full p-6 rounded-2xl relative space-y-4 shadow-2xl">
+      <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      <h3 class="text-xl font-bold text-center"><i class="fa-solid fa-user-lock mr-2 text-blue-500"></i>অ্যাকাউন্ট লগইন</h3>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">অ্যাডমিন হলে ইমেইল ব্যবহার করুন, ইউজার হলে খালি রাখুন</label>
+          <input id="loginEmail" type="email" placeholder="Admin Email" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+        </div>
+        <div id="userField">
+          <label class="text-xs text-slate-400 block mb-1">টেলিগ্রাম ইউজার আইডি (User ID)</label>
+          <input id="loginUserId" type="number" placeholder="e.g. 7015857680" class="w-full bg-slate-800 p-2.5 rounded-lg text-sm border border-slate-700 focus:outline-none">
+        </div>
+      </div>
+      <button onclick="performAuth()" class="w-full bg-blue-600 hover:bg-blue-500 font-bold py-2.5 rounded-lg text-sm transition shadow-lg">লগইন করুন</button>
+    </div>
+  </div>
+
+  <div id="depositModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+    <div class="glass max-w-md w-full p-6 rounded-2xl relative space-y-4">
+      <button onclick="closeModal('depositModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      <h3 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-wallet mr-2"></i>ব্যালেন্স ডিপোজিট করুন</h3>
+      
+      <div class="space-y-3 text-sm">
+        <label class="block text-xs text-slate-400">মেথড সিলেক্ট করুন</label>
+        <select id="depMethod" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 focus:outline-none">
+          <option value="USDT BEP20">USDT BEP20 (0xA7762298B895a82...)</option>
+          <option value="ETH Base">ETH Base (0xA7762298B895a82...)</option>
+          <option value="TON">TON (UQCHW8kThv1mFVidjk...)</option>
+          <option value="USDC ERC20">USDC ERC20 (0xA7762298B895a82...)</option>
+        </select>
+        <input id="depAmount" type="number" placeholder="ডিপোজিট পরিমাণ ($)" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 focus:outline-none">
+        <input id="depTrx" type="text" placeholder="Transaction Hash / Proof Text" class="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 focus:outline-none">
+      </div>
+      <button onclick="submitDeposit()" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-2.5 rounded-lg text-sm transition">অনুরোধ পাঠান</button>
+    </div>
+  </div>
+
+  <div id="ordersModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+    <div class="glass max-w-lg w-full p-6 rounded-2xl relative space-y-4">
+      <button onclick="closeModal('ordersModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      <h3 class="text-xl font-bold"><i class="fa-solid fa-receipt mr-2 text-indigo-400"></i>আপনার ক্রয়সমূহ (Purchase History)</h3>
+      <div id="ordersList" class="space-y-3 max-h-80 overflow-y-auto text-xs"></div>
+    </div>
+  </div>
+
   <script>
-    const API_ROUTE = '/api';
-    let runtimeState = { 
-      token: localStorage.getItem('tok') || null, 
-      is_admin: localStorage.getItem('isAdm') === 'true', 
-      isLoginView: true 
-    };
+    let currentUser = null;
+    let isAdminMode = false;
 
-    function viewTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(view => view.classList.remove('active-view'));
-      const activeEl = document.getElementById(tabId);
-      if (activeEl) activeEl.classList.add('active-view');
+    // Open/Close Modals
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-      if (tabId === 'store-tab') runStorefrontEngine();
-      if (tabId === 'account-tab') runProfileEngine();
-      if (tabId === 'admin-panel-tab') runAdminEngine();
+    // Session-based Profile Updates
+    function updateUI() {
+      const pBox = document.getElementById('profileBox');
+      const authMenu = document.getElementById('authMenu');
+      const actionButtons = document.getElementById('actionButtons');
+      const adminMenuBtn = document.getElementById('adminMenuBtn');
+
+      if (currentUser) {
+        pBox.innerHTML = `
+          <div class="space-y-1 bg-slate-900/40 p-3 rounded-xl border border-slate-800">
+            <p><b class="text-slate-200">ID:</b> <code>${currentUser.user_id}</code></p>
+            <p><b class="text-slate-200">User:</b> @${currentUser.username || 'NoUsername'}</p>
+            <p><b class="text-slate-200">Balance:</b> <span class="text-emerald-400 font-bold">${parseFloat(currentUser.balance).toFixed(2)}$</span></p>
+            <p><b class="text-slate-200">Total Deposit:</b> ${parseFloat(currentUser.total_deposit || 0).toFixed(2)}$</p>
+            <p><b class="text-slate-200">Total Spent:</b> ${parseFloat(currentUser.total_spent || 0).toFixed(2)}$</p>
+          </div>
+        `;
+        authMenu.innerHTML = `
+          <span class="text-sm font-medium text-blue-400"><i class="fa-solid fa-circle-check mr-1"></i>${currentUser.username}</span>
+          <button onclick="logout()" class="text-xs bg-red-900/40 border border-red-700/40 px-2.5 py-1.5 rounded-lg hover:bg-red-800 transition">Logout</button>
+        `;
+        actionButtons.classList.remove('hidden');
+        if (isAdminMode) {
+          adminMenuBtn.classList.remove('hidden');
+        }
+      } else {
+        pBox.innerHTML = `<p class="text-center py-4">অনুগ্রহ করে আপনার অ্যাকাউন্ট লগইন করুন।</p>`;
+        actionButtons.classList.add('hidden');
+        adminMenuBtn.classList.add('hidden');
+        document.getElementById('adminPanelSection').classList.add('hidden');
+      }
     }
 
-    function toggleAuthGate() {
-      runtimeState.isLoginView = !runtimeState.isLoginView;
-      document.getElementById('auth-header-title').innerText = runtimeState.isLoginView ? 'Secure Core Login' : 'Register Identity Profile';
-      document.getElementById('auth-header-desc').innerText = runtimeState.isLoginView ? 'Access your customized premium account node' : 'Generate cloud system profile credentials matrix';
-      document.getElementById('switch-auth-mode-btn').innerText = runtimeState.isLoginView ? "Don't have an account? Sign Up" : 'Already verified? Access Login';
-      document.getElementById('username-input-wrapper').classList.toggle('hidden', runtimeState.isLoginView);
-    }
-
-    // --- SERVICE ACTION DISPATCH DISKS ---
-    async function dispatchAuth(e) {
-      e.preventDefault();
-      const email = document.getElementById('form-email').value;
-      const password = document.getElementById('form-password').value;
-      const username = document.getElementById('form-username').value;
-
-      const endpoint = runtimeState.isLoginView ? '/auth/login' : '/auth/register';
-      const bodyPayload = runtimeState.isLoginView ? { email, password } : { email, password, username };
+    // Auth Engine
+    async function performAuth() {
+      const email = document.getElementById('loginEmail').value;
+      const userId = document.getElementById('loginUserId').value;
 
       try {
-        const res = await fetch(`${API_ROUTE}${endpoint}`, {
+        const res = await fetch('/api/auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bodyPayload)
+          body: JSON.stringify({ email, userId })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Authentication sequence pipeline crash');
-
-        if (runtimeState.isLoginView) {
-          localStorage.setItem('tok', data.token);
-          localStorage.setItem('isAdm', data.is_admin);
-          runtimeState.token = data.token;
-          runtimeState.is_admin = data.is_admin;
-          validateSessionState();
+        if (data.success) {
+          currentUser = data.user;
+          isAdminMode = data.isAdmin;
+          closeModal('loginModal');
+          updateUI();
+          if (isAdminMode) loadAdminDashboard();
+          alert("লগইন সফল হয়েছে!");
         } else {
-          alert('Registration successful! Processing authentication login entry.');
-          toggleAuthGate();
+          alert(data.error || "Login failed");
         }
       } catch (err) {
-        alert(err.message);
+        alert("সার্ভার কানেকশন এরর!");
       }
     }
 
-    function destroySession() {
-      localStorage.clear();
-      runtimeState.token = null;
-      runtimeState.is_admin = false;
-      validateSessionState();
+    function logout() {
+      currentUser = null;
+      isAdminMode = false;
+      updateUI();
     }
 
-    function validateSessionState() {
-      if (runtimeState.token) {
-        document.getElementById('nav-links').classList.remove('hidden');
-        document.getElementById('admin-nav-link').classList.toggle('hidden', !runtimeState.is_admin);
-        viewTab('store-tab');
-      } else {
-        document.getElementById('nav-links').classList.add('hidden');
-        viewTab('auth-gate-tab');
+    // Fetch and Render Available Services
+    async function loadServices() {
+      const grid = document.getElementById('servicesGrid');
+      grid.innerHTML = '<p class="text-slate-400">সার্ভিস লোড হচ্ছে...</p>';
+
+      const headers = {};
+      if(currentUser) {
+        headers['user-id'] = currentUser.user_id;
+        headers['is-admin'] = isAdminMode;
       }
-    }
-
-    async function runStorefrontEngine() {
-      document.getElementById('shimmer-loader').classList.remove('hidden');
-      document.getElementById('live-services-grid').classList.add('hidden');
 
       try {
-        const [servicesRes, profileRes] = await Promise.all([
-          fetch(`${API_ROUTE}/services`, { headers: { 'Authorization': `Bearer ${runtimeState.token}` } }),
-          fetch(`${API_ROUTE}/profile`, { headers: { 'Authorization': `Bearer ${runtimeState.token}` } })
-        ]);
+        const res = await fetch('/api/services', { headers });
+        if (res.status === 503) {
+          grid.innerHTML = '<p class="text-purple-400 font-bold py-6">⚠️ সাইটটি বর্তমানে মেইনটেইন্যান্স মোডে আছে। অনুগ্রহ করে পরে চেষ্টা করুন।</p>';
+          return;
+        }
+        const data = await res.json();
+        grid.innerHTML = '';
+        
+        if(data.length === 0) {
+          grid.innerHTML = '<p class="text-slate-400">এই মুহূর্তে কোনো সার্ভিস এভেইলেবল নেই।</p>';
+          return;
+        }
 
-        const services = await servicesRes.json();
-        const profile = await profileRes.json();
-
-        document.getElementById('header-balance-view').innerText = `$${profile.balance.toFixed(2)}`;
-
-        const container = document.getElementById('live-services-grid');
-        container.innerHTML = '';
-
-        services.forEach(s => {
-          container.innerHTML += `
-            <div class="glass-ui p-6 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all duration-300">
-              <div>
-                <div class="flex justify-between items-center mb-3">
-                  <span class="bg-blue-950 text-blue-400 border border-blue-900/60 text-[9px] font-bold px-2.5 py-0.5 rounded-md uppercase">${s.category}</span>
-                  <span class="text-[11px] ${s.stock > 0 ? 'text-emerald-400' : 'text-red-400'} font-medium">${s.stock > 0 ? `🟢 Stock: ${s.stock}` : '🔴 Out of Stock'}</span>
+        data.forEach(srv => {
+          const isOut = srv.stock <= 0;
+          grid.innerHTML += `
+            <div class="glass rounded-2xl p-5 shadow-lg flex flex-col justify-between space-y-4 hover:border-slate-700 transition">
+              <div class="space-y-2">
+                <div class="flex justify-between items-start">
+                  <span class="bg-slate-800 text-slate-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border border-slate-700">${srv.category}</span>
+                  <span class="text-xs text-slate-400">ID: <code>${srv.service_id}</code></span>
                 </div>
-                <h3 class="text-base font-bold text-white mb-1.5">${s.name}</h3>
-                <p class="text-slate-400 text-xs line-clamp-2 mb-6">${s.description || 'No system meta details provided.'}</p>
+                <h4 class="text-lg font-bold text-slate-100">${srv.name}</h4>
+                <p class="text-xs text-slate-400 font-mono">${srv.description}</p>
+                <div class="flex justify-between items-center text-sm pt-2">
+                  <div>মূল্য: <span class="text-emerald-400 font-extrabold text-base">${parseFloat(srv.price).toFixed(2)}$</span></div>
+                  <div>স্টক: <span class="${isOut ? 'text-red-500':'text-blue-400'} font-bold">${srv.stock} টি</span></div>
+                </div>
               </div>
-              <div class="flex justify-between items-center pt-4 border-t border-slate-800/60">
-                <span class="text-lg font-bold text-white">$${s.price.toFixed(2)}</span>
-                <button onclick="triggerPurchaseOrder(${s.service_id})" ${s.stock <= 0 ? 'disabled' : ''} class="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all">Buy Now</button>
-              </div>
-            </div>`;
+              <button onclick="buyService(${srv.service_id})" ${isOut ? 'disabled':''} class="w-full ${isOut ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 glow-btn text-white'} text-sm font-bold py-2.5 rounded-xl transition">
+                ${isOut ? 'Out Of Stock' : '<i class="fa-solid fa-shopping-cart mr-2"></i>Buy Now'}
+              </button>
+            </div>
+          `;
         });
-
-        document.getElementById('shimmer-loader').classList.add('hidden');
-        container.classList.remove('hidden');
-      } catch (err) { console.error(err); }
+      } catch (err) {
+        grid.innerHTML = '<p class="text-red-400">সার্ভিস লোড করতে ব্যর্থ!</p>';
+      }
     }
 
-    async function triggerPurchaseOrder(service_id) {
-      if (!confirm('Authorize instant asset clearance buy transaction?')) return;
+    // Buy Process
+    async function buyService(serviceId) {
+      if(!currentUser) return alert("দয়া করে প্রথমে লগইন করুন!");
+      if(!confirm("আপনি কি নিশ্চিত যে এই সার্ভিসটি কিনতে চান?")) return;
+
       try {
-        const res = await fetch(`${API_ROUTE}/services/buy`, {
+        const res = await fetch('/api/buy', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${runtimeState.token}` },
-          body: JSON.stringify({ service_id })
+          headers: { 
+            'Content-Type': 'application/json',
+            'user-id': currentUser.user_id,
+            'is-admin': isAdminMode
+          },
+          body: JSON.stringify({ userId: currentUser.user_id, serviceId })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
-
-        alert(`🎉 Purchase Successful!\n\nGmail ID: ${data.purchase.gmail}\nPassword Phrase: ${data.purchase.account_pass}`);
-        runStorefrontEngine();
-      } catch(err) { alert(err.message); }
+        if(data.success) {
+          alert(`🎉 কেনাকাটা সফল হয়েছে!\n\nপ্রোডাক্ট: ${data.item.product_name}\nGmail: ${data.item.product_gmail}\nPassword: ${data.item.product_password}`);
+          // Refresh Profile data & list
+          refreshProfileData();
+          loadServices();
+        } else {
+          alert("ত্রুটি: " + data.error);
+        }
+      } catch(err) {
+        alert("ক্রয় সম্পন্ন করা যায়নি!");
+      }
     }
 
-    async function runProfileEngine() {
-      try {
-        const [profileRes, purchasesRes] = await Promise.all([
-          fetch(`${API_ROUTE}/profile`, { headers: { 'Authorization': `Bearer ${runtimeState.token}` } }),
-          fetch(`${API_ROUTE}/purchases`, { headers: { 'Authorization': `Bearer ${runtimeS
+    // Refresh User Account Data Dynamic
+    async function refreshProfileData() {
+      if(!currentUser) return;
+      const res = await fetch(`/api/profile/${currentUser.user_id}`);
+      const data = await res.json();
+      if(!data.error) {
+        currentUser = data;
+        updateUI();
+      }
+    }
+
+    // User Orders Lookup
+    async function loadUserOrders() {
+      if(!currentUser) return;
+      openModal('ordersModal');
+      const container = document.getElementById('ordersList');
+      container.innerHTML = 'লোড হচ্ছে...';
+
+      const res = await fetch(`/api/orders/${currentUser.user_id}`);
+      const data = await res.json();
+      container.innerHTML = '';
+                
