@@ -1,294 +1,340 @@
-// server.js
-const express = require('express');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+// servconst express = require('express');
+const { MongoClient } = require('mongodb');
 const cors = require('cors');
 const path = require('path');
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
-// --- CONFIGURATION ---
-const JWT_SECRET = 'fahim_pro_secret_key_2026';
-const MONGO_URI = "mongodb+srv://fahim:Fahim123456@cluster0.3sihfnt.mongodb.net/premium_service_bot?retryWrites=true&w=majority";
+// static files serving
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Requested Credentials
-const ADMIN_EMAIL = 'fahimfahimf737@gmail.com';
-const ADMIN_PASSWORD_RAW = '@FAHIM1UKBD1ST';
+// config
+const MONGO_URI = "mongodb+srv://fahim:Fahim123456@cluster0.3sihfnt.mongodb.net/?retryWrites=true&w=majority";
+const DB_NAME = "premium_service_bot";
+const ADMIN_EMAIL = "fahimfahimf737@gmail.com";
+const ADMIN_ID = 7015857680;
 
-// Connect to your existing MongoDB Cluster
-mongoose.connect(MONGO_URI)
-  .then(() => console.log('🛡️ Database connected successfully to premium_service_bot'))
-  .catch(err => console.error('Database connection error:', err));
+let db, users, services, serviceItems, purchases, deposits, counters, settings, bannedUsers;
 
-// --- MONGOOSE SCHEMAS (Matching your Python setup) ---
-const UserSchema = new mongoose.Schema({
-  user_id: { type: Number, unique: true, required: true },
-  username: { type: String, default: '' },
-  balance: { type: Number, default: 0.0 },
-  total_spent: { type: Number, default: 0.0 },
-  bought_count: { type: Number, default: 0 },
-  email: { type: String, unique: true, sparse: true },
-  password: { type: String }, // Hashed
-  is_admin: { type: Boolean, default: false }
-});
+// Database Connection
+MongoClient.connect(MONGO_URI)
+  .then(client => {
+    db = client.db(DB_NAME);
+    users = db.collection("users");
+    services = db.collection("services");
+    serviceItems = db.collection("service_items");
+    purchases = db.collection("purchases");
+    deposits = db.collection("deposits");
+    counters = db.collection("counters");
+    settings = db.collection("settings");
+    bannedUsers = db.collection("banned_users");
+    console.log("🟢 Connected to MongoDB Atlas Successfully!");
+  })
+  .catch(err => console.error("🔴 MongoDB Connection Error:", err));
 
-const ServiceSchema = new mongoose.Schema({
-  service_id: { type: Number, unique: true },
-  name: String,
-  price: Number,
-  category: { type: String, default: 'General' },
-  description: String,
-  stock: { type: Number, default: 0 }
-});
+// Helpers
+function nowText() {
+  const d = new Date();
+  return `${d.getHours()}:${d.getMinutes()} | ${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`;
+}
 
-const ServiceItemSchema = new mongoose.Schema({
-  service_id: Number,
-  gmail: { type: String, required: true },
-  password: { type: String, required: true },
-  is_sold: { type: Boolean, default: false },
-  sold_at: Date
-});
-
-const DepositSchema = new mongoose.Schema({
-  deposit_id: { type: Number, unique: true },
-  user_id: Number,
-  username: String,
-  amount: Number,
-  payment_method: String,
-  status: { type: String, default: 'pending' }, // pending, confirmed, rejected
-  created_at: { type: Date, default: Date.now }
-});
-
-const PurchaseSchema = new mongoose.Schema({
-  user_id: Number,
-  product_name: String,
-  price: Number,
-  gmail: String,
-  account_pass: String,
-  created_at: { type: Date, default: Date.now }
-});
-
-const CounterSchema = new mongoose.Schema({
-  _id: String,
-  seq: { type: Number, default: 0 }
-});
-
-const User = mongoose.model('User', UserSchema, 'users');
-const Service = mongoose.model('Service', ServiceSchema, 'services');
-const ServiceItem = mongoose.model('ServiceItem', ServiceItemSchema, 'service_items');
-const Deposit = mongoose.model('Deposit', DepositSchema, 'deposits');
-const Purchase = mongoose.model('Purchase', PurchaseSchema, 'purchases');
-const Counter = mongoose.model('Counter', CounterSchema, 'counters');
-
-// Counter increment helper for Sequence IDs
-async function getNextSequenceValue(sequenceName) {
-  const sequenceDocument = await Counter.findByIdAndUpdate(
-    sequenceName,
+async function getNextSequence(name) {
+  const counter = await counters.findOneAndUpdate(
+    { _id: name },
     { $inc: { seq: 1 } },
-    { new: true, upsert: true }
+    { upsert: true, returnDocument: 'after' }
   );
-  return sequenceDocument.seq;
+  return counter.seq;
 }
 
-// Seed Primary Admin Account 
-async function seedAdmin() {
-  const adminExists = await User.findOne({ email: ADMIN_EMAIL });
-  if (!adminExists) {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD_RAW, salt);
-    await User.create({
-      user_id: 7015857680, // Matches your Python script ADMIN_ID
-      username: 'FAHIM1UKBD1ST',
-      email: ADMIN_EMAIL,
-      password: hashedPassword,
-      is_admin: true,
-      balance: 10000.0
-    });
-    console.log('📌 Primary Admin Account Registered successfully.');
-  }
-}
-seedAdmin();
+// Middleware to Check Maintenance & Ban Status
+async function checkStatus(req, res, next) {
+  const userId = parseInt(req.headers['user-id']);
+  const isAdmin = req.headers['is-admin'] === 'true';
 
-// --- SECURITY MIDDLEWARE ---
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Authentication required' });
+  if (!isAdmin && userId) {
+    // Check Ban
+    const ban = await bannedUsers.findOne({ user_id: userId });
+    if (ban) return res.status(403).json({ error: `You are banned! Reason: ${ban.reason || 'No reason'}` });
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: 'Session expired. Please log in again.' });
-    req.user = user;
-    next();
-  });
-}
-
-function requireAdmin(req, res, next) {
-  if (!req.user || !req.user.is_admin) {
-    return res.status(403).json({ message: 'Forbidden: Administrative clearance needed' });
+    // Check Maintenance
+    const maintenance = await settings.findOne({ key: "maintenance_mode" });
+    if (maintenance && maintenance.value === true) {
+      return res.status(503).json({ error: "Site is under maintenance. Please try again later." });
+    }
   }
   next();
 }
 
-// --- API APPARATUS & ENDPOINTS ---
+// ---------------- USER ENDPOINTS ----------------
 
-// Auth Systems
-app.post('/api/auth/login', async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'User not found' });
+// User Login / Registration lookup
+app.post('/api/auth', async (req, res) => {
+  const { email, password, userId } = req.body;
 
-    const validPass = await bcrypt.compare(password, user.password);
-    if (!validPass) return res.status(400).json({ message: 'Incorrect credentials' });
-
-    const token = jwt.sign({ id: user._id, user_id: user.user_id, is_admin: user.is_admin, email: user.email }, JWT_SECRET, { expiresIn: '12h' });
-    res.json({ token, is_admin: user.is_admin, username: user.username });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  // Admin login check
+  if (email === ADMIN_EMAIL) {
+    return res.json({ success: true, isAdmin: true, user: { user_id: ADMIN_ID, username: "Admin_Fahim", balance: 9999 } });
   }
+
+  // Web user lookup using Telegram User ID
+  if (userId) {
+    const uId = parseInt(userId);
+    let user = await users.findOne({ user_id: uId });
+    if (!user) {
+      // Auto register user if not found
+      user = {
+        user_id: uId,
+        username: "WebUser_" + uId,
+        balance: 0.0,
+        bought_count: 0,
+        total_deposit: 0.0,
+        total_spent: 0.0,
+        created_at: nowText(),
+        updated_at: nowText()
+      };
+      await users.insertOne(user);
+    }
+    return res.json({ success: true, isAdmin: false, user });
+  }
+  return res.status(400).json({ error: "Invalid credentials or User ID" });
 });
 
-app.post('/api/auth/register', async (req, res) => {
-  const { email, password, username } = req.body;
-  try {
-    const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ message: 'Email already in use' });
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const mockTelegramId = Math.floor(100000000 + Math.random() * 900000000);
-
-    await User.create({
-      user_id: mockTelegramId,
-      username: username || 'web_user',
-      email,
-      password: hashedPassword,
-      is_admin: false
-    });
-    res.status(201).json({ message: 'Registration Successful' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// App Engine Frontends
-app.get('/api/profile', authenticateToken, async (req, res) => {
-  const user = await User.findById(req.user.id).select('-password');
+// Get User Profile Data
+app.get('/api/profile/:userId', checkStatus, async (req, res) => {
+  const user = await users.findOne({ user_id: parseInt(req.params.userId) });
+  if (!user) return res.status(404).json({ error: "User not found" });
   res.json(user);
 });
 
-app.get('/api/services', authenticateToken, async (req, res) => {
-  const services = await Service.find({});
-  res.json(services);
+// View Active Services
+app.get('/api/services', checkStatus, async (req, res) => {
+  const activeServices = await services.find({ is_active: true }).sort({ service_id: -1 }).toArray();
+  res.json(activeServices);
 });
 
-app.post('/api/services/buy', authenticateToken, async (req, res) => {
-  const { service_id } = req.body;
-  const user = await User.findById(req.user.id);
+// Buy Service (Atomic Operation matching Python code)
+app.post('/api/buy', checkStatus, async (req, res) => {
+  const { userId, serviceId } = req.body;
+  const uId = parseInt(userId);
+  const sId = parseInt(serviceId);
 
-  const service = await Service.findOne({ service_id });
-  if (!service || service.stock <= 0) {
-    return res.status(400).json({ message: 'Product completely out of stock!' });
-  }
+  const user = await users.findOne({ user_id: uId });
+  const service = await services.findOne({ service_id: sId });
 
-  if (user.balance < service.price) {
-    return res.status(400).json({ message: 'Insufficient funds. Please fund your balance.' });
-  }
+  if (!user || !service) return res.status(404).json({ error: "User or Service not found" });
+  if (service.stock <= 0 || !service.is_active) return res.status(400).json({ error: "Product out of stock or inactive" });
+  if (user.balance < service.price) return res.status(400).json({ error: "Insufficient Balance" });
 
-  // Atomically grab an item
-  const item = await ServiceItem.findOneAndUpdate(
-    { service_id: service.service_id, is_sold: false },
-    { $set: { is_sold: true, sold_at: new Date() } },
-    { new: true }
+  // Get available item and mark as sold instantly
+  const item = await serviceItems.findOneAndUpdate(
+    { service_id: sId, is_sold: 0 },
+    { $set: { is_sold: 1, sold_at: nowText() } },
+    { sort: { item_id: 1 }, returnDocument: 'after' }
   );
 
-  if (!item) return res.status(400).json({ message: 'Stock sync failure. Try again.' });
+  if (!item) return res.status(400).json({ error: "No available account item found in stock" });
 
-  // Update user parameters
-  user.balance -= service.price;
-  user.total_spent += service.price;
-  user.bought_count += 1;
-  await user.save();
+  // Deduct balance and update user stats
+  await users.updateOne(
+    { user_id: uId },
+    { 
+      $inc: { balance: -parseFloat(service.price), total_spent: parseFloat(service.price), bought_count: 1 },
+      $set: { updated_at: nowText() }
+    }
+  );
 
-  // Deduct stock count safely
-  service.stock -= 1;
-  await service.save();
+  // Decrement Stock
+  await services.updateOne(
+    { service_id: sId },
+    { $inc: { stock: -1 }, $set: { updated_at: nowText() } }
+  );
 
-  const receipt = await Purchase.create({
-    user_id: user.user_id,
-    product_name: service.name,
-    price: service.price,
-    gmail: item.gmail,
-    account_pass: item.password
-  });
-
-  res.json({ message: 'Purchase Complete!', purchase: receipt });
-});
-
-app.post('/api/deposits/submit', authenticateToken, async (req, res) => {
-  const { amount, payment_method } = req.body;
-  const nextDepId = await getNextSequenceValue('deposit_id');
-  const user = await User.findById(req.user.id);
-
-  const dep = await Deposit.create({
-    deposit_id: nextDepId,
-    user_id: user.user_id,
+  // Save Purchase history
+  const purchaseId = await getNextSequence("purchase_id");
+  const purchaseDoc = {
+    purchase_id: purchaseId,
+    user_id: uId,
     username: user.username,
-    amount: parseFloat(amount),
-    payment_method
-  });
-  res.status(201).json({ message: 'Deposit requested successfully', deposit: dep });
+    product_name: service.name,
+    product_price: parseFloat(service.price),
+    product_gmail: item.gmail,
+    product_password: item.password,
+    created_at: nowText()
+  };
+  await purchases.insertOne(purchaseDoc);
+
+  res.json({ success: true, item: purchaseDoc });
 });
 
-app.get('/api/purchases', authenticateToken, async (req, res) => {
-  const history = await Purchase.find({ user_id: req.user.user_id }).sort({ created_at: -1 });
+// View User Orders
+app.get('/api/orders/:userId', checkStatus, async (req, res) => {
+  const history = await purchases.find({ user_id: parseInt(req.params.userId) }).sort({ purchase_id: -1 }).toArray();
   res.json(history);
 });
 
-// --- ADMIN LEVEL SYSTEM OVERRIDES ---
-app.get('/api/admin/deposits/pending', authenticateToken, requireAdmin, async (req, res) => {
-  const list = await Deposit.find({ status: 'pending' });
+// Submit Deposit Request
+app.post('/api/deposit', checkStatus, async (req, res) => {
+  const { userId, username, amount, method, trxInfo } = req.body;
+  const depositId = await getNextSequence("deposit_id");
+
+  const depositDoc = {
+    deposit_id: depositId,
+    user_id: parseInt(userId),
+    username: username || "WebUser",
+    amount: parseFloat(amount),
+    payment_method: method,
+    screenshot_file_id: trxInfo || "Web Submission", // Using transaction hash/reference as proof
+    status: "pending",
+    created_at: nowText()
+  };
+
+  await deposits.insertOne(depositDoc);
+  res.json({ success: true, depositId });
+});
+
+
+// ---------------- ADMIN ENDPOINTS ----------------
+
+// Site Stats
+app.get('/api/admin/stats', async (req, res) => {
+  const totalUsers = await users.countDocuments({});
+  const totalDeps = await deposits.countDocuments({});
+  const pendingDeps = await deposits.countDocuments({ status: "pending" });
+  const maintenance = await settings.findOne({ key: "maintenance_mode" });
+  
+  res.json({
+    totalUsers,
+    totalDeposits: totalDeps,
+    pendingDeposits: pendingDeps,
+    maintenanceMode: maintenance ? maintenance.value : false
+  });
+});
+
+// Get Pending Deposits
+app.get('/api/admin/pending-deposits', async (req, res) => {
+  const list = await deposits.find({ status: "pending" }).sort({ deposit_id: -1 }).toArray();
   res.json(list);
 });
 
-app.post('/api/admin/deposits/action', authenticateToken, requireAdmin, async (req, res) => {
-  const { deposit_id, action } = req.body; // action: 'confirm' or 'reject'
-  const dep = await Deposit.findOne({ deposit_id });
-  if (!dep || dep.status !== 'pending') return res.status(400).json({ message: 'Deposit request already settled.' });
+// Action on Deposit (Confirm / Reject)
+app.post('/api/admin/action-deposit', async (req, res) => {
+  const { depositId, action } = req.body;
+  const dep = await deposits.findOne({ deposit_id: parseInt(depositId) });
+
+  if (!dep || dep.status !== 'pending') return res.status(404).json({ error: "Pending deposit not found" });
 
   if (action === 'confirm') {
-    dep.status = 'confirmed';
-    await User.findOneAndUpdate({ user_id: dep.user_id }, { $inc: { balance: dep.amount } });
+    await deposits.updateOne({ deposit_id: dep.deposit_id }, { $set: { status: "confirmed", updated_at: nowText() } });
+    await users.updateOne({ user_id: dep.user_id }, { 
+      $inc: { balance: parseFloat(dep.amount), total_deposit: parseFloat(dep.amount) },
+      $set: { updated_at: nowText() }
+    });
   } else {
-    dep.status = 'rejected';
+    await deposits.updateOne({ deposit_id: dep.deposit_id }, { $set: { status: "rejected", updated_at: nowText() } });
   }
-  await dep.save();
-  res.json({ message: `Transaction set to ${dep.status}` });
+  res.json({ success: true });
 });
 
-app.post('/api/admin/services/create', authenticateToken, requireAdmin, async (req, res) => {
+// Service Management (Add Service)
+app.post('/api/admin/add-service', async (req, res) => {
   const { name, price, category, description } = req.body;
-  const nextSrvId = await getNextSequenceValue('service_id');
-  const newSrv = await Service.create({ service_id: nextSrvId, name, price, category, description, stock: 0 });
-  res.status(201).json(newSrv);
+  const serviceId = await getNextSequence("service_id");
+
+  const newService = {
+    service_id: serviceId,
+    name,
+    price: parseFloat(price),
+    category: category || "General",
+    description: description || "No description",
+    stock: 0,
+    is_active: true,
+    created_at: nowText(),
+    updated_at: nowText()
+  };
+
+  await services.insertOne(newService);
+  res.json({ success: true, serviceId });
 });
 
-app.post('/api/admin/services/stock', authenticateToken, requireAdmin, async (req, res) => {
-  const { service_id, gmail, password } = req.body;
-  await ServiceItem.create({ service_id: parseInt(service_id), gmail, password });
-  await Service.findOneAndUpdate({ service_id: parseInt(service_id) }, { $inc: { stock: 1 } });
-  res.json({ message: 'Stock allocated.' });
+// Add Stock Items
+app.post('/api/admin/add-stock', async (req, res) => {
+  const { serviceId, gmail, password } = req.body;
+  const sId = parseInt(serviceId);
+
+  const existingItem = await serviceItems.findOne({ service_id: sId, gmail });
+  if (existingItem) return res.status(400).json({ error: "This Account/Gmail already exists in stock!" });
+
+  const itemId = await getNextSequence("item_id");
+  await serviceItems.insertOne({
+    item_id: itemId,
+    service_id: sId,
+    gmail,
+    password,
+    is_sold: 0,
+    created_at: nowText()
+  });
+
+  await services.updateOne({ service_id: sId }, { $inc: { stock: 1 }, $set: { updated_at: nowText() } });
+  res.json({ success: true });
 });
 
-// Bind frontend static distribution build assets
-app.use(express.static(path.join(__dirname, 'public')));
+// Delete Service completely
+app.delete('/api/admin/delete-service/:id', async (req, res) => {
+  const sId = parseInt(req.params.id);
+  await services.deleteOne({ service_id: sId });
+  await serviceItems.deleteMany({ service_id: sId });
+  res.json({ success: true });
+});
+
+// Toggle Service Active Status
+app.post('/api/admin/toggle-service', async (req, res) => {
+  const { serviceId } = req.body;
+  const sId = parseInt(serviceId);
+  const service = await services.findOne({ service_id: sId });
+  if (!service) return res.status(404).json({ error: "Service not found" });
+
+  const nextStatus = !service.is_active;
+  await services.updateOne({ service_id: sId }, { $set: { is_active: nextStatus, updated_at: nowText() } });
+  res.json({ success: true, is_active: nextStatus });
+});
+
+// Toggle Maintenance System
+app.post('/api/admin/toggle-maintenance', async (req, res) => {
+  const maintenance = await settings.findOne({ key: "maintenance_mode" });
+  const currentStatus = maintenance ? maintenance.value : false;
+  const newStatus = !currentStatus;
+
+  await settings.updateOne(
+    { key: "maintenance_mode" },
+    { $set: { value: newStatus, updated_at: nowText() } },
+    { upsert: true }
+  );
+  res.json({ success: true, maintenanceMode: newStatus });
+});
+
+// Ban/Unban System
+app.post('/api/admin/toggle-ban', async (req, res) => {
+  const { userId, reason, action } = req.body;
+  const uId = parseInt(userId);
+
+  if (action === 'ban') {
+    await bannedUsers.updateOne({ user_id: uId }, { $set: { reason, created_at: nowText() } }, { upsert: true });
+  } else {
+    await bannedUsers.deleteOne({ user_id: uId });
+  }
+  res.json({ success: true });
+});
+
+// Fallback Route to Frontend
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 Premium Web Hub operational on port ${PORT}`));
+// Server Listen
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Server fully operational on port ${PORT}`));
+        er.js Premium Web Hub operational on port ${PORT}`));
   
