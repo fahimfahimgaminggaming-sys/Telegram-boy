@@ -1,70 +1,237 @@
 <!DOCTYPE html>
-
-<html lang="yes">
-
+<html lang="bn">
 <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<meta charset="UTF-8">
+<title>🎂 Premium Birthday Wish</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<title>Professional Glassmorphism Login</title>
+<style>
+body{
+    overflow:hidden;
+    font-family: Arial, sans-serif;
+}
 
-<link href="https://fonts.googleapis.com/css2?
+/* Animated Background */
+.bg-animated{
+    background: linear-gradient(-45deg,#ff9ecf,#ffc4dd,#fbc2eb,#a18cd1);
+    background-size:400% 400%;
+    animation: gradientMove 10s ease infinite;
+}
 
-family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+@keyframes gradientMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax
+/* Glassmorphism */
+.glass{
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    border:1px solid rgba(255,255,255,0.3);
+    box-shadow:0 8px 32px rgba(0,0,0,0.2);
+}
 
-/libs/font-awesome/6.0.0/css/all.min.css">
+/* Floating */
+.float{
+    animation: float 4s ease-in-out infinite;
+}
 
-<link rel="stylesheet" href="newlogin.css">
+@keyframes float{
+    0%{transform:translateY(0px)}
+    50%{transform:translateY(-12px)}
+    100%{transform:translateY(0px)}
+}
 
+/* Glow */
+.glow{
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow{
+    from{
+        box-shadow:0 0 20px #ff7eb3;
+    }
+    to{
+        box-shadow:0 0 45px #ff1493;
+    }
+}
+
+/* Balloons */
+.balloon{
+    position:absolute;
+    font-size:40px;
+    animation: rise linear infinite;
+}
+
+@keyframes rise{
+    from{
+        transform:translateY(100vh);
+        opacity:0;
+    }
+    to{
+        transform:translateY(-120vh);
+        opacity:1;
+    }
+}
+
+/* Firework Canvas */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+}
+</style>
 </head>
-<body>
 
-<div class="login-box">
+<body class="bg-animated min-h-screen flex items-center justify-center relative p-4">
 
-<form id="loginForm">f
+<!-- Firework Canvas -->
+<canvas id="fireworkCanvas"></canvas>
 
-<h2>LOGIN</h2>
+<!-- Balloons -->
+<div class="balloon left-[10%]" style="animation-duration:12s;">🎈</div>
+<div class="balloon left-[30%]" style="animation-duration:15s;">🎈</div>
+<div class="balloon left-[60%]" style="animation-duration:10s;">🎈</div>
+<div class="balloon left-[85%]" style="animation-duration:14s;">🎈</div>
 
-<div class="input-group">
+<!-- Card -->
+<div class="glass glow rounded-[35px] p-8 w-full max-w-md text-center text-white z-10">
 
-<i class="fas fa-user"></i>
+    <!-- Upload Photo -->
+    <label class="cursor-pointer">
+        <img id="preview"
+        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        class="w-32 h-32 rounded-full mx-auto border-4 border-white object-cover mb-4 shadow-xl"/>
 
-<input type="text" id="username" required>
+        <input type="file"
+        id="photoUpload"
+        accept="image/*"
+        class="hidden">
+    </label>
 
-<label>Username</label>
+    <div class="text-6xl mb-4 float">
+        🎂
+    </div>
 
+    <!-- Name Input -->
+    <input
+    type="text"
+    id="nameInput"
+    placeholder="তোমার নাম লিখো..."
+    class="w-full p-3 rounded-xl text-black mb-4 outline-none text-center"/>
+
+    <h1 id="birthdayTitle"
+    class="text-3xl font-extrabold mb-3">
+        🎉 শুভ জন্মদিন! 🎉
+    </h1>
+
+    <p class="text-lg opacity-90 mb-5">
+        তোমার জীবন ভরে উঠুক সুখ, ভালোবাসা আর সফলতায় ❤️
+    </p>
+
+    <!-- Music -->
+    <audio id="birthdayMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+
+    <button onclick="startCelebration()"
+    class="bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full font-bold hover:scale-110 transition duration-300 shadow-2xl">
+        🎁 Celebration শুরু করো
+    </button>
+
+    <p id="wishMessage"
+    class="hidden mt-5 text-xl font-bold animate-bounce">
+        🎉 অনেক শুভেচ্ছা ও ভালোবাসা! 🎂
+    </p>
 </div>
 
-<div class="input-group">
+<script>
+/* Photo Upload */
+document.getElementById('photoUpload')
+.addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(file){
+        document.getElementById('preview').src =
+        URL.createObjectURL(file);
+    }
+});
 
-<i class="fas fa-lock"></i>
+/* Name Customize */
+document.getElementById('nameInput')
+.addEventListener('input', function(){
+    const name = this.value.trim();
+    const title = document.getElementById('birthdayTitle');
 
-<input type="password" id="password" required>
+    if(name){
+        title.innerHTML =
+        `🎉 শুভ জন্মদিন, ${name}! 🎉`;
+    }else{
+        title.innerHTML =
+        `🎉 শুভ জন্মদিন! 🎉`;
+    }
+});
 
-<label>Password</label>
+/* Celebration */
+function startCelebration(){
 
-</div>
+    // Music
+    document.getElementById('birthdayMusic').play();
 
-<button type="submit" class="login-btn" id="submitBtn">Sign In</button>
+    // Confetti
+    confetti({
+        particleCount:300,
+        spread:180,
+        origin:{y:0.6}
+    });
 
-<p class="signup-link">
+    setInterval(()=>{
+        confetti({
+            particleCount:80,
+            spread:100
+        });
+    },2500);
 
-New here? <a href="#">Create Account</a>
+    // Message
+    document.getElementById('wishMessage')
+    .classList.remove('hidden');
 
-|
+    // Fireworks
+    fireworkBurst();
+}
 
-</p>
+/* Fireworks */
+const canvas =
+document.getElementById("fireworkCanvas");
+const ctx = canvas.getContext("2d");
 
-</form>
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-</div>
+function fireworkBurst(){
+    setInterval(()=>{
+        confetti({
+            particleCount:120,
+            spread:360,
+            startVelocity:45,
+            origin:{
+                x:Math.random(),
+                y:Math.random()*0.5
+            }
+        });
+    },900);
+}
 
-<script src="newlogin.js"></script>
+window.addEventListener('resize',()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+});
+</script>
 
 </body>
-
 </html>
