@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fahim Shop Pro Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #080c14; color: #f1f5f9; }
+    .glass-ui { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .neon-border:focus { border-color: #3b82f6; box-shadow: 0 0 14px rgba(59, 130, 246, 0.25); }
+    .shimmer-anim { background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%); background-size: 200% 100%; animation: moveShimmer 1.6s infinite linear; }
+    @keyframes moveShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .tab-content { display: none; opacity: 0; transform: translateY(8px); transition: all 0.3s ease-out; }
+    .tab-content.active-view { display: block; opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="min-h-screen relative pb-12">
+
+  <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+  <nav class="w-full glass-ui sticky top-0 z-50 px-8 py-4 flex justify-between items-center border-b border-slate-800">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="viewTab('store-tab')">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-bold shadow-lg text-white">F</div>
+      <span class="text-lg font-bold tracking-tight text-white">FAHIM <span class="text-blue-500 text-xs tracking-widest font-mono block">SHOP PRO</span></span>
+    </div>
+    <div id="nav-links" class="hidden flex items-center gap-6">
+      <button onclick="viewTab('store-tab')" class="hover:text-blue-400 font-medium text-sm transition-colors">🛒 Marketplace</button>
+      <button onclick="viewTab('account-tab')" class="hover:text-blue-400 font-medium text-sm transition-colors">👤 Profile Wallet</button>
+      <button id="admin-nav-link" onclick="viewTab('admin-panel-tab')" class="hidden bg-red-950/40 text-red-400 border border-red-900/40 px-3 py-1 rounded-full text-xs font-bold transition-all">⚙️ Admin Override</button>
+      <button onclick="destroySession()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs px-4 py-2 rounded-xl transition-all">Logout</button>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-6 mt-10">
+
+    <section id="auth-gate-tab" class="tab-content active-view max-w-md mx-auto mt-16">
+      <div class="glass-ui rounded-3xl p-8 shadow-2xl border border-slate-800">
+        <h2 id="auth-header-title" class="text-2xl font-bold tracking-tight text-white text-center mb-1">Secure Core Login</h2>
+        <p id="auth-header-desc" class="text-slate-400 text-xs text-center mb-8">Access your customized premium account node</p>
+        
+        <form id="auth-form-handler" onsubmit="dispatchAuth(event)" class="space-y-5">
+          <div id="username-input-wrapper" class="hidden">
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Display Username</label>
+            <input type="text" id="form-username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none neon-border text-white transition-all" placeholder="JohnDoe">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Email Address</label>
+            <input type="email" id="form-email" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none neon-border text-white transition-all" placeholder="fahimfahimf737@gmail.com">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Security Token Password</label>
+            <input type="password" id="form-password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none neon-border text-white transition-all" placeholder="••••••••">
+          </div>
+          <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 font-bold rounded-xl text-sm shadow-xl hover:opacity-95 text-white active:scale-[0.99] transition-all">Authenticate Credentials</button>
+        </form>
+        
+        <div class="mt-6 text-center">
+          <button onclick="toggleAuthGate()" id="switch-auth-mode-btn" class="text-xs text-slate-400 hover:text-blue-400 font-medium transition-colors">Don't have an account? Sign Up</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="store-tab" class="tab-content space-y-8">
+      <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-slate-800 pb-6">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight text-white">Premium Accounts Matrix</h1>
+          <p class="text-slate-400 text-xs mt-0.5">Automated product dispatch engine</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl px-5 py-3 flex items-center gap-4">
+          <span class="text-xs text-slate-400 uppercase font-bold tracking-wide">Available Vault:</span>
+          <span id="header-balance-view" class="text-xl font-bold text-emerald-400">$0.00</span>
+        </div>
+      </div>
+
+      <div id="shimmer-loader" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="shimmer-anim h-44 rounded-2xl opacity-40"></div>
+        <div class="shimmer-anim h-44 rounded-2xl opacity-40"></div>
+        <div class="shimmer-anim h-44 rounded-2xl opacity-40"></div>
+      </div>
+
+      <div id="live-services-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden"></div>
+    </section>
+
+    <section id="account-tab" class="tab-content space-y-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-ui p-6 rounded-2xl border border-slate-800">
+          <span class="text-xs font-bold text-slate-400 uppercase">Available Cash Reserves</span>
+          <h3 id="card-user-balance" class="text-3xl font-bold text-blue-400 mt-2">$0.00</h3>
+        </div>
+        <div class="glass-ui p-6 rounded-2xl border border-slate-800">
+          <span class="text-xs font-bold text-slate-400 uppercase">Total Capital Invested</span>
+          <h3 id="card-user-spent" class="text-3xl font-bold text-indigo-400 mt-2">$0.00</h3>
+        </div>
+        <div class="glass-ui p-6 rounded-2xl border border-slate-800">
+          <span class="text-xs font-bold text-slate-400 uppercase">Acquired Packages</span>
+          <h3 id="card-user-count" class="text-3xl font-bold text-emerald-400 mt-2">0 Items</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass-ui p-6 rounded-2xl border border-slate-800 h-fit space-y-4">
+          <h3 class="text-sm font-bold tracking-wider uppercase text-slate-300">File Deposit Ledger Alert</h3>
+          <form onsubmit="submitDepositTicket(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Top-up Value (USD)</label>
+              <input type="number" step="any" id="ticket-amount" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none text-white focus:border-blue-500 transition-all" placeholder="10.00">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Network Channels</label>
+              <select id="ticket-method" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none text-white focus:border-blue-500 transition-all">
+                <option value="USDT (BEP20)">USDT (BEP20)</option>
+                <option value="Binance Pay ID">Binance Pay ID</option>
+                <option value="TRX (TRC20)">TRX (TRC20)</option>
+              </select>
+            </div>
+            <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 font-bold text-xs rounded-xl text-white transition-all">Transmit Deposit Signal</button>
+          </form>
+        </div>
+
+        <div class="glass-ui p-6 rounded-2xl border border-slate-800 md:col-span-2 space-y-4">
+          <h3 class="text-sm font-bold tracking-wider uppercase text-slate-300">Delivered Dynamic Assets Registry</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 uppercase">
+                  <th class="pb-3 font-semibold">Asset Product Matrix</th>
+                  <th class="pb-3 font-semibold">Account Gmail</th>
+                  <th class="pb-3 font-semibold">Decrypted Token Key</th>
+                  <th class="pb-3 font-semibold text-right">Value Charged</th>
+                </tr>
+              </thead>
+              <tbody id="user-purchase-rows" class="divide-y divide-slate-800/40 text-slate-300"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin-panel-tab" class="tab-content space-y-8">
+      <div class="p-5 bg-red-950/20 border border-red-900/30 rounded-2xl">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-red-400">Administrative Terminal Active</h2>
+        <p class="text-xs text-red-300/70 mt-1">Direct system overrides, state deployments, and ledger approval engines active.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="glass-ui p-6 rounded-2xl border border-slate-800 space-y-4">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Inject Product Configuration Matrix</h3>
+          <form onsubmit="adminCreateService(event)" class="space-y-3">
+            <input type="text" id="adm-name" placeholder="Service Identifier Label Name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
+            <input type="number" step="any" id="adm-price" placeholder="Product Listing Cost Value ($)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
+            <input type="text" id="adm-cat" placeholder="System Routing Category Default" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
+            <textarea id="adm-desc" placeholder="System Meta Specifications Description Detail Data" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white h-16"></textarea>
+            <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 font-bold text-xs text-white rounded-xl transition-all">Deploy Configuration</button>
+          </form>
+        </div>
+
+        <div class="glass-ui p-6 rounded-2xl border border-slate-800 space-y-4">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Feed Stock Account Asset Blocks</h3>
+          <form onsubmit="adminLoadStock(event)" class="space-y-3">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">Target Package Target ID Node</label>
+              <select id="adm-stock-id-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white"></select>
+            </div>
+            <input type="email" id="adm-stock-gmail" placeholder="Target Account Gmail Identity" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
+            <input type="text" id="adm-stock-pass" placeholder="Target Account Security Plaintext Pass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white">
+            <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-500 font-bold text-xs text-white rounded-xl transition-all">Append Stack Block</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="glass-ui p-6 rounded-2xl border border-slate-800 space-y-4">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Pending Deposit Approvals Pipeline Queue</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 uppercase">
+                <th class="pb-3">Transaction ID</th>
+                <th class="pb-3">User Target Identity</th>
+                <th class="pb-3">Value Amount</th>
+                <th class="pb-3">Routing Pipeline</th>
+                <th class="pb-3 text-right">System Action Overrides</th>
+              </tr>
+            </thead>
+            <tbody id="adm-pending-deposit-rows" class="divide-y divide-slate-800/40 text-slate-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const API_ROUTE = '/api';
+    let runtimeState = { 
+      token: localStorage.getItem('tok') || null, 
+      is_admin: localStorage.getItem('isAdm') === 'true', 
+      isLoginView: true 
+    };
+
+    function viewTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(view => view.classList.remove('active-view'));
+      const activeEl = document.getElementById(tabId);
+      if (activeEl) activeEl.classList.add('active-view');
+
+      if (tabId === 'store-tab') runStorefrontEngine();
+      if (tabId === 'account-tab') runProfileEngine();
+      if (tabId === 'admin-panel-tab') runAdminEngine();
+    }
+
+    function toggleAuthGate() {
+      runtimeState.isLoginView = !runtimeState.isLoginView;
+      document.getElementById('auth-header-title').innerText = runtimeState.isLoginView ? 'Secure Core Login' : 'Register Identity Profile';
+      document.getElementById('auth-header-desc').innerText = runtimeState.isLoginView ? 'Access your customized premium account node' : 'Generate cloud system profile credentials matrix';
+      document.getElementById('switch-auth-mode-btn').innerText = runtimeState.isLoginView ? "Don't have an account? Sign Up" : 'Already verified? Access Login';
+      document.getElementById('username-input-wrapper').classList.toggle('hidden', runtimeState.isLoginView);
+    }
+
+    // --- SERVICE ACTION DISPATCH DISKS ---
+    async function dispatchAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('form-email').value;
+      const password = document.getElementById('form-password').value;
+      const username = document.getElementById('form-username').value;
+
+      const endpoint = runtimeState.isLoginView ? '/auth/login' : '/auth/register';
+      const bodyPayload = runtimeState.isLoginView ? { email, password } : { email, password, username };
+
+      try {
+        const res = await fetch(`${API_ROUTE}${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyPayload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Authentication sequence pipeline crash');
+
+        if (runtimeState.isLoginView) {
+          localStorage.setItem('tok', data.token);
+          localStorage.setItem('isAdm', data.is_admin);
+          runtimeState.token = data.token;
+          runtimeState.is_admin = data.is_admin;
+          validateSessionState();
+        } else {
+          alert('Registration successful! Processing authentication login entry.');
+          toggleAuthGate();
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function destroySession() {
+      localStorage.clear();
+      runtimeState.token = null;
+      runtimeState.is_admin = false;
+      validateSessionState();
+    }
+
+    function validateSessionState() {
+      if (runtimeState.token) {
+        document.getElementById('nav-links').classList.remove('hidden');
+        document.getElementById('admin-nav-link').classList.toggle('hidden', !runtimeState.is_admin);
+        viewTab('store-tab');
+      } else {
+        document.getElementById('nav-links').classList.add('hidden');
+        viewTab('auth-gate-tab');
+      }
+    }
+
+    async function runStorefrontEngine() {
+      document.getElementById('shimmer-loader').classList.remove('hidden');
+      document.getElementById('live-services-grid').classList.add('hidden');
+
+      try {
+        const [servicesRes, profileRes] = await Promise.all([
+          fetch(`${API_ROUTE}/services`, { headers: { 'Authorization': `Bearer ${runtimeState.token}` } }),
+          fetch(`${API_ROUTE}/profile`, { headers: { 'Authorization': `Bearer ${runtimeState.token}` } })
+        ]);
+
+        const services = await servicesRes.json();
+        const profile = await profileRes.json();
+
+        document.getElementById('header-balance-view').innerText = `$${profile.balance.toFixed(2)}`;
+
+        const container = document.getElementById('live-services-grid');
+        container.innerHTML = '';
+
+        services.forEach(s => {
+          container.innerHTML += `
+            <div class="glass-ui p-6 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all duration-300">
+              <div>
+                <div class="flex justify-between items-center mb-3">
+                  <span class="bg-blue-950 text-blue-400 border border-blue-900/60 text-[9px] font-bold px-2.5 py-0.5 rounded-md uppercase">${s.category}</span>
+                  <span class="text-[11px] ${s.stock > 0 ? 'text-emerald-400' : 'text-red-400'} font-medium">${s.stock > 0 ? `🟢 Stock: ${s.stock}` : '🔴 Out of Stock'}</span>
+                </div>
+                <h3 class="text-base font-bold text-white mb-1.5">${s.name}</h3>
+                <p class="text-slate-400 text-xs line-clamp-2 mb-6">${s.description || 'No system meta details provided.'}</p>
+              </div>
+              <div class="flex justify-between items-center pt-4 border-t border-slate-800/60">
+                <span class="text-lg font-bold text-white">$${s.price.toFixed(2)}</span>
+                <button onclick="triggerPurchaseOrder(${s.service_id})" ${s.stock <= 0 ? 'disabled' : ''} class="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all">Buy Now</button>
+              </div>
+            </div>`;
+        });
+
+        document.getElementById('shimmer-loader').classList.add('hidden');
+        container.classList.remove('hidden');
+      } catch (err) { console.error(err); }
+    }
+
+    async function triggerPurchaseOrder(service_id) {
+      if (!confirm('Authorize instant asset clearance buy transaction?')) return;
+      try {
+        const res = await fetch(`${API_ROUTE}/services/buy`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${runtimeState.token}` },
+          body: JSON.stringify({ service_id })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+
+        alert(`🎉 Purchase Successful!\n\nGmail ID: ${data.purchase.gmail}\nPassword Phrase: ${data.purchase.account_pass}`);
+        runStorefrontEngine();
+      } catch(err) { alert(err.message); }
+    }
+
+    async function runProfileEngine() {
+      try {
+        const [profileRes, purchasesRes] = await Promise.all([
+          fetch(`${API_ROUTE}/profile`, { headers: { 'Authorization': `Bearer ${runtimeState.token}` } }),
+          fetch(`${API_ROUTE}/purchases`, { headers: { 'Authorization': `Bearer ${runtimeS
