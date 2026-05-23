@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="description" content="TrustBuy - Premium digital marketplace with instant delivery" />
+<title>TrustBuy.com — Premium Digital Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000'/%3E%3Ctext x='32' y='42' font-family='Inter,sans-serif' font-size='32' font-weight='800' fill='%23d4af37' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E" />
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#000;
+  --bg-2:#0a0a0a;
+  --surface:rgba(20,20,22,.72);
+  --surface-2:rgba(28,28,32,.78);
+  --border:rgba(255,255,255,.08);
+  --border-2:rgba(212,175,55,.22);
+  --text:#f5f5f7;
+  --text-2:#a1a1a6;
+  --muted:#6e6e73;
+  --gold:#d4af37;
+  --gold-2:#f0d78c;
+  --gold-soft:rgba(212,175,55,.12);
+  --danger:#ff453a;
+  --success:#30d158;
+  --info:#0a84ff;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 10px 40px rgba(0,0,0,.5);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+body{background:radial-gradient(1200px 800px at 80% -10%,rgba(212,175,55,.08),transparent 60%),radial-gradient(900px 600px at -10% 100%,rgba(212,175,55,.05),transparent 60%),#000;padding-bottom:env(safe-area-inset-bottom)}
+img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:16px;color:var(--text);background:transparent;border:none;outline:none;width:100%}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+
+/* Loading */
+#loader{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s var(--ease)}
+#loader.hide{opacity:0;pointer-events:none}
+.loader-logo{font-size:42px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,var(--gold),var(--gold-2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:24px;animation:pulse 1.6s ease-in-out infinite}
+.loader-ring{width:42px;height:42px;border:2px solid rgba(212,175,55,.18);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.97)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+
+/* Glass */
+.glass{background:var(--surface);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--border);border-radius:var(--radius)}
+.glass-gold{background:var(--surface);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--border-2);border-radius:var(--radius)}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top));background:rgba(0,0,0,.6);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.5px}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#1c1c1e,#000);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;border:1px solid var(--border-2);box-shadow:0 4px 20px rgba(212,175,55,.15)}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.icon-btn{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border);transition:transform .2s var(--ease),background .2s}
+.icon-btn:hover{background:rgba(255,255,255,.08)}
+.icon-btn:active{transform:scale(.92)}
+.badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;background:var(--danger);color:#fff;font-size:10px;font-weight:700;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #000}
+.icon-wrap{position:relative}
+
+/* Main */
+.app{padding:18px 18px 110px;max-width:1100px;margin:0 auto;animation:fadeIn .4s var(--ease)}
+.page{animation:fadeUp .35s var(--ease)}
+
+/* Hero / banner slider */
+.hero{border-radius:22px;overflow:hidden;position:relative;margin-bottom:22px;aspect-ratio:16/8;background:linear-gradient(135deg,#1a1a1f,#0a0a0a);border:1px solid var(--border-2)}
+.hero-slides{display:flex;transition:transform .6s var(--ease);height:100%}
+.hero-slide{min-width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:24px;position:relative;background-size:cover;background-position:center}
+.hero-slide::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85))}
+.hero-slide>*{position:relative;z-index:1}
+.hero-tag{display:inline-block;padding:6px 12px;background:rgba(212,175,55,.18);border:1px solid var(--border-2);border-radius:999px;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;width:fit-content}
+.hero-title{font-size:clamp(22px,4vw,32px);font-weight:800;letter-spacing:-.5px;margin:0 0 6px;max-width:80%}
+.hero-sub{color:var(--text-2);font-size:14px;margin:0;max-width:80%}
+.hero-dots{position:absolute;bottom:14px;right:18px;display:flex;gap:6px;z-index:2}
+.hero-dot{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.4);transition:all .3s}
+.hero-dot.active{width:22px;background:var(--gold)}
+
+/* Flash sale */
+.flash{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;margin-bottom:18px;border-radius:16px;background:linear-gradient(135deg,rgba(255,69,58,.15),rgba(212,175,55,.08));border:1px solid rgba(255,69,58,.25)}
+.flash-left{display:flex;align-items:center;gap:10px}
+.flash-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,69,58,.2);font-size:18px}
+.flash-title{font-weight:700;font-size:14px}
+.flash-sub{font-size:12px;color:var(--text-2)}
+.flash-timer{display:flex;gap:4px}
+.flash-cell{background:#000;border:1px solid var(--border);border-radius:8px;padding:6px 9px;min-width:34px;text-align:center;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+
+/* Section header */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin:24px 4px 14px}
+.section-title{font-size:18px;font-weight:700;letter-spacing:-.3px;margin:0}
+.section-link{font-size:13px;color:var(--gold);font-weight:500}
+
+/* Search */
+.search-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:18px}
+.search-bar svg{flex:0 0 18px;color:var(--text-2)}
+.search-bar input{flex:1;font-size:15px}
+.filter-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px;scrollbar-width:none}
+.filter-chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:8px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;font-size:13px;font-weight:500;color:var(--text-2);transition:all .2s var(--ease);white-space:nowrap}
+.chip.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+.chip:active{transform:scale(.95)}
+
+/* Product grid */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr);gap:14px}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr);gap:16px}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s var(--ease),border-color .25s;position:relative}
+.card:hover{transform:translateY(-3px);border-color:var(--border-2)}
+.card-img{aspect-ratio:1;background:#111 center/cover no-repeat;position:relative;overflow:hidden}
+.card-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.4))}
+.card-fav{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:16px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:2;transition:transform .2s}
+.card-fav.active{color:var(--danger)}
+.card-fav:active{transform:scale(.85)}
+.card-stock{position:absolute;top:8px;left:8px;padding:4px 8px;background:rgba(48,209,88,.2);border:1px solid rgba(48,209,88,.4);border-radius:8px;font-size:10px;font-weight:600;color:var(--success);z-index:2}
+.card-stock.out{background:rgba(255,69,58,.2);border-color:rgba(255,69,58,.4);color:var(--danger)}
+.card-body{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card-title{font-size:14px;font-weight:600;line-height:1.3;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px}
+.card-rating{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2)}
+.card-rating .star{color:var(--gold)}
+.card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:6px}
+.card-price{font-size:16px;font-weight:700;color:var(--gold)}
+.card-price small{font-size:11px;color:var(--muted);font-weight:400;text-decoration:line-through;margin-left:4px}
+.add-btn{width:32px;height:32px;border-radius:10px;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;transition:transform .15s}
+.add-btn:active{transform:scale(.85)}
+
+/* Bottom nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:60;display:flex;justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(10,10,10,.85);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-top:1px solid var(--border)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;color:var(--text-2);font-size:10px;font-weight:500;border-radius:12px;transition:color .2s;position:relative}
+.nav-item.active{color:var(--gold)}
+.nav-item svg{width:22px;height:22px}
+.nav-item.active::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--gold);border-radius:2px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border-radius:14px;font-weight:600;font-size:15px;transition:transform .15s var(--ease),opacity .2s;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#000;box-shadow:0 6px 24px rgba(212,175,55,.3)}
+.btn-secondary{background:var(--surface-2);border:1px solid var(--border);color:var(--text)}
+.btn-danger{background:rgba(255,69,58,.15);border:1px solid rgba(255,69,58,.35);color:var(--danger)}
+.btn-success{background:rgba(48,209,88,.15);border:1px solid rgba(48,209,88,.35);color:var(--success)}
+.btn-ghost{background:transparent;color:var(--text-2)}
+.btn:disabled{opacity:.5;pointer-events:none}
+
+/* Auth */
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .5s var(--ease)}
+.auth-card{width:100%;max-width:420px;padding:32px 26px;border-radius:24px}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo .brand-mark{margin:0 auto 14px;width:54px;height:54px;font-size:24px;border-radius:14px}
+.auth-logo h1{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px}
+.auth-logo p{color:var(--text-2);font-size:14px;margin:0}
+.auth-tabs{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;margin-bottom:22px}
+.auth-tab{flex:1;padding:10px;border-radius:9px;font-weight:600;font-size:14px;color:var(--text-2);transition:all .25s}
+.auth-tab.active{background:var(--gold);color:#000}
+.field{margin-bottom:14px}
+.field-label{display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;font-weight:500;padding-left:4px}
+.input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;transition:border-color .2s}
+.input-wrap:focus-within{border-color:var(--gold)}
+.input-wrap svg{flex:0 0 18px;color:var(--text-2)}
+.eye-btn{flex:0 0 auto;color:var(--text-2);padding:2px}
+
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .25s var(--ease)}
+@media(min-width:640px){.modal-backdrop{align-items:center}}
+.modal{width:100%;max-width:520px;max-height:90vh;background:#0e0e10;border:1px solid var(--border);border-radius:24px 24px 0 0;overflow:hidden;display:flex;flex-direction:column;animation:slideUp .35s var(--ease)}
+@media(min-width:640px){.modal{border-radius:24px;animation:scaleIn .25s var(--ease)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:17px;font-weight:700;margin:0}
+.modal-body{padding:20px;overflow-y:auto;flex:1}
+.modal-foot{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:10px}
+.close-btn{width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+
+/* Toast */
+#toast-host{position:fixed;top:calc(20px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:calc(100% - 32px);max-width:380px}
+.toast{padding:13px 16px;border-radius:14px;background:rgba(20,20,22,.95);backdrop-filter:blur(20px);border:1px solid var(--border);font-size:14px;font-weight:500;box-shadow:var(--shadow);animation:fadeUp .3s var(--ease);display:flex;align-items:center;gap:10px}
+.toast.success{border-color:rgba(48,209,88,.4);color:var(--success)}
+.toast.error{border-color:rgba(255,69,58,.4);color:var(--danger)}
+.toast.info{border-color:var(--border-2);color:var(--gold)}
+
+/* Wallet */
+.wallet-card{padding:24px;border-radius:22px;background:linear-gradient(135deg,#1a1a1f 0%,#0a0a0a 100%);border:1px solid var(--border-2);position:relative;overflow:hidden;margin-bottom:18px}
+.wallet-card::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.15),transparent 70%);top:-80px;right:-60px}
+.wallet-label{font-size:12px;color:var(--text-2);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px;position:relative}
+.wallet-bal{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--gold-2));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-1px;position:relative;margin-bottom:14px}
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative}
+
+/* Crypto methods */
+.crypto-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+.crypto-item{padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);text-align:center;transition:all .2s var(--ease)}
+.crypto-item:hover{border-color:var(--border-2);transform:translateY(-2px)}
+.crypto-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-weight:700;color:#fff}
+.crypto-name{font-weight:700;font-size:13px}
+.crypto-net{font-size:11px;color:var(--text-2);margin-top:2px}
+
+/* Deposit page */
+.deposit-warn{padding:12px 14px;border-radius:12px;background:rgba(255,159,10,.1);border:1px solid rgba(255,159,10,.3);color:#ff9f0a;font-size:13px;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}
+.qr-box{display:flex;justify-content:center;padding:18px;background:#fff;border-radius:18px;margin:14px auto;width:fit-content}
+.addr-box{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;word-break:break-all;font-family:'SF Mono',Menlo,monospace;font-size:12px}
+.copy-btn{flex:0 0 auto;padding:8px 12px;background:var(--gold);color:#000;border-radius:8px;font-weight:600;font-size:12px}
+.upload-zone{padding:24px;border:2px dashed var(--border);border-radius:14px;text-align:center;color:var(--text-2);font-size:13px;cursor:pointer;transition:border-color .2s;margin-bottom:12px}
+.upload-zone:hover{border-color:var(--gold);color:var(--gold)}
+.upload-zone img{margin:10px auto 0;max-width:200px;max-height:200px;border-radius:10px}
+
+/* Order/list items */
+.list-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:10px}
+.list-img{width:54px;height:54px;border-radius:12px;background:#222 center/cover;flex:0 0 54px}
+.list-body{flex:1;min-width:0}
+.list-title{font-weight:600;font-size:14px;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-sub{font-size:12px;color:var(--text-2)}
+.status-pill{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.status-pending{background:rgba(255,159,10,.15);color:#ff9f0a}
+.status-completed,.status-approved,.status-delivered{background:rgba(48,209,88,.15);color:var(--success)}
+.status-rejected,.status-cancelled,.status-banned{background:rgba(255,69,58,.15);color:var(--danger)}
+.status-processing{background:rgba(10,132,255,.15);color:var(--info)}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+@media(min-width:640px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
+.stat{padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--border)}
+.stat-label{font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:6px}
+.stat-val{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.stat-val.gold{color:var(--gold)}
+
+/* Chart */
+.chart-wrap{padding:18px;border-radius:18px;background:var(--surface);border:1px solid var(--border);margin-bottom:18px}
+.chart-svg{width:100%;height:180px}
+
+/* Profile */
+.profile-head{display:flex;align-items:center;gap:14px;padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:18px;margin-bottom:14px}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#000;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.menu-list{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:background .2s;text-align:left;width:100%}
+.menu-item:hover{background:var(--surface-2)}
+.menu-item svg{flex:0 0 20px;color:var(--gold)}
+.menu-item-text{flex:1}
+.menu-item-arr{color:var(--text-2)}
+
+/* Cart */
+.cart-foot{position:sticky;bottom:80px;background:rgba(10,10,10,.95);backdrop-filter:blur(20px);padding:14px;border:1px solid var(--border);border-radius:18px;margin-top:14px}
+.cart-total{display:flex;justify-content:space-between;font-size:14px;color:var(--text-2);margin-bottom:8px}
+.cart-total.grand{font-size:18px;color:var(--text);font-weight:700;margin-bottom:12px}
+
+/* Chat */
+.chat-fab{position:fixed;bottom:90px;right:18px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#000;display:flex;align-items:center;justify-content:center;z-index:55;box-shadow:0 8px 28px rgba(212,175,55,.4);transition:transform .2s}
+.chat-fab:active{transform:scale(.9)}
+.chat-panel{position:fixed;bottom:160px;right:18px;width:300px;max-width:calc(100vw - 36px);max-height:420px;background:#0e0e10;border:1px solid var(--border);border-radius:18px;z-index:55;display:none;flex-direction:column;overflow:hidden;box-shadow:var(--shadow)}
+.chat-panel.show{display:flex;animation:scaleIn .25s var(--ease)}
+.chat-msgs{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.chat-msg{padding:8px 12px;border-radius:14px;max-width:80%}
+.chat-msg.bot{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.me{background:var(--gold);color:#000;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-input{padding:10px;border-top:1px solid var(--border);display:flex;gap:8px}
+.chat-input input{flex:1;padding:8px 12px;background:var(--surface-2);border-radius:10px;font-size:13px}
+
+/* Maintenance */
+.maint{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
+.maint-card{max-width:400px}
+.maint-icon{font-size:64px;margin-bottom:18px}
+.maint h2{font-size:24px;margin:0 0 8px;letter-spacing:-.5px}
+.maint p{color:var(--text-2);font-size:14px}
+
+/* Empty */
+.empty{text-align:center;padding:60px 20px;color:var(--text-2)}
+.empty-icon{font-size:54px;opacity:.5;margin-bottom:14px}
+.empty p{margin:6px 0;font-size:14px}
+
+/* Tabs (admin etc) */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;color:var(--text-2);font-weight:500;white-space:nowrap;flex:0 0 auto}
+.tab.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:600}
+
+/* Product detail */
+.pd-img{width:100%;aspect-ratio:1;background:#111 center/cover;border-radius:18px;margin-bottom:14px}
+.pd-title{font-size:22px;font-weight:800;letter-spacing:-.4px;margin:0 0 6px}
+.pd-price{font-size:28px;font-weight:800;color:var(--gold);margin:8px 0}
+.pd-desc{color:var(--text-2);font-size:14px;line-height:1.55;margin:12px 0}
+.review-item{padding:12px;background:var(--surface-2);border-radius:12px;margin-bottom:8px}
+.review-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.review-name{font-weight:600;font-size:13px}
+.review-stars{color:var(--gold);font-size:12px}
+.review-text{font-size:13px;color:var(--text-2);line-height:1.5}
+.stars-input{display:flex;gap:4px;font-size:24px;cursor:pointer;color:#444;margin-bottom:10px}
+.stars-input span.on{color:var(--gold)}
+
+.text-c{text-align:center}
+.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
+.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.fz12{font-size:12px}.fz14{font-size:14px}
+.muted{color:var(--text-2)}
+.gold{color:var(--gold)}
+.divider{height:1px;background:var(--border);margin:18px 0}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="loader"><div class="loader-logo">TrustBuy</div><div class="loader-ring"></div></div>
+<div id="toast-host"></div>
+<div id="root"></div>
+<button id="chatFab" class="chat-fab hidden" aria-label="Support chat">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+<div id="chatPanel" class="chat-panel">
+  <div class="modal-head"><div class="modal-title">Live Support</div><button class="close-btn" onclick="App.toggleChat(false)">✕</button></div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-input">
+    <input id="chatInput" placeholder="Type a message..." />
+    <button class="add-btn" onclick="App.sendChat()">→</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+ * TrustBuy.com — Single-file premium marketplace
+ * ============================================================ */
+"use strict";
+
+const DB_KEY = "trustbuy_db_v3";
+const SESSION_KEY = "trustbuy_session_v3";
+const ADMIN_EMAIL = "fahimfahimf737@gmail.com";
+const ADMIN_PASS = "@FAHIM1UKBD1ST";
+const SUPPORT_TG = "https://t.me/FAHIM1UKBD1ST";
+
+const WALLETS = [
+  { id:"bep20", name:"BNB / BEP20", net:"Binance Smart Chain", color:"#f0b90b", addr:"0xA7762298B895a82c971c2f668ef3Cd66F58eEe97", warn:"Only send BEP20 tokens. ERC20 may be lost." },
+  { id:"base",  name:"ETH Base",    net:"Base Network",        color:"#0052ff", addr:"0xA7762298B895a82c971c2f668ef3Cd66F58eEe97", warn:"Send only assets on Base. Other networks lose funds." },
+  { id:"ton",   name:"TON",         net:"The Open Network",    color:"#0098ea", addr:"UQCHW8kThv1mFVidjkB-HV7OXd8Wkb96_4IZme-B5G9lEU7f", warn:"Send only TON to this address." },
+  { id:"usdc",  name:"USDC ERC20",  net:"Ethereum Mainnet",    color:"#2775ca", addr:"0xA7762298B895a82c971c2f668ef3Cd66F58eEe97", warn:"Only USDC on Ethereum ERC20. Other tokens are lost." }
+];
+
+const DEFAULT_BANNERS = [
+  { tag:"Featured", title:"Premium accounts, instant delivery", sub:"Verified inventory, auto-fulfilled in seconds.", img:"https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=70" },
+  { tag:"New Drop",  title:"Flash sale — up to 40% off",       sub:"Limited stock. Refresh and grab yours.",         img:"https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&q=70" },
+  { tag:"Trusted",   title:"Secure crypto deposits",            sub:"BEP20 · Base · TON · USDC supported.",            img:"https://images.unsplash.com/photo-1518544866330-95a2bec01a36?w=1200&q=70" }
+];
+
+const DEFAULT_PRODUCTS = [
+  { id:"p1", title:"Netflix Premium 1 Month", category:"Streaming", price:6.99, oldPrice:11.99, image:"https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=600&q=70", stock:["[email protected]:Pass123","[email protected]:Pass456","[email protected]:Pass789"], desc:"Full HD/4K premium Netflix account. Instant delivery via email after purchase.", featured:true, sold:142 },
+  { id:"p2", title:"Spotify Premium 3 Month", category:"Music",     price:9.99, oldPrice:14.99, image:"https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?w=600&q=70", stock:["[email protected]:Sp123","[email protected]:Sp456"], desc:"Ad-free Spotify Premium. Works worldwide.", featured:true, sold:88 },
+  { id:"p3", title:"ChatGPT Plus 1 Month",    category:"AI",        price:14.99,oldPrice:20,    image:"https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=70", stock:["[email protected]:Gpt1","[email protected]:Gpt2"], desc:"GPT-4 access, faster responses, plugins.", featured:true, sold:201 },
+  { id:"p4", title:"YouTube Premium 1 Month", category:"Streaming", price:5.99, oldPrice:9.99,  image:"https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=70", stock:["[email protected]:Yt1"], desc:"Ad-free YouTube + Music. Background play.", sold:67 },
+  { id:"p5", title:"Disney+ 1 Month",         category:"Streaming", price:4.99, oldPrice:7.99,  image:"https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?w=600&q=70", stock:["[email protected]:Dis1"], desc:"Disney, Pixar, Marvel, Star Wars.", sold:34 },
+  { id:"p6", title:"Canva Pro 1 Year",        category:"Design",    price:12.99,oldPrice:54.99, image:"https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&q=70", stock:["[email protected]:Can1","[email protected]:Can2"], desc:"All Pro features unlocked for 12 months.", featured:true, sold:178 }
+];
+
+/* ---------- DB ---------- */
+const DB = {
+  data: null,
+  load(){
+    try{
+      const raw = localStorage.getItem(DB_KEY);
+      this.data = raw ? JSON.parse(raw) : null;
+    }catch(e){ this.data = null; }
+    if(!this.data) this.seed();
+    this.migrate();
+    return this.data;
+  },
+  save(){ try{ localStorage.setItem(DB_KEY, JSON.stringify(this.data)); }catch(e){ Toast.show("Storage full","error"); } },
+  seed(){
+    this.data = {
+      users:[{ id:"admin", name:"Admin", email:ADMIN_EMAIL, pass:ADMIN_PASS, balance:0, role:"admin", banned:false, createdAt:Date.now() }],
+      products: DEFAULT_PRODUCTS,
+      banners: DEFAULT_BANNERS,
+      orders:[],
+      deposits:[],
+      coupons:[{ code:"WELCOME10", percent:10, active:true },{ code:"VIP20", percent:20, active:true }],
+      referrals:{},
+      notifications:[],
+      reviews:{},
+      wishlist:{},
+      cart:{},
+      settings:{ maintenance:false, flashEnd: Date.now()+1000*60*60*24, referralBonus:1.5 }
+    };
+    this.save();
+  },
+  migrate(){
+    const d = this.data;
+    d.users ||= []; d.products ||= []; d.banners ||= DEFAULT_BANNERS;
+    d.orders ||= []; d.deposits ||= []; d.coupons ||= [];
+    d.referrals ||= {}; d.notifications ||= []; d.reviews ||= {};
+    d.wishlist ||= {}; d.cart ||= {}; d.settings ||= {};
+    if(!d.users.find(u=>u.email===ADMIN_EMAIL)){
+      d.users.push({ id:"admin"+Date.now(), name:"Admin", email:ADMIN_EMAIL, pass:ADMIN_PASS, balance:0, role:"admin", banned:false, createdAt:Date.now() });
+    }
+    if(d.settings.flashEnd && d.settings.flashEnd < Date.now()) d.settings.flashEnd = Date.now()+1000*60*60*24;
+    this.save();
+  }
+};
+
+/* ---------- Toast ---------- */
+const Toast = {
+  show(msg, type="info", ms=2400){
+    const host = document.getElementById("toast-host");
+    const t = document.createElement("div");
+    t.className = "toast "+type;
+    t.textContent = msg;
+    host.appendChild(t);
+    setTimeout(()=>{ t.style.opacity="0"; t.style.transform="translateY(-8px)"; setTimeout(()=>t.remove(),300); }, ms);
+  }
+};
+
+/* ---------- Notifications ---------- */
+const Notify = {
+  push(userId, title, body){
+    DB.data.notifications.push({ id:"n"+Date.now()+Math.random(), userId, title, body, read:false, at:Date.now() });
+    DB.save();
+    if("Notification" in window && Notification.permission==="granted"){
+      try{ new Notification(title,{body}); }catch(e){}
+    }
+  },
+  broadcast(title, body){
+    DB.data.users.forEach(u=>this.push(u.id,title,body));
+  }
+};
+
+/* ---------- Session ---------- */
+const Session = {
+  user: null,
+  load(){
+    try{
+      const id = localStorage.getItem(SESSION_KEY);
+      if(id) this.user = DB.data.users.find(u=>u.id===id) || null;
+    }catch(e){}
+  },
+  login(email, pass){
+    const u = DB.data.users.find(x=>x.email.toLowerCase()===email.toLowerCase() && x.pass===pass);
+    if(!u) return { ok:false, msg:"Invalid email or password" };
+    if(u.banned) return { ok:false, msg:"This account is banned" };
+    this.user = u;
+    localStorage.setItem(SESSION_KEY, u.id);
+    return { ok:true };
+  },
+  register(name, email, pass, refCode){
+    if(!name||!email||!pass) return { ok:false, msg:"All fields required" };
+    if(pass.length<6) return { ok:false, msg:"Password must be 6+ chars" };
+    if(!/^\S+@\S+\.\S+$/.test(email)) return { ok:false, msg:"Invalid email" };
+    if(DB.data.users.find(x=>x.email.toLowerCase()===email.toLowerCase())) return { ok:false, msg:"Email already registered" };
+    const u = { id:"u"+Date.now(), name, email, pass, balance:0, role:email.toLowerCase()===ADMIN_EMAIL.toLowerCase()?"admin":"user", banned:false, createdAt:Date.now(), refCode:"REF"+Math.random().toString(36).slice(2,8).toUpperCase() };
+    DB.data.users.push(u);
+    if(refCode){
+      const refUser = DB.data.users.find(x=>x.refCode===refCode);
+      if(refUser){
+        refUser.balance += DB.data.settings.referralBonus||1;
+        DB.data.referrals[refUser.id] = (DB.data.referrals[refUser.id]||0)+1;
+        Notify.push(refUser.id,"Referral bonus","+$"+(DB.data.settings.referralBonus||1)+" credited.");
+      }
+    }
+    DB.save();
+    this.user = u;
+    localStorage.setItem(SESSION_KEY, u.id);
+    return { ok:true };
+  },
+  logout(){ this.user=null; localStorage.removeItem(SESSION_KEY); App.render(); }
+};
+
+/* ---------- Helpers ---------- */
+const $ = (s,c=document)=>c.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => "$"+Number(n||0).toFixed(2);
+const fmtDate = ts => new Date(ts).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+const fmtTime = ts => new Date(ts).toLocaleString();
+const uid = ()=> Math.random().toString(36).slice(2,10);
+
+/* ---------- App / Router ---------- */
+const App = {
+  route: "home",
+  routeParam: null,
+  filter: "All",
+  searchQ: "",
+  bannerIdx: 0,
+  bannerTimer: null,
+  flashTimer: null,
+  modal: null,
+
+  init(){
+    DB.load();
+    Session.load();
+    if("Notification" in window && Notification.permission==="default"){
+      try{ Notification.requestPermission(); }catch(e){}
+    }
+    setTimeout(()=>{ document.getElementById("loader").classList.add("hide"); }, 500);
+    this.render();
+    window.addEventListener("hashchange",()=>{
+      const r = location.hash.replace(/^#/,"") || "home";
+      this.go(r);
+    });
+    document.getElementById("chatFab").addEventListener("click",()=>this.toggleChat());
+  },
+
+  go(route, param=null){
+    this.route = route;
+    this.routeParam = param;
+    this.closeModal();
+    this.render();
+    window.scrollTo({top:0,behavior:"smooth"});
+  },
+
+  render(){
+    const root = document.getElementById("root");
+    if(DB.data.settings.maintenance && (!Session.user || Session.user.role!=="admin")){
+      root.innerHTML = `<div class="maint"><div class="maint-card"><div class="maint-icon">🛠️</div><h2>Under Maintenance</h2><p>We're upgrading systems. Please check back soon.</p></div></div>`;
+      document.getElementById("chatFab").classList.add("hidden");
+      return;
+    }
+    if(!Session.user){
+      this.renderAuth(); 
+      document.getElementById("chatFab").classList.add("hidden");
+      return;
+    }
+    document.getElementById("chatFab").classList.remove("hidden");
+    root.innerHTML = this.renderShell();
+    this.afterRender();
+  },
+
+  /* ---------- AUTH ---------- */
+  renderAuth(){
+    document.getElementById("root").innerHTML = `
+      <div class="auth-screen">
+        <div class="auth-card glass-gold">
+          <div class="auth-logo">
+            <div class="brand-mark">T</div>
+            <h1>TrustBuy<span class="gold">.com</span></h1>
+            <p>Premium digital marketplace</p>
+          </div>
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login" onclick="App.switchAuthTab('login')">Sign in</button>
+            <button class="auth-tab" data-tab="register" onclick="App.switchAuthTab('register')">Create</button>
+          </div>
+          <div id="authForms">${this.authLoginForm()}</div>
+        </div>
+      </div>`;
+  },
+  switchAuthTab(t){
+    document.querySelectorAll(".auth-tab").forEach(b=>b.classList.toggle("active", b.dataset.tab===t));
+    document.getElementById("authForms").innerHTML = t==="login"?this.authLoginForm():this.authRegisterForm();
+  },
+  authLoginForm(){
+    return `
+      <form onsubmit="App.doLogin(event)">
+        <div class="field"><label class="field-label">Email</label>
+          <div class="input-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 4 8 8 8-8"/></svg>
+          <input type="email" id="loginEmail" required placeholder="you@example.com" autocomplete="email" /></div></div>
+        <div class="field"><label class="field-label">Password</label>
+          <div class="input-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="loginPass" required placeholder="••••••••" autocomplete="current-password" />
+          <button type="button" class="eye-btn" onclick="App.togglePwd(this,'loginPass')">👁</button></div></div>
+        <button class="btn btn-primary mt-12" type="submit">Sign in</button>
+        <p class="text-c muted fz12 mt-12">Forgot password? <a class="gold" href="javascript:App.resetPassword()">Reset</a></p>
+      </form>`;
+  },
+  authRegisterForm(){
+    return `
+      <form onsubmit="App.doRegister(event)">
+        <div class="field"><label class="field-label">Name</label>
+          <div class="input-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          <input type="text" id="regName" required placeholder="Your name" /></div></div>
+        <div class="field"><label class="field-label">Email</label>
+          <div class="input-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 4 8 8 8-8"/></svg>
+          <input type="email" id="regEmail" required placeholder="you@example.com" /></div></div>
+        <div class="field"><label class="field-label">Password</label>
+          <div class="input-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="regPass" required placeholder="Min 6 characters" />
+          <button type="button" class="eye-btn" onclick="App.togglePwd(this,'regPass')">👁</button></div></div>
+        <div class="field"><label class="field-label">Referral code (optional)</label>
+          <div class="input-wrap"><input type="text" id="regRef" placeholder="REFXXXXXX" /></div></div>
+        <button class="btn btn-primary mt-12" type="submit">Create account</button>
+      </form>`;
+  },
+  togglePwd(btn,id){
+    const i = document.getElementById(id);
+    if(!i) return;
+    i.type = i.type==="password"?"text":"password";
+    btn.textContent = i.type==="password"?"👁":"🙈";
+  },
+  doLogin(e){
+    e.preventDefault();
+    const email = $("#loginEmail").value.trim();
+    const pass = $("#loginPass").value;
+    const r = Session.login(email, pass);
+    if(!r.ok) return Toast.show(r.msg,"error");
+    Toast.show("Welcome back, "+Session.user.name,"success");
+    this.go("home");
+  },
+  doRegister(e){
+    e.preventDefault();
+    const name = $("#regName").value.trim();
+    const email = $("#regEmail").value.trim();
+    const pass = $("#regPass").value;
+    const ref = $("#regRef").value.trim();
+    const r = Session.register(name, email, pass, ref);
+    if(!r.ok) return Toast.show(r.msg,"error");
+    Toast.show("Account created","success");
+    this.go("home");
+  },
+  resetPassword(){
+    const email = prompt("Enter your account email:");
+    if(!email) return;
+    const u = DB.data.users.find(x=>x.email.toLowerCase()===email.toLowerCase());
+    if(!u) return Toast.show("No account with that email","error");
+    const newPass = prompt("Enter new password (min 6 chars):");
+    if(!newPass || newPass.length<6) return Toast.show("Password too short","error");
+    u.pass = newPass;
+    DB.save();
+    Toast.show("Password reset. You can sign in now.","success");
+  },
+
+  /* ---------- SHELL ---------- */
+  renderShell(){
+    const u = Session.user;
+    const unread = DB.data.notifications.filter(n=>n.userId===u.id && !n.read).length;
+    const cartCount = (DB.data.cart[u.id]||[]).reduce((a,b)=>a+b.qty,0);
+    return `
+      <div class="topbar">
+        <div class="brand"><div class="brand-mark">T</div>TrustBuy<span class="gold">.com</span></div>
+        <div class="topbar-actions">
+          <button class="icon-btn icon-wrap" onclick="App.go('notifications')" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+            ${unread?`<span class="badge">${unread}</span>`:""}
+          </button>
+          <button class="icon-btn icon-wrap" onclick="App.go('cart')" aria-label="Cart">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l2.4 12.5a2 2 0 0 0 2 1.5h7.7a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>
+            ${cartCount?`<span class="badge">${cartCount}</span>`:""}
+          </button>
+        </div>
+      </div>
+      <main class="app">${this.renderPage()}</main>
+      ${this.renderBottomNav()}`;
+  },
+  renderBottomNav(){
+    const items = [
+      ["home","Home",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 9-8 9 8v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2z"/></svg>`],
+      ["shop","Shop",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18l-1.5 11a2 2 0 0 1-2 1.7H6.5a2 2 0 0 1-2-1.7L3 9z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg>`],
+      ["wishlist","Wishlist",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>`],
+      ["wallet","Wallet",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="3"/><path d="M17 13h2"/></svg>`],
+      ["profile","Profile",`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`]
+    ];
+    return `<nav class="bottom-nav">${items.map(([r,l,svg])=>`
+      <button class="nav-item ${this.route===r?"active":""}" onclick="App.go('${r}')">${svg}<span>${l}</span></button>`).join("")}</nav>`;
+  },
+
+  renderPage(){
+    switch(this.route){
+      case "home": return this.pageHome();
+      case "shop": return this.pageShop();
+      case "wishlist": return this.pageWishlist();
+      case "wallet": return this.pageWallet();
+      case "deposit": return this.pageDeposit();
+      case "deposits": return this.pageDeposits();
+      case "cart": return this.pageCart();
+      case "orders": return this.pageOrders();
+      case "profile": return this.pageProfile();
+      case "notifications": return this.pageNotifications();
+      case "product": return this.pageProduct();
+      case "admin": return this.pageAdmin();
+      case "referrals": return this.pageReferrals();
+      default: return this.pageHome();
+    }
+  },
+
+  afterRender(){
+    if(this.bannerTimer) clearInterval(this.bannerTimer);
+    if(this.flashTimer) clearInterval(this.flashTimer);
+    if(this.route==="home"){
+      this.bannerTimer = setInterval(()=>this.nextBanner(), 5000);
+      this.flashTimer = setInterval(()=>this.tickFlash(), 1000);
+      this.tickFlash();
+    }
+  },
+
+  /* ---------- HOME ---------- */
+  pageHome(){
+    const d = DB.data;
+    const featured = d.products.filter(p=>p.featured);
+    const top = [...d.products].sort((a,b)=>(b.sold||0)-(a.sold||0)).slice(0,6);
+    return `<div class="page">
+      <div class="hero" id="hero">
+        <div class="hero-slides" id="heroSlides">${d.banners.map(b=>`
+          <div class="hero-slide" style="background-image:url('${esc(b.img||"")}')">
+            <span class="hero-tag">${esc(b.tag)}</span>
+            <h2 class="hero-title">${esc(b.title)}</h2>
+            <p class="hero-sub">${esc(b.sub)}</p>
+          </div>`).join("")}</div>
+        <div class="hero-dots" id="heroDots">${d.banners.map((_,i)=>`<span class="hero-dot ${i===0?"active":""}"></span>`).join("")}</div>
+      </div>
+      <div class="flash">
+        <div class="flash-left">
+          <div class="flash-icon">⚡</div>
+          <div><div class="flash-title">Flash Sale</div><div class="flash-sub">Limited time deals</div></div>
+        </div>
+        <div class="flash-timer" id="flashTimer"></div>
+      </div>
+      <div class="section-header"><h3 class="section-title">Featured</h3><a class="section-link" onclick="App.go('shop')">See all</a></div>
+      <div class="grid">${featured.map(p=>this.productCard(p)).join("") || `<p class="muted">No featured products yet.</p>`}</div>
+      <div class="section-header"><h3 class="section-title">Top Selling</h3><a class="section-link" onclick="App.go('shop')">See all</a></div>
+      <div class="grid">${top.map(p=>this.productCard(p)).join("")}</div>
+    </div>`;
+  },
+  nextBanner(){
+    const slides = document.getElementById("heroSlides");
+    const dots = document.getElementById("heroDots");
+    if(!slides || !dots) return;
+    const total = DB.data.banners.length;
+    if(!total) return;
+    this.bannerIdx = (this.bannerIdx+1)%total;
+    slides.style.transform = `translateX(-${this.bannerIdx*100}%)`;
+    dots.querySelectorAll(".hero-dot").forEach((d,i)=>d.classList.toggle("active",i===this.bannerIdx));
+  },
+  tickFlash(){
+    const el = document.getElementById("flashTimer");
+    if(!el) return;
+    let ms = (DB.data.settings.flashEnd||0) - Date.now();
+    if(ms<=0){ DB.data.settings.flashEnd = Date.now()+1000*60*60*24; DB.save(); ms = 1000*60*60*24; }
+    const h = String(Math.floor(ms/3.6e6)).padStart(2,"0");
+    const m = String(Math.floor(ms%3.6e6/6e4)).padStart(2,"0");
+    const s = String(Math.floor(ms%6e4/1000)).padStart(2,"0");
+    el.innerHTML = `<div class="flash-cell">${h}</div><div class="flash-cell">${m}</div><div class="flash-cell">${s}</div>`;
+  },
+
+  /* ---------- PRODUCT CARD ---------- */
+  productCard(p){
+    const u = Session.user;
+    const fav = (DB.data.wishlist[u.id]||[]).includes(p.id);
+    const stock = (p.stock||[]).length;
+    return `<div class="card">
+      <div class="card-img" style="background-image:url('${esc(p.image)}')" onclick="App.go('product','${p.id}')">
+        <button class="card-fav ${fav?"active":""}" onclick="event.stopPropagation();App.toggleWish('${p.id}')" aria-label="Wishlist">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="${fav?"currentColor":"none"}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        </button>
+        <span class="card-stock ${stock?"":"out"}">${stock?stock+" in stock":"Out"}</span>
+      </div>
+      <div class="card-body" onclick="App.go('product','${p.id}')">
+        <h4 class="card-title">${esc(p.title)}</h4>
+        <div class="card-rating"><span class="star">★</span>${this.avgRating(p.id).toFixed(1)} · ${p.sold||0} sold</div>
+        <div class="card-bottom">
+          <div class="card-price">${fmt(p.price)}${p.oldPrice?`<small>${fmt(p.oldPrice)}</small>`:""}</div>
+          <button class="add-btn" onclick="event.stopPropagation();App.addToCart('${p.id}')">+</button>
+        </div>
+      </div>
+    </div>`;
+  },
+  avgRating(pid){
+    const rs = DB.data.reviews[pid]||[];
+    if(!rs.length) return 5;
+    return rs.reduce((a,b)=>a+b.stars,0)/rs.length;
+  },
+
+  /* ---------- SHOP ---------- */
+  pageShop(){
+    const cats = ["All", ...new Set(DB.data.products.map(p=>p.category))];
+    const q = this.searchQ.toLowerCase();
+    let prods = DB.data.products.filter(p=>(this.filter==="All"||p.category===this.filter) && (!q||p.title.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)));
+    return `<div class="page">
+      <div class="search-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="searchInput" placeholder="Search products..." value="${esc(this.searchQ)}" oninput="App.onSearch(this.value)" />
+      </div>
+      <div class="filter-chips">${cats.map(c=>`<button class="chip ${c===this.filter?"active":""}" onclick="App.setFilter('${esc(c)}')">${esc(c)}</button>`).join("")}</div>
+      ${prods.length?`<div class="grid">${prods.map(p=>this.productCard(p)).join("")}</div>`:`<div class="empty"><div class="empty-icon">🔍</div><p>No products found</p></div>`}
+    </div>`;
+  },
+  onSearch(v){ this.searchQ = v; const g = document.querySelector(".grid"); if(g){ const q = v.toLowerCase(); let prods = DB.data.products.filter(p=>(this.filter==="All"||p.category===this.filter) && (!q||p.title.toLowerCase().includes(q))); g.innerHTML = prods.map(p=>this.productCard(p)).join(""); } },
+  setFilter(c){ this.filter = c; this.render(); },
+
+  /* ---------- PRODUCT ---------- */
+  pageProduct(){
+    const p = DB.data.products.find(x=>x.id===this.routeParam);
+    if(!p) return `<div class="empty">Product not found</div>`;
+    const reviews = DB.data.reviews[p.id]||[];
+    const u = Session.user;
+    const fav = (DB.data.wishlist[u.id]||[]).includes(p.id);
+    return `<div class="page">
+      <button class="btn btn-ghost mb-12" onclick="history.back()">← Back</button>
+      <div class="pd-img" style="background-image:url('${esc(p.image)}')"></div>
+      <div class="row"><span class="hero-tag">${esc(p.category)}</span></div>
+      <h1 class="pd-title mt-8">${esc(p.title)}</h1>
+      <div class="card-rating"><span class="star gold">★</span>${this.avgRating(p.id).toFixed(1)} · ${reviews.length} reviews · ${p.sold||0} sold</div>
+      <div class="pd-price">${fmt(p.price)} ${p.oldPrice?`<small style="font-size:14px;text-decoration:line-through;color:var(--muted);font-weight:400">${fmt(p.oldPrice)}</small>`:""}</div>
+      <p class="pd-desc">${esc(p.desc||"")}</p>
+      <div class="row">
+        <button class="btn btn-secondary" onclick="App.toggleWish('${p.id}');App.render()">${fav?"♥ Saved":"♡ Wishlist"}</button>
+        <button class="btn btn-secondary" onclick="App.addToCart('${p.id}')">Add to cart</button>
+      </div>
+      <button class="btn btn-primary mt-12" onclick="App.buyNow('${p.id}')">Buy now — Instant delivery</button>
+      <div class="divider"></div>
+      <h3 class="section-title">Reviews</h3>
+      <div class="mt-12">${reviews.length?reviews.map(r=>`
+        <div class="review-item"><div class="review-head"><span class="review-name">${esc(r.name)}</span><span class="review-stars">${"★".repeat(r.stars)}${"☆".repeat(5-r.stars)}</span></div><div class="review-text">${esc(r.text)}</div></div>`).join(""):`<p class="muted fz14">No reviews yet. Be the first.</p>`}</div>
+      <div class="glass mt-16" style="padding:14px">
+        <h4 style="margin:0 0 10px;font-size:14px">Leave a review</h4>
+        <div class="stars-input" id="starsIn">${[1,2,3,4,5].map(n=>`<span data-n="${n}" onclick="App.setStar(${n})">★</span>`).join("")}</div>
+        <textarea id="revText" placeholder="Share your experience..." rows="3" style="padding:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;resize:vertical"></textarea>
+        <button class="btn btn-primary mt-8" onclick="App.submitReview('${p.id}')">Submit</button>
+      </div>
+    </div>`;
+  },
+  _star: 5,
+  setStar(n){ this._star = n; document.querySelectorAll("#starsIn span").forEach((s,i)=>s.classList.toggle("on",i<n)); },
+  submitReview(pid){
+    const t = $("#revText").value.trim();
+    if(!t) return Toast.show("Write something","error");
+    DB.data.reviews[pid] = DB.data.reviews[pid]||[];
+    DB.data.reviews[pid].unshift({ name:Session.user.name, stars:this._star||5, text:t, at:Date.now() });
+    DB.save();
+    Toast.show("Review posted","success");
+    this.render();
+  },
+
+  /* ---------- WISHLIST ---------- */
+  toggleWish(pid){
+    const u = Session.user;
+    DB.data.wishlist[u.id] ||= [];
+    const arr = DB.data.wishlist[u.id];
+    const i = arr.indexOf(pid);
+    if(i>=0){ arr.splice(i,1); Toast.show("Removed from wishlist"); }
+    else { arr.push(pid); Toast.show("Added to wishlist","success"); }
+    DB.save();
+    if(this.route==="wishlist"||this.route==="shop"||this.route==="home") this.render();
+    else { const card = event?.target?.closest(".card"); if(card){ const fav = card.querySelector(".card-fav"); fav?.classList.toggle("active"); } }
+  },
+  pageWishlist(){
+    const u = Session.user;
+    const ids = DB.data.wishlist[u.id]||[];
+    const items = DB.data.products.filter(p=>ids.includes(p.id));
+    return `<div class="page">
+      <h2 class="section-title mb-16">My Wishlist</h2>
+      ${items.length?`<div class="grid">${items.map(p=>this.productCard(p)).join("")}</div>`:`<div class="empty"><div class="empty-icon">♡</div><p>Your wishlist is empty</p></div>`}
+    </div>`;
+  },
+
+  /* ---------- CART ---------- */
+  addToCart(pid){
+    const u = Session.user;
+    DB.data.cart[u.id] ||= [];
+    const c = DB.data.cart[u.id];
+    const ex = c.find(x=>x.pid===pid);
+    if(ex) ex.qty++; else c.push({ pid, qty:1 });
+    DB.save();
+    Toast.show("Added to cart","success");
+    this.render();
+  },
+  changeQty(pid,d){
+    const u = Session.user;
+    const c = DB.data.cart[u.id]||[];
+    const it = c.find(x=>x.pid===pid); if(!it) return;
+    it.qty += d;
+    if(it.qty<=0) DB.data.cart[u.id] = c.filter(x=>x.pid!==pid);
+    DB.save(); this.render();
+  },
+  pageCart(){
+    const u = Session.user;
+    const c = DB.data.cart[u.id]||[];
+    const items = c.map(x=>({...x, p: DB.data.products.find(p=>p.id===x.pid)})).filter(x=>x.p);
+    let subtotal = items.reduce((a,x)=>a+x.p.price*x.qty,0);
+    const cp = this._coupon;
+    let discount = 0;
+    if(cp){ discount = subtotal*cp.percent/100; }
+    const total = subtotal-discount;
+    return `<div class="page">
+      <h2 class="section-title mb-16">Cart</h2>
+      ${items.length?`
+        ${items.map(it=>`
+          <div class="list-item">
+            <div class="list-img" style="background-image:url('${esc(it.p.image)}')"></div>
+            <div class="list-body">
+              <p class="list-title">${esc(it.p.title)}</p>
+              <p class="list-sub">${fmt(it.p.price)} × ${it.qty} = <span class="gold">${fmt(it.p.price*it.qty)}</span></p>
+            </div>
+            <div class="row" style="flex:0 0 auto;gap:4px">
+              <button class="add-btn" style="background:var(--surface-2);color:var(--text)" onclick="App.changeQty('${it.pid}',-1)">−</button>
+              <button class="add-btn" onclick="App.changeQty('${it.pid}',1)">+</button>
+            </div>
+          </div>`).join("")}
+        <div class="row mt-12">
+          <input id="couponIn" placeholder="Coupon code" style="padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px" />
+          <button class="btn btn-secondary" style="flex:0 0 auto" onclick="App.applyCoupon()">Apply</button>
+        </div>
+        <div class="cart-foot">
+          <div class="cart-total"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
+          ${discount?`<div class="cart-total"><span>Discount (${cp.code})</span><span class="gold">−${fmt(discount)}</span></div>`:""}
+          <div class="cart-total grand"><span>Total</span><span>${fmt(total)}</span></div>
+          <button class="btn btn-primary" onclick="App.checkout()">Checkout & Get Accounts</button>
+        </div>
+      `:`<div class="empty"><div class="empty-icon">🛒</div><p>Your cart is empty</p><button class="btn btn-primary mt-12" onclick="App.go('shop')" style="max-width:200px;margin:12px auto">Browse Shop</button></div>`}
+    </div>`;
+  },
+  _coupon:null,
+  applyCoupon(){
+    const v = $("#couponIn").value.trim().toUpperCase();
+    const c = DB.data.coupons.find(x=>x.code===v && x.active);
+    if(!c){ this._coupon=null; return Toast.show("Invalid coupon","error"); }
+    this._coupon = c;
+    Toast.show(`${c.percent}% off applied`,"success");
+    this.render();
+  },
+  checkout(){
+    const u = Session.user;
+    const c = DB.data.cart[u.id]||[];
+    const items = c.map(x=>({...x, p: DB.data.products.find(p=>p.id===x.pid)})).filter(x=>x.p);
+    if(!items.length) return Toast.show("Cart empty","error");
+    let subtotal = items.reduce((a,x)=>a+x.p.price*x.qty,0);
+    let discount = this._coupon ? subtotal*this._coupon.percent/100 : 0;
+    let total = subtotal-discount;
+    if(u.balance < total) return Toast.show("Insufficient wallet balance. Deposit first.","error");
+    // verify stock
+    for(const it of items){ if((it.p.stock||[]).length < it.qty) return Toast.show("Not enough stock for "+it.p.title,"error"); }
+    // deduct + deliver
+    u.balance -= total;
+    const delivered = [];
+    items.forEach(it=>{
+      for(let i=0;i<it.qty;i++){
+        const acc = it.p.stock.shift();
+        delivered.push({ pid:it.p.id, title:it.p.title, account:acc });
+      }
+      it.p.sold = (it.p.sold||0) + it.qty;
+    });
+    const order = { id:"o"+Date.now(), userId:u.id, items:delivered, total, status:"delivered", at:Date.now(), coupon:this._coupon?.code||null };
+    DB.data.orders.unshift(order);
+    DB.data.cart[u.id] = [];
+    this._coupon = null;
+    Notify.push(u.id,"Order delivered","Your accounts are ready in Orders.");
+    DB.save();
+    Toast.show("Order completed! Accounts delivered.","success");
+    this.go("orders");
+  },
+
+  /* ---------- ORDERS ---------- */
+  pageOrders(){
+    const u = Session.user;
+    const orders = DB.data.orders.filter(o=>o.userId===u.id);
+    return `<div class="page">
+      <h2 class="section-title mb-16">My Orders</h2>
+      ${orders.length?orders.map(o=>`
+        <div class="glass mb-12" style="padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div><div style="font-weight:700">Order #${o.id.slice(-6)}</div><div class="fz12 muted">${fmtTime(o.at)}</div></div>
+            <span class="status-pill status-${o.status}">${o.status}</span>
+          </div>
+          ${o.items.map(it=>`
+            <div class="list-item" style="margin-bottom:6px">
+              <div class="list-body"><p class="list-title">${esc(it.title)}</p><p class="list-sub" style="font-family:monospace;word-break:break-all">${esc(it.account)}</p></div>
+              <button class="copy-btn" onclick="App.copyText('${esc(it.account).replace(/'/g,"\\'")}')">Copy</button>
+            </div>`).join("")}
+          <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+            <span class="muted fz12">Total paid</span><span class="gold" style="font-weight:700">${fmt(o.total)}</span>
+          </div>
+        </div>`).join(""):`<div class="empty"><div class="empty-icon">📦</div><p>No orders yet</p></div>`}
+    </div>`;
+  },
+  copyText(t){ navigator.clipboard?.writeText(t).then(()=>Toast.show("Copied","success")).catch(()=>{ const ta = document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy")}catch(e){} ta.remove(); Toast.show("Copied","success"); }); },
+  buyNow(pid){
+    const u = Session.user;
+    DB.data.cart[u.id] = [{pid, qty:1}];
+    DB.save();
+    this.go("cart");
+  },
+
+  /* ---------- WALLET ---------- */
+  pageWallet(){
+    const u = Session.user;
+    return `<div class="page">
+      <div class="wallet-card">
+        <div class="wallet-label">Wallet balance</div>
+        <div class="wallet-bal">${fmt(u.balance)}</div>
+        <div class="wallet-actions">
+          <button class="btn btn-primary" onclick="App.go('deposit')">+ Deposit</button>
+          <button class="btn btn-secondary" onclick="App.go('deposits')">History</button>
+        </div>
+      </div>
+      <h3 class="section-title">Choose deposit method</h3>
+      <div class="crypto-grid mt-12">${WALLETS.map(w=>`
+        <button class="crypto-item" onclick="App.go('deposit');setTimeout(()=>App.selectCrypto('${w.id}'),60)">
+          <div class="crypto-icon" style="background:${w.color}">${w.id.slice(0,2).toUpperCase()}</div>
+          <div class="crypto-name">${esc(w.name)}</div>
+          <div class="crypto-net">${esc(w.net)}</div>
+        </button>`).join("")}</div>
+    </div>`;
+  },
+
+  /* ---------- DEPOSIT ---------- */
+  _crypto:"bep20",
+  pageDeposit(){
+    const w = WALLETS.find(x=>x.id===this._crypto) || WALLETS[0];
+    return `<div class="page">
+      <button class="btn btn-ghost mb-12" onclick="App.go('wallet')">← Back to wallet</button>
+      <h2 class="section-title mb-12">Crypto Deposit</h2>
+      <div class="filter-chips mb-12">${WALLETS.map(x=>`<button class="chip ${x.id===this._crypto?"active":""}" onclick="App.selectCrypto('${x.id}')">${esc(x.name)}</button>`).join("")}</div>
+      <div class="glass" style="padding:16px">
+        <div class="deposit-warn">⚠️ ${esc(w.warn)} Network: <b>${esc(w.net)}</b></div>
+        <div class="text-c muted fz12">Scan QR or copy address</div>
+        <div class="qr-box" id="qrBox"></div>
+        <label class="field-label">Wallet address</label>
+        <div class="addr-box"><span style="flex:1">${esc(w.addr)}</span><button class="copy-btn" onclick="App.copyText('${esc(w.addr)}')">Copy</button></div>
+        <label class="field-label mt-12">Deposit amount (USD)</label>
+        <div class="input-wrap"><input id="depAmt" type="number" min="1" step="0.01" placeholder="e.g. 25.00" /></div>
+        <label class="field-label mt-12">Transaction screenshot</label>
+        <label class="upload-zone" for="depFile" id="depZone">
+          <div>📸 Tap to upload payment proof</div>
+          <input type="file" id="depFile" accept="image/*" hidden onchange="App.previewDepImg(event)" />
+        </label>
+        <button class="btn btn-primary mt-12" onclick="App.submitDeposit()">Submit deposit</button>
+      </div>
+    </div>`;
+  },
+  selectCrypto(id){
+    this._crypto = id;
+    this.render();
+    setTimeout(()=>this.renderQR(), 50);
+  },
+  renderQR(){
+    const w = WALLETS.find(x=>x.id===this._crypto)||WALLETS[0];
+    const box = document.getElementById("qrBox");
+    if(!box) return;
+    box.innerHTML = "";
+    try{
+      new QRCode(box, { text:w.addr, width:180, height:180, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M });
+    }catch(e){
+      box.innerHTML = `<div style="padding:30px;color:#000">QR unavailable</div>`;
+    }
+  },
+  _depImg:null,
+  previewDepImg(e){
+    const f = e.target.files?.[0]; if(!f) return;
+    if(f.size>2*1024*1024) return Toast.show("Image too large (max 2MB)","error");
+    const r = new FileReader();
+    r.onload = ev=>{
+      this._depImg = ev.target.result;
+      const z = document.getElementById("depZone");
+      z.innerHTML = `<div>✓ Uploaded</div><img src="${this._depImg}" alt="proof" />`;
+    };
+    r.readAsDataURL(f);
+  },
+  submitDeposit(){
+    const amt = parseFloat($("#depAmt").value);
+    if(!amt||amt<=0) return Toast.show("Enter amount","error");
+    if(!this._depImg) return Toast.show("Upload payment screenshot","error");
+    const w = WALLETS.find(x=>x.id===this._crypto);
+    const dep = { id:"d"+Date.now(), userId:Session.user.id, amount:amt, method:w.name, address:w.addr, proof:this._depImg, status:"pending", at:Date.now() };
+    DB.data.deposits.unshift(dep);
+    DB.save();
+    this._depImg = null;
+    Notify.push(Session.user.id,"Deposit submitted","We're verifying your payment.");
+    Toast.show("Deposit submitted, awaiting approval","success");
+    this.go("deposits");
+  },
+  pageDeposits(){
+    const u = Session.user;
+    const deps = DB.data.deposits.filter(d=>d.userId===u.id);
+    return `<div class="page">
+      <h2 class="section-title mb-16">Deposit History</h2>
+      ${deps.length?deps.map(d=>`
+        <div class="glass mb-12" style="padding:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <div><div style="font-weight:700">${fmt(d.amount)}</div><div class="fz12 muted">${esc(d.method)} · ${fmtTime(d.at)}</div></div>
+            <span class="status-pill status-${d.status}">${d.status}</span>
+          </div>
+          ${d.proof?`<img src="${d.proof}" style="max-width:120px;border-radius:8px;margin-top:6px" />`:""}
+        </div>`).join(""):`<div class="empty"><div class="empty-icon">💳</div><p>No deposits yet</p></div>`}
+    </div>`;
+  },
+
+  /* ---------- PROFILE ---------- */
+  pageProfile(){
+    const u = Session.user;
+    const init = (u.name||"U").slice(0,1).toUpperCase();
+    return `<div class="page">
+      <div class="profile-head">
+        <div class="avatar">${esc(init)}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:17px">${esc(u.name)}</div>
+          <div class="muted fz12">${esc(u.email)}</div>
+          <div class="gold fz12" style="margin-top:4px">${fmt(u.balance)} balance</div>
+        </div>
+        <button class="icon-btn" onclick="App.editProfile()">✏️</button>
+      </div>
+      <div class="menu-list">
+        <button class="menu-item" onclick="App.go('orders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9 12 3l9 6v12H3z"/></svg><span class="menu-item-text">My Orders</span><span class="menu-item-arr">›</span></button>
+        <button class="menu-item" onclick="App.go('deposits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="3"/></svg><span class="menu-item-text">Deposit History</span><span class="menu-item-arr">›</span></button>
+        <button class="menu-item" onclick="App.go('referrals')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><circle cx="17" cy="8" r="3"/><path d="M3 21a6 6 0 0 1 12 0"/></svg><span class="menu-item-text">Referrals</span><span class="menu-item-arr">›</span></button>
+        <button class="menu-item" onclick="App.changePass()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="menu-item-text">Change Password</span><span class="menu-item-arr">›</span></button>
+        <button class="menu-item" onclick="window.open('${SUPPORT_TG}','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4z"/></svg><span class="menu-item-text">Telegram Support</span><span class="menu-item-arr">›</span></button>
+        <button class="menu-item" onclick="App.exportData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span class="menu-item-text">Backup Data</span><span class="menu-item-arr">›</span></button>
+        <button class="menu-item" onclick="document.getElementById('importFile').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg><span class="menu-item-text">Restore Backup</span><span class="menu-item-arr">›</span></button>
+        <input type="file" id="importFile" hidden accept="application/json" onchange="App.importData(event)" />
+        ${u.role==="admin"?`<button class="menu-item" onclick="App.go('admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6z"/></svg><span class="menu-item-text gold">Admin Panel</span><span class="menu-item-arr">›</span></button>`:""}
+        <button class="menu-item" onclick="if(confirm('Sign out?'))Session.logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--danger)"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg><span class="menu-item-text" style="color:var(--danger)">Sign Out</span></button>
+      </div>
+    </div>`;
+  },
+  editProfile(){
+    const u = Session.user;
+    const n = prompt("Display name:", u.name);
+    if(n&&n.trim()){ u.name = n.trim(); DB.save(); Toast.show("Profile updated","success"); this.render(); }
+  },
+  changePass(){
+    const u = Session.user;
+    const cur = prompt("Current password:");
+    if(cur!==u.pass) return Toast.show("Wrong current password","error");
+    const np = prompt("New password (min 6):");
+    if(!np||np.length<6) return Toast.show("Too short","error");
+    u.pass = np; DB.save(); Toast.show("Password updated","success");
+  },
+  exportData(){
+    const blob = new Blob([JSON.stringify(DB.data,null,2)],{type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "trustbuy-backup-"+Date.now()+".json";
+    a.click();
+    Toast.show("Backup downloaded","success");
+  },
+  importData(e){
+    const f = e.target.files?.[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ev=>{
+      try{
+        const d = JSON.parse(ev.target.result);
+        if(!d.users) throw new Error("Invalid backup");
+        if(confirm("Replace all data with backup?")){
+          DB.data = d; DB.save(); Toast.show("Restored","success"); this.render();
+        }
+      }catch(err){ Toast.show("Invalid backup file","error"); }
+    };
+    r.readAsText(f);
+  },
+
+  /* ---------- REFERRALS ---------- */
+  pageReferrals(){
+    const u = Session.user;
+    if(!u.refCode){ u.refCode = "REF"+Math.random().toString(36).slice(2,8).toUpperCase(); DB.save(); }
+    const count = DB.data.referrals[u.id]||0;
+    return `<div class="page">
+      <h2 class="section-title mb-16">Referrals</h2>
+      <div class="wallet-card">
+        <div class="wallet-label">Your code</div>
+        <div class="wallet-bal" style="font-size:28px">${esc(u.refCode)}</div>
+        <div class="muted fz12" style="position:relative">Earn $${DB.data.settings.referralBonus||1} per friend who signs up</div>
+        <button class="btn btn-primary mt-12" onclick="App.copyText('${esc(u.refCode)}')">Copy code</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Referred</div><div class="stat-val gold">${count}</div></div>
+        <div class="stat"><div class="stat-label">Earned</div><div class="stat-val gold">${fmt(count*(DB.data.settings.referralBonus||1))}</div></div>
+      </div>
+    </div>`;
+  },
+
+  /* ---------- NOTIFICATIONS ---------- */
+  pageNotifications(){
+    const u = Session.user;
+    const list = DB.data.notifications.filter(n=>n.userId===u.id).sort((a,b)=>b.at-a.at);
+    list.forEach(n=>n.read=true); DB.save();
+    return `<div class="page">
+      <h2 class="section-title mb-16">Notifications</h2>
+      ${list.length?list.map(n=>`
+        <div class="glass mb-8" style="padding:12px">
+          <div style="font-weight:600">${esc(n.title)}</div>
+          <div class="muted fz12">${esc(n.body)}</div>
+          <div class="muted fz12" style="margin-top:4px">${fmtTime(n.at)}</div>
+        </div>`).join(""):`<div class="empty"><div class="empty-icon">🔔</div><p>No notifications</p></div>`}
+    </div>`;
+  },
+
+  /* ---------- CHAT ---------- */
+  toggleChat(force){
+    const p = document.getElementById("chatPanel");
+    const show = force===undefined ? !p.classList.contains("show") : force;
+    p.classList.toggle("show", show);
+    if(show && !p.dataset.init){
+      p.dataset.init = "1";
+      const msgs = document.getElementById("chatMsgs");
+      msgs.innerHTML = `<div class="chat-msg bot">Hi ${esc(Session.user.name)}! 👋 I'm here to help. For instant support tap below.</div><div class="chat-msg bot">📨 <a href="${SUPPORT_TG}" target="_blank" style="color:var(--gold)">Open Telegram support</a></div>`;
+    }
+  },
+  sendChat(){
+    const i = document.getElementById("chatInput");
+    const v = i.value.trim(); if(!v) return;
+    const msgs = document.getElementById("chatMsgs");
+    msgs.insertAdjacentHTML("beforeend",`<div class="chat-msg me">${esc(v)}</div>`);
+    i.value="";
+    msgs.scrollTop = msgs.scrollHeight;
+    setTimeout(()=>{
+      msgs.insertAdjacentHTML("beforeend",`<div class="chat-msg bot">Thanks! Our team will reply on <a href="${SUPPORT_TG}" target="_blank" style="color:var(--gold)">Telegram</a> shortly.</div>`);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 800);
+  },
+
+  /* ---------- ADMIN ---------- */
+  _adminTab:"dash",
+  pageAdmin(){
+    if(Session.user.role!=="admin") return `<div class="empty">Access denied</div>`;
+    const tabs = [["dash","Dashboard"],["prods","Products"],["orders","Orders"],["deps","Deposits"],["users","Users"],["coupons","Coupons"],["banners","Banners"],["broadcast","Broadcast"],["settings","Settings"]];
+    return `<div class="page">
+      <h2 class="section-title mb-12">Admin Panel</h2>
+      <div class="tabs">${tabs.map(([k,l])=>`<button class="tab ${this._adminTab===k?"active":""}" onclick="App._adminTab='${k}';App.render()">${l}</button>`).join("")}</div>
+      ${this.renderAdminTab()}
+    </div>`;
+  },
+  renderAdminTab(){
+    switch(this._adminTab){
+      case "dash": return this.adminDash();
+      case "prods": return this.adminProds();
+      case "orders": return this.adminOrders();
+      case "deps": return this.adminDeps();
+      case "users": return this.adminUsers();
+      case "coupons": return this.adminCoupons();
+      case "banners": return this.adminBanners();
+      case "broadcast": return this.adminBroadcast();
+      case "settings": return this.adminSettings();
+    }
+  },
+  adminDash(){
+    const d = DB.data;
+    const rev = d.orders.reduce((a,o)=>a+o.total,0);
+    const last7 = Array.from({length:7},(_,i)=>{
+      const day = new Date(); day.setHours(0,0,0,0); day.setDate(day.getDate()-(6-i));
+      const next = day.getTime()+86400000;
+      const v = d.orders.filter(o=>o.at>=day.getTime() && o.at<next).reduce((a,o)=>a+o.total,0);
+      return { label: day.toLocaleDateString(undefined,{weekday:"short"}), v };
+    });
+    const max = Math.max(...last7.map(x=>x.v),1);
+    const W=300, H=140, P=24;
+    const pts = last7.map((p,i)=>[P+i*((W-2*P)/6), H-P-(p.v/max)*(H-2*P)]);
+    const path = pts.map((p,i)=>(i?"L":"M")+p[0]+","+p[1]).join(" ");
+    return `
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Users</div><div class="stat-val">${d.users.length}</div></div>
+        <div class="stat"><div class="stat-label">Orders</div><div class="stat-val">${d.orders.length}</div></div>
+        <div class="stat"><div class="stat-label">Revenue</div><div class="stat-val gold">${fmt(rev)}</div></div>
+        <div class="stat"><div class="stat-label">Pending Deposits</div><div class="stat-val">${d.deposits.filter(x=>x.status==="pending").length}</div></div>
+      </div>
+      <div class="chart-wrap">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:700">Revenue (7d)</div><div class="gold" style="font-weight:700">${fmt(last7.reduce((a,b)=>a+b.v,0))}</div></div>
+        <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+          <defs><linearGradient id="g1" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d4af37" stop-opacity=".5"/><stop offset="1" stop-color="#d4af37" stop-opacity="0"/></linearGradient></defs>
+          <path d="${path} L ${pts[pts.length-1][0]},${H-P} L ${pts[0][0]},${H-P} Z" fill="url(#g1)"/>
+          <path d="${path}" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linejoin="round"/>
+          ${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#d4af37"/>`).join("")}
+          ${last7.map((p,i)=>`<text x="${P+i*((W-2*P)/6)}" y="${H-6}" fill="#888" font-size="10" text-anchor="middle">${p.label}</text>`).join("")}
+        </svg>
+      </div>`;
+  },
+  adminProds(){
+    return `
+      <button class="btn btn-primary mb-12" onclick="App.editProduct()">+ New product</button>
+      ${DB.data.products.map(p=>`
+        <div class="list-item">
+          <div class="list-img" style="background-image:url('${esc(p.image)}')"></div>
+          <div class="list-body">
+            <p class="list-title">${esc(p.title)}</p>
+            <p class="list-sub">${fmt(p.price)} · ${(p.stock||[]).length} stock · ${p.sold||0} sold</p>
+          </div>
+          <div class="row" style="flex:0 0 auto;gap:6px">
+            <button class="add-btn" style="background:var(--surface-2);color:var(--text);font-size:14px" onclick="App.editProduct('${p.id}')">✎</button>
+            <button class="add-btn" style="background:rgba(255,69,58,.2);color:var(--danger);font-size:14px" onclick="App.delProduct('${p.id}')">🗑</button>
+          </div>
+        </div>`).join("")}`;
+  },
+  editProduct(id){
+    const p = id ? DB.data.products.find(x=>x.id===id) : { id:"p"+Date.now(), title:"", category:"Streaming", price:0, oldPrice:0, image:"", stock:[], desc:"", featured:false, sold:0 };
+    this.openModal("Product", `
+      <div class="field"><label class="field-label">Title</label><div class="input-wrap"><input id="pf_title" value="${esc(p.title)}" /></div></div>
+      <div class="field"><label class="field-label">Category</label><div class="input-wrap"><input id="pf_cat" value="${esc(p.category)}" /></div></div>
+      <div class="row">
+        <div class="field"><label class="field-label">Price</label><div class="input-wrap"><input id="pf_price" type="number" step="0.01" value="${p.price}" /></div></div>
+        <div class="field"><label class="field-label">Old price</label><div class="input-wrap"><input id="pf_old" type="number" step="0.01" value="${p.oldPrice||0}" /></div></div>
+      </div>
+      <div class="field"><label class="field-label">Image URL or upload</label>
+        <div class="input-wrap"><input id="pf_img" value="${esc(p.image)}" placeholder="https://..." /></div>
+        <input type="file" id="pf_imgfile" accept="image/*" style="margin-top:8px;font-size:12px" onchange="App._readImg(event,'pf_img')" />
+      </div>
+      <div class="field"><label class="field-label">Description</label><div class="input-wrap"><textarea id="pf_desc" rows="3" style="resize:vertical">${esc(p.desc||"")}</textarea></div></div>
+      <div class="field"><label class="field-label">Stock (one account per line, format email:pass)</label><div class="input-wrap"><textarea id="pf_stock" rows="4" style="resize:vertical;font-family:monospace;font-size:13px">${esc((p.stock||[]).join("\n"))}</textarea></div></div>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="pf_feat" ${p.featured?"checked":""} style="width:auto" /> Featured</label>
+    `, ()=>{
+      p.title = $("#pf_title").value.trim();
+      p.category = $("#pf_cat").value.trim()||"General";
+      p.price = parseFloat($("#pf_price").value)||0;
+      p.oldPrice = parseFloat($("#pf_old").value)||0;
+      p.image = $("#pf_img").value.trim();
+      p.desc = $("#pf_desc").value.trim();
+      p.stock = $("#pf_stock").value.split("\n").map(s=>s.trim()).filter(Boolean);
+      p.featured = $("#pf_feat").checked;
+      if(!p.title) return Toast.show("Title required","error");
+      if(!id) DB.data.products.push(p);
+      DB.save(); Toast.show("Saved","success"); this.closeModal(); this.render();
+    });
+  },
+  _readImg(e, targetId){
+    const f = e.target.files?.[0]; if(!f) return;
+    if(f.size>2*1024*1024) return Toast.show("Image too large (2MB max)","error");
+    const r = new FileReader();
+    r.onload = ev=>{ document.getElementById(targetId).value = ev.target.result; Toast.show("Image loaded","success"); };
+    r.readAsDataURL(f);
+  },
+  delProduct(id){
+    if(!confirm("Delete this product?")) return;
+    DB.data.products = DB.data.products.filter(x=>x.id!==id);
+    DB.save(); this.render();
+  },
+  adminOrders(){
+    const o = DB.data.orders;
+    return o.length?o.map(or=>{
+      const u = DB.data.users.find(x=>x.id===or.userId);
+      return `<div class="glass mb-8" style="padding:12px">
+        <div style="display:flex;justify-content:space-between"><div><b>#${or.id.slice(-6)}</b><div class="muted fz12">${esc(u?.email||"?")} · ${fmtTime(or.at)}</div></div><div class="gold" style="font-weight:700">${fmt(or.total)}</div></div>
+        <div class="fz12 muted mt-8">${or.items.length} item(s) · ${esc(or.status)}</div>
+      </div>`;
+    }).join(""):`<p class="muted">No orders</p>`;
+  },
+  adminDeps(){
+    const deps = DB.data.deposits;
+    return deps.length?deps.map(d=>{
+      const u = DB.data.users.find(x=>x.id===d.userId);
+      return `<div class="glass mb-8" style="padding:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><b>${fmt(d.amount)}</b> via ${esc(d.method)}<div class="muted fz12">${esc(u?.email||"?")} · ${fmtTime(d.at)}</div></div>
+          <span class="status-pill status-${d.status}">${d.status}</span>
+        </div>
+        ${d.proof?`<img src="${d.proof}" style="max-width:100px;border-radius:6px;margin-top:8px" onclick="window.open('${d.proof}','_blank')" />`:""}
+        ${d.status==="pending"?`<div class="row mt-8"><button class="btn btn-success" onclick="App.approveDep('${d.id}')">Approve</button><button class="btn btn-danger" onclick="App.rejectDep('${d.id}')">Reject</button></div>`:""}
+      </div>`;
+    }).join(""):`<p class="muted">No deposits</p>`;
+  },
+  approveDep(id){
+    const d = DB.data.deposits.find(x=>x.id===id); if(!d||d.status!=="pending") return;
+    const u = DB.data.users.find(x=>x.id===d.userId);
+    if(u){ u.balance += d.amount; Notify.push(u.id,"Deposit approved","+"+fmt(d.amount)+" added to wallet."); }
+    d.status="approved"; DB.save(); Toast.show("Approved","success"); this.render();
+  },
+  rejectDep(id){
+    const d = DB.data.deposits.find(x=>x.id===id); if(!d) return;
+    d.status="rejected"; Notify.push(d.userId,"Deposit rejected","Please contact support if needed.");
+    DB.save(); Toast.show("Rejected"); this.render();
+  },
+  adminUsers(){
+    return DB.data.users.map(u=>`
+      <div class="list-item">
+        <div class="avatar" style="width:44px;height:44px;font-size:16px;flex:0 0 44px">${esc((u.name||"U")[0].toUpperCase())}</div>
+        <div class="list-body"><p class="list-title">${esc(u.name)} ${u.role==="admin"?"<span class='gold'>★</span>":""}</p><p class="list-sub">${esc(u.email)} · ${fmt(u.balance)}</p></div>
+        <div class="row" style="flex:0 0 auto;gap:6px">
+          ${u.role!=="admin"?`<button class="add-btn" style="background:${u.banned?"rgba(48,209,88,.2);color:var(--success)":"rgba(255,69,58,.2);color:var(--danger)"};font-size:12px;width:auto;padding:0 10px" onclick="App.toggleBan('${u.id}')">${u.banned?"Unban":"Ban"}</button>`:""}
+        </div>
+      </div>`).join("");
+  },
+  toggleBan(id){
+    const u = DB.data.users.find(x=>x.id===id); if(!u) return;
+    u.banned = !u.banned; DB.save(); Toast.show(u.banned?"Banned":"Unbanned","success"); this.render();
+  },
+  adminCoupons(){
+    return `
+      <button class="btn btn-primary mb-12" onclick="App.addCoupon()">+ New coupon</button>
+      ${DB.data.coupons.map((c,i)=>`
+        <div class="list-item">
+          <div class="list-body"><p class="list-title gold">${esc(c.code)}</p><p class="list-sub">${c.percent}% off · ${c.active?"Active":"Inactive"}</p></div>
+          <button class="add-btn" style="background:rgba(255,69,58,.2);color:var(--danger)" onclick="DB.data.coupons.splice(${i},1);DB.save();App.render()">🗑</button>
+        </div>`).join("")}`;
+  },
+  addCoupon(){
+    const code = prompt("Code:")?.toUpperCase(); if(!code) return;
+    const pct = parseInt(prompt("Percent off (1-90):"),10); if(!pct||pct<1||pct>90) return Toast.show("Invalid","error");
+    DB.data.coupons.push({ code, percent:pct, active:true }); DB.save(); this.render();
+  },
+  adminBanners(){
+    return `
+      <button class="btn btn-primary mb-12" onclick="App.editBanner()">+ New banner</button>
+      ${DB.data.banners.map((b,i)=>`
+        <div class="list-item">
+          <div class="list-img" style="background-image:url('${esc(b.img)}')"></div>
+          <div class="list-body"><p class="list-title">${esc(b.title)}</p><p class="list-sub">${esc(b.tag)}</p></div>
+          <button class="add-btn" style="background:rgba(255,69,58,.2);color:var(--danger)" onclick="DB.data.banners.splice(${i},1);DB.save();App.render()">🗑</button>
+        </div>`).join("")}`;
+  },
+  editBanner(){
+    const tag = prompt("Tag:","Featured"); if(!tag) return;
+    const title = prompt("Title:"); if(!title) return;
+    const sub = prompt("Subtitle:","")||"";
+    const img = prompt("Image URL:","")||"";
+    DB.data.banners.push({ tag, title, sub, img }); DB.save(); this.render();
+  },
+  adminBroadcast(){
+    return `<div class="glass" style="padding:16px">
+      <div class="field"><label class="field-label">Title</label><div class="input-wrap"><input id="bc_title" placeholder="Announcement" /></div></div>
+      <div class="field"><label class="field-label">Message</label><div class="input-wrap"><textarea id="bc_body" rows="3" style="resize:vertical"></textarea></div></div>
+      <button class="btn btn-primary" onclick="App.sendBroadcast()">Send to all users</button>
+    </div>`;
+  },
+  sendBroadcast(){
+    const t = $("#bc_title").value.trim(), b = $("#bc_body").value.trim();
+    if(!t||!b) return Toast.show("Fill both","error");
+    Notify.broadcast(t,b);
+    Toast.show("Broadcast sent","success");
+  },
+  adminSettings(){
+    const s = DB.data.settings;
+    return `<div class="glass" style="padding:16px">
+      <label style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+        <span>Maintenance mode</span>
+        <input type="checkbox" ${s.maintenance?"checked":""} onchange="DB.data.settings.maintenance=this.checked;DB.save();Toast.show('Saved','success')" style="width:auto" />
+      </label>
+      <div class="divider"></div>
+      <div class="field"><label class="field-label">Referral bonus ($)</label><div class="input-wrap"><input id="ref_bonus" type="number" step="0.1" value="${s.referralBonus||1}" onchange="DB.data.settings.referralBonus=parseFloat(this.value)||1;DB.save()" /></div></div>
+      <button class="btn btn-secondary mt-12" onclick="App.resetFlash()">Reset flash sale timer (24h)</button>
+      <button class="btn btn-danger mt-12" onclick="if(confirm('Erase ALL data?')){localStorage.clear();location.reload()}">Wipe all data</button>
+    </div>`;
+  },
+  resetFlash(){ DB.data.settings.flashEnd = Date.now()+1000*60*60*24; DB.save(); Toast.show("Reset","success"); },
+
+  /* ---------- MODAL ---------- */
+  openModal(title, body, onSave){
+    this.closeModal();
+    const m = document.createElement("div");
+    m.className="modal-backdrop";
+    m.innerHTML = `<div class="modal">
+      <div class="modal-head"><div class="modal-title">${esc(title)}</div><button class="close-btn" onclick="App.closeModal()">✕</button></div>
+      <div class="modal-body">${body}</div>
+      <div class="modal-foot">
+        <button class="btn btn-secondary" onclick="App.closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="modalSave">Save</button>
+      </div>
+    </div>`;
+    m.addEventListener("click",e=>{ if(e.target===m) this.closeModal(); });
+    document.body.appendChild(m);
+    this.modal = m;
+    document.getElementById("modalSave").onclick = onSave;
+  },
+  closeModal(){ if(this.modal){ this.modal.remove(); this.modal=null; } }
+};
+
+document.addEventListener("DOMContentLoaded",()=>{
+  try{ App.init(); }
+  catch(e){ console.error(e); document.getElementById("loader").classList.add("hide"); document.getElementById("root").innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><p>Load error: ${esc(e.message)}</p><button class="btn btn-secondary mt-12" onclick="localStorage.clear();location.reload()" style="max-width:200px;margin:12px auto">Reset & reload</button></div>`; }
+});
+
+// expose for inline handlers
+window.App = App;
+window.Session = Session;
+window.DB = DB;
+window.Toast = Toast;
+</script>
+</body>
+</html>
